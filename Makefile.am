@@ -12,17 +12,17 @@ EXTRA_DIST = \
 
 bin_PROGRAMS = admesh
 admesh_SOURCES = \
-	admesh.c \
-	connect.c \
-	getopt.c \
-	getopt1.c \
-	normals.c \
-	shared.c \
-	stlinit.c \
-	stl_io.c \
-	util.c \
-	getopt.h \
-	stl.h
+	src/admesh.c \
+	src/connect.c \
+	src/getopt.c \
+	src/getopt1.c \
+	src/normals.c \
+	src/shared.c \
+	src/stlinit.c \
+	src/stl_io.c \
+	src/util.c \
+	src/getopt.h \
+	src/stl.h
 
 distclean-local:
 	rm -rf *.cache *~

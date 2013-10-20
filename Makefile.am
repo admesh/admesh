@@ -9,7 +9,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libadmesh.pc
 
 EXTRA_DIST = \
-	ADMESH.DOC \
+	admesh-doc.txt \
 	COPYING \
 	README \
 	INSTALL \

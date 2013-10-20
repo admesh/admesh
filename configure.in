@@ -1,0 +1,30 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(stl.h)
+
+dnl Checks for programs.
+AC_PROG_CC
+
+dnl Some cc's allow prototypes, etc.  Should check them individually
+if test x$GCC = xyes; then
+        CFLAGS2="-O2 -Wall -Wno-implicit"
+else
+        CFLAGS2="-O"
+fi
+
+dnl Checks for libraries.
+dnl Replace `main' with a function in -lm:
+AC_CHECK_LIB(m, main)
+
+dnl Checks for header files.
+dnl AC_HEADER_STDC
+
+dnl Checks for library functions.
+dnl AC_FUNC_MEMCMP
+
+AC_CHECK_FUNC(getopt_long, , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"])
+AC_SUBST(LIBOBJS)dnl
+
+
+CFLAGS="$CFLAGS $CFLAGS2"
+
+AC_OUTPUT(Makefile)

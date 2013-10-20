@@ -1,14 +1,22 @@
 ACLOCAL_AMFLAGS = -I m4
 
-pkgconfdir = $(libdir)/pkgconfig
+AM_LDFLAGS = \
+	-Wl,--gc-sections \
+	-Wl,--as-needed \
+	-no-undefined
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libadmesh.pc
 
 EXTRA_DIST = \
 	ADMESH.DOC \
 	COPYING \
 	README \
 	INSTALL \
-	ChangeLog.old
+	ChangeLog.old \
+	libadmesh.pc.in	
 
+CLEANFILES = libadmesh.pc
 
 bin_PROGRAMS = admesh
 admesh_SOURCES = \
@@ -18,11 +26,25 @@ admesh_SOURCES = \
 	src/getopt1.c \
 	src/normals.c \
 	src/shared.c \
-	src/stlinit.c \
-	src/stl_io.c \
 	src/util.c \
-	src/getopt.h \
-	src/stl.h
+	src/getopt.h
+admesh_LDADD = \
+	libadmesh.la
+
+# libadmesh libtool versioning
+LIBADMESH_CURRENT=1
+LIBADMESH_REVISION=0
+LIBADMESH_AGE=0
+
+pkginclude_HEADERS = src/stl.h
+lib_LTLIBRARIES = libadmesh.la
+
+libadmesh_la_SOURCES = \
+	src/stlinit.c \
+	src/stl_io.c
+libadmesh_la_LDFLAGS = \
+	$(AM_LDFLAGS) \
+	-version-info $(LIBADMESH_CURRENT):$(LIBADMESH_REVISION):$(LIBADMESH_AGE)
 
 distclean-local:
 	rm -rf *.cache *~

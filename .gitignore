@@ -23,4 +23,4 @@ stamp-h1
 *.o
 *.tar.*
 admesh
-
+admesh-*/

@@ -19,6 +19,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "stl.h"
 
 #if !defined(SEEK_SET)

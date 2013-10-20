@@ -18,6 +18,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz])
 AM_SILENT_RULES([yes])
+LT_INIT([disable-static pic-only])
 AC_LANG([C])
 
 # ===========================
@@ -26,12 +27,14 @@ AC_LANG([C])
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
+AC_PROG_SED
+AC_PROG_MKDIR_P
 
 # ================
 # Check for cflags
 # ================
 AC_ARG_ENABLE([werror],
-	[AS_HELP_STRING([--enablee-werror], [Treat all warnings as errors, useful for development])],
+	[AS_HELP_STRING([--enablee-werror], [Treat all warnings as errors, useful for development @<:@default=disabled@:>@])],
 	[enable_werror="$enableval"],
 	[enable_werror=no]
 )
@@ -55,6 +58,7 @@ AC_CHECK_LIB(m, main)
 # =====================
 AC_CONFIG_FILES([
 Makefile
+libadmesh.pc
 ])
 
 AC_OUTPUT

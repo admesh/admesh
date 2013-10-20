@@ -8,10 +8,14 @@ AM_LDFLAGS = \
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libadmesh.pc
 
-EXTRA_DIST = \
+doc_DATA = \
 	admesh-doc.txt \
+	block.stl \
+	README
+
+EXTRA_DIST = \
+	$(doc_DATA) \
 	COPYING \
-	README \
 	INSTALL \
 	ChangeLog.old \
 	libadmesh.pc.in	

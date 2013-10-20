@@ -22,12 +22,9 @@ bin_PROGRAMS = admesh
 admesh_SOURCES = \
 	src/admesh.c \
 	src/connect.c \
-	src/getopt.c \
-	src/getopt1.c \
 	src/normals.c \
 	src/shared.c \
-	src/util.c \
-	src/getopt.h
+	src/util.c
 admesh_LDADD = \
 	libadmesh.la
 

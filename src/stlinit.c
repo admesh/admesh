@@ -81,6 +81,7 @@ stl_initialize(stl_file *stl, char *file)
   long           file_size;
   int            header_num_facets;
   int            num_facets;
+  size_t         s;
   int            i, j;
   unsigned char  chtest[128];
   int            num_lines = 1;
@@ -123,9 +124,9 @@ stl_initialize(stl_file *stl, char *file)
   fseek(stl->fp, HEADER_SIZE, SEEK_SET);
   fread(chtest, sizeof(chtest), 1, stl->fp);
   stl->stats.type = ascii;
-  for(i = 0; i < sizeof(chtest); i++)
+  for(s = 0; s < sizeof(chtest); s++)
     {
-      if(chtest[i] > 127)
+      if(chtest[s] > 127)
 	{
 	  stl->stats.type = binary;
 	  break;

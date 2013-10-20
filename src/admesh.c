@@ -27,7 +27,7 @@
 
 static void usage(int status, char *program_name);
 
-void
+int
 main(int argc, char **argv)
 {
   stl_file stl_in;
@@ -230,24 +230,26 @@ main(int argc, char **argv)
 	  break;
     	 default:
 	  usage(1, program_name);
-	  break;
+	  return 0;
 	}
     }
   
   if(help_flag)
     {
       usage(0, program_name);
+      return 0;
     }
   if(version_flag)
     {
       printf("ADMesh - version 0.95\n");
-      exit(0);
+      return 0;
     }
   
   if(optind == argc)
     {
       printf("No input file name given.\n");
       usage(1, program_name);
+      return 0;
     }
   else
     {
@@ -463,7 +465,7 @@ All facets connected.  No further nearby check necessary.\n");
   
   stl_close(&stl_in);
 
-  exit(0);
+  return 0;
 }
 
 static void 
@@ -513,5 +515,4 @@ So check here to find what happens if, for example, --translate and --merge\n\
 options are specified together.  The order of the options specified on the\n\
 command line is not important.\n");
     }
-  exit(status);
 }  

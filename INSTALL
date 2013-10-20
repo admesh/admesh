@@ -1,0 +1,19 @@
+To install ADMesh, you will need a system with a c compiler.
+Do the following:
+
+1.  Get the file admesh-0.95.tar.gz
+2.  Extract the archive.  i.e. type something like the following:
+         tar -zxvf admesh-0.95.tar.gz
+	 or if that doesn't work, try the following:
+         cat admesh-0.95.tar.gz | gzip -d | tar xvf -
+    The source files will be extracted into a directory called admesh-0.95
+3.  cd admesh-0.95
+4.  type the following:
+         ./configure
+	 make
+
+That should do it.  You should have an executable file called admesh.  There
+is only the one stand-alone executable and there are no configuration files
+or environment variables to be set.  I don't believe that that the included
+configure script will run under MS-DOS or Windows, so you will need to edit
+the included Makefile.in file by hand to compile it.

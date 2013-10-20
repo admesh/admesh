@@ -14,8 +14,13 @@ depcomp
 install-sh
 libtool
 ltmain.sh
-m4
+m4/
 missing
 mkinstalldirs
 stamp-h1
 *.pc
+.deps/
+*.o
+*.tar.*
+admesh
+

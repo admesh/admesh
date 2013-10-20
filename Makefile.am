@@ -1,21 +1,31 @@
-#! /bin/sh
+ACLOCAL_AMFLAGS = -I m4
 
-SHELL = /bin/sh
-CC = @CC@
-CFLAGS = -I@srcdir@ @CFLAGS@
-CPPFLAGS = @CPPFLAGS@
-LDFLAGS = @LDFLAGS@
-LIBOBJS = @LIBOBJS@
-.SUFFIXES:
-.SUFFIXES: .c .o
+pkgconfdir = $(libdir)/pkgconfig
 
-OBJ = admesh.o connect.o stl_io.o stlinit.o util.o normals.o shared.o @LIBOBJS@
+EXTRA_DIST = \
+	ADMESH.DOC \
+	COPYING \
+	README \
+	INSTALL \
+	ChangeLog.old
 
-all: @srcdir@/configure $(OBJ)
-	$(CC) @LDFLAGS@ -o admesh $(OBJ) @LIBS@
 
-clean:
-	rm -f $(OBJ) admesh core admesh.core core.admesh
-	rm -f config.h config.log config.status\
-	      config.cache Makefile
+bin_PROGRAMS = admesh
+admesh_SOURCES = \
+	admesh.c \
+	connect.c \
+	getopt.c \
+	getopt1.c \
+	normals.c \
+	shared.c \
+	stlinit.c \
+	stl_io.c \
+	util.c \
+	getopt.h \
+	stl.h
 
+distclean-local:
+	rm -rf *.cache *~
+
+dist-hook:
+	git log --date=short --pretty="format:@%cd  %an  <%ae>  [%H]%n%n%s%n%n%e%b" | sed -e "s|^\([^@]\)|\t\1|" -e "s|^@||" >$(distdir)/ChangeLog

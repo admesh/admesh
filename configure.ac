@@ -31,27 +31,24 @@ AC_PROG_LIBTOOL
 # Check for cflags
 # ================
 AC_ARG_ENABLE([werror],
-        [AS_HELP_STRING([--disable-werror], [Treat all warnings as errors, useful for development])],
-        [enable_werror="$enableval"],
-        [enable_werror=yes]
+	[AS_HELP_STRING([--enablee-werror], [Treat all warnings as errors, useful for development])],
+	[enable_werror="$enableval"],
+	[enable_werror=no]
 )
 AS_IF([test x"$enable_werror" != "xno"], [
-        CFLAGS="$CFLAGS -Werror"
-        CXXFLAGS="$CXXFLAGS -Werror"
+	CFLAGS="$CFLAGS -Werror"
+	CXXFLAGS="$CXXFLAGS -Werror"
 ])
 AS_IF([test x"$GCC" = xyes], [
-        # Be tough with warnings and produce less careless code
-        CFLAGS="$CFLAGS -Wall -Wextra -pedantic"
-        CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wshadow -pedantic"
+	# Be tough with warnings and produce less careless code
+	CFLAGS="$CFLAGS -Wall -Wextra -pedantic"
+	CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wshadow -pedantic"
 ])
 
-# ==============
-# Find some libs
-# ==============
+# =========
+# Find libs
+# =========
 AC_CHECK_LIB(m, main)
-AC_CHECK_FUNC(getopt_long, , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"])
-AC_SUBST(LIBOBJS)
-
 
 # =====================
 # Prepare all .in files
@@ -68,6 +65,6 @@ AC_OUTPUT
 AC_MSG_NOTICE([
 ==============================================================================
 Build configuration:
-        werror:          ${enable_werror}
+	werror:	  ${enable_werror}
 ==============================================================================
 ])

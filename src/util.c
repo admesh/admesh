@@ -77,7 +77,7 @@ stl_verify_neighbors(stl_file *stl)
     }
 }
 
-//Translates the stl by x,y,z, from wherever it is currently:
+/* Translates the stl by x,y,z, from wherever it is currently: */
 void
 stl_translate(stl_file *stl, float x, float y, float z)
 {

@@ -310,7 +310,7 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
   if(merge_flag)
     {
       printf("Merging %s with %s\n", input_file, merge_name);
-      //Open the file and add the contents to stl_in:
+      /* Open the file and add the contents to stl_in: */
       stl_open_merge(&stl_in, merge_name);
     }
   

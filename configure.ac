@@ -34,7 +34,7 @@ AC_PROG_MKDIR_P
 # Check for cflags
 # ================
 AC_ARG_ENABLE([werror],
-	[AS_HELP_STRING([--enablee-werror], [Treat all warnings as errors, useful for development @<:@default=disabled@:>@])],
+	[AS_HELP_STRING([--enable-werror], [Treat all warnings as errors, useful for development @<:@default=disabled@:>@])],
 	[enable_werror="$enableval"],
 	[enable_werror=no]
 )

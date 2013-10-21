@@ -104,15 +104,5 @@ added in the future.  These include:
  * Splitting a file into smaller files
 
 ADMesh is free but Copyrighted software.  It is distributed under the terms
-of the GNU General Public License (GPL).  It is NOT in the public domain and
-its source code cannot be used in commercial software.  Details of the GPL
-are in the file COPYING that comes with the ADMesh software package.
-
-ADMesh can be obtained via http from:
-  http://www.engr.csulb.edu/~amartin/admesh/admesh-0.95.tar.gz
-or visit my home page at:
-  http://www.engr.csulb.edu/~amartin
-
-Send questions, comments, suggestions, etc. to me at the following address.
-<amartin@engr.csulb.edu>
-Anthony D. Martin
+of the GNU General Public License (GPL). Details of the GPL are in the file
+COPYING that comes with the ADMesh software package.

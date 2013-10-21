@@ -9,7 +9,7 @@ from the world around us.
 No further development will be done, but bugs will be resolved, if possible.
 
 Don't patch this project downstream but use this code, so all can benefit from
-the changes. Pull requests are welcome.
+the changes. Pull requests are welcome, but be sure to generate no warnings.
 
 About ADMesh:
 -------------

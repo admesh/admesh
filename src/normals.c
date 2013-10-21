@@ -96,7 +96,6 @@ stl_fix_normal_directions(stl_file *stl)
   /*  int next_facet;*/
   int i;
   int j;
-  int checked_before = 0;
   struct stl_normal
   {
     int               facet_num;
@@ -183,9 +182,6 @@ stl_fix_normal_directions(stl_file *stl)
 	{
 	  /* All of the facets in this part have been fixed. */
 	  stl->stats.number_of_parts += 1;
-	  /* There are (checked-checked_before) facets */
-	  /* in part stl->stats.number_of_parts */
-	  checked_before = checked;
 	  if(checked >= stl->stats.number_of_facets)
 	    {
 	      /* All of the facets have been checked.  Bail out. */

@@ -205,15 +205,50 @@ stl_allocate(stl_file *stl)
   if(stl->facet_start == NULL) perror("stl_initialize");
 }
 
+//This function reads file_to_merge and ADDs the contents of the file to the 
+// already loaded and filled stl.
 void
-stl_open_merge(stl_file *stl, char *file)
+stl_open_merge(stl_file *stl, char *file_to_merge)
 {
-  int first_facet;
+  int num_facets_so_far, first_facet_of_merged;
   
-  first_facet = stl->stats.number_of_facets;
-  stl_initialize(stl, file);
+  //Record how many facets we have so far from the first file.  We will start putting
+  //facets in the next position.  Since we're 0-indexed, it'l be the same position.
+  num_facets_so_far = stl->stats.number_of_facets;
+  
+  //Record the file type we started with:
+  stl_type origStlType=stl->stats.type;
+  //Record the file pointer too:
+  FILE *origFp=stl->fp;
+  
+  //Create an stl_file structure for the file to merge:
+  stl_file stl_to_merge;  
+  
+  //Initialize the sturucture with zero stats, header info and sizes:
+  stl_initialize(&stl_to_merge, file_to_merge);
+  
+  //Copy what we need to into stl so that we can read the file_to_merge directly into it
+  //using stl_read:  Save the rest of the valuable info:
+  stl->stats.type=stl_to_merge.stats.type;
+  stl->fp=stl_to_merge.fp;
+  
+  //Add the number of facets we already have in stl with what we we found in stl_to_merge but 
+  //haven't read yet.
+  stl->stats.number_of_facets=num_facets_so_far+stl_to_merge.stats.number_of_facets;
+  
+  //Allocate enough room for stl->stats.number_of_facets facets and neighbors:
   stl_reallocate(stl);
-  stl_read(stl, first_facet, 0);
+  
+  //Read the file to merge directly into stl, adding it to what we have already.
+  // Start at num_facets_so_far, the index to the first unused facet.  Also say
+  // that this isn't our first time so we should augment stats like min and max 
+  //instead of erasing them.
+  stl_read(stl, num_facets_so_far, 0);
+  
+  //Restore the stl information we overwrote (for stl_read) so that it still accurately
+  // reflects the subject part:
+  stl->stats.type=origStlType;
+  stl->fp=origFp;
 }
 
 static void
@@ -232,6 +267,9 @@ stl_reallocate(stl_file *stl)
   if(stl->facet_start == NULL) perror("stl_initialize");
 }
 
+//Reads the contents of the file pointed to by stl->fp into the stl structure,
+//starting at facet first_facet.  The second argument says if it's our first
+// time running this for the stl and therefore we should reset our max and min stats.
 static void
 stl_read(stl_file *stl, int first_facet, int first)
 {
@@ -242,7 +280,6 @@ stl_read(stl_file *stl, int first_facet, int first)
   float diff_z;
   float max_diff;
 
-  
   if(stl->stats.type == binary)
     {
       fseek(stl->fp, HEADER_SIZE, SEEK_SET);

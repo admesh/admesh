@@ -123,7 +123,11 @@ stl_initialize(stl_file *stl, char *file)
   
   /* Check for binary or ASCII file */
   fseek(stl->fp, HEADER_SIZE, SEEK_SET);
-  fread(chtest, sizeof(chtest), 1, stl->fp);
+  if (!fread(chtest, sizeof(chtest), 1, stl->fp))
+  {
+    perror("The input is an empty file");
+    exit(1);
+  }
   stl->stats.type = ascii;
   for(s = 0; s < sizeof(chtest); s++)
     {
@@ -149,8 +153,10 @@ stl_initialize(stl_file *stl, char *file)
       num_facets = (file_size - HEADER_SIZE) / SIZEOF_STL_FACET;
 
       /* Read the header */
-      fread(stl->stats.header, LABEL_SIZE, 1, stl->fp);
-      stl->stats.header[80] = '\0';
+      if (fread(stl->stats.header, LABEL_SIZE, 1, stl->fp) > 79)
+      {
+        stl->stats.header[80] = '\0';
+      }
 
       /* Read the int following the header.  This should contain # of facets */
       header_num_facets = stl_get_little_int(stl->fp);

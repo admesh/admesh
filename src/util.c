@@ -77,6 +77,7 @@ stl_verify_neighbors(stl_file *stl)
     }
 }
 
+//Translates the stl by x,y,z, from wherever it is currently:
 void
 stl_translate(stl_file *stl, float x, float y, float z)
 {
@@ -87,17 +88,17 @@ stl_translate(stl_file *stl, float x, float y, float z)
     {
       for(j = 0; j < 3; j++)
 	{
-	  stl->facet_start[i].vertex[j].x -= (stl->stats.min.x - x);
-	  stl->facet_start[i].vertex[j].y -= (stl->stats.min.y - y);
-	  stl->facet_start[i].vertex[j].z -= (stl->stats.min.z - z);
+	  stl->facet_start[i].vertex[j].x += x;
+	  stl->facet_start[i].vertex[j].y += y;
+	  stl->facet_start[i].vertex[j].z += z;
 	}
     }
-  stl->stats.max.x -= (stl->stats.min.x - x);
-  stl->stats.max.y -= (stl->stats.min.y - y);
-  stl->stats.max.z -= (stl->stats.min.z - z);
-  stl->stats.min.x = x;
-  stl->stats.min.y = y;
-  stl->stats.min.z = z;
+  stl->stats.max.x += x;
+  stl->stats.max.y += y;
+  stl->stats.max.z += z;
+  stl->stats.min.x += x;
+  stl->stats.min.y += y;
+  stl->stats.min.z += z;
 }
 
 void

@@ -22,6 +22,8 @@ EXTRA_DIST = \
 
 CLEANFILES = libadmesh.pc
 
+dist_man_MANS = admesh.1
+
 bin_PROGRAMS = admesh
 admesh_SOURCES = \
 	src/admesh.c \

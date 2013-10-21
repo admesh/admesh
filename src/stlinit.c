@@ -210,19 +210,19 @@ stl_allocate(stl_file *stl)
 void
 stl_open_merge(stl_file *stl, char *file_to_merge)
 {
-  int num_facets_so_far, first_facet_of_merged;
+  int num_facets_so_far;
+  stl_type origStlType;
+  FILE *origFp;
+  stl_file stl_to_merge;  
   
   /* Record how many facets we have so far from the first file.  We will start putting
      facets in the next position.  Since we're 0-indexed, it'l be the same position. */
   num_facets_so_far = stl->stats.number_of_facets;
   
   /* Record the file type we started with: */
-  stl_type origStlType=stl->stats.type;
+  origStlType=stl->stats.type;
   /* Record the file pointer too: */
-  FILE *origFp=stl->fp;
-  
-  /* Create an stl_file structure for the file to merge: */
-  stl_file stl_to_merge;  
+  origFp=stl->fp;
   
   /* Initialize the sturucture with zero stats, header info and sizes: */
   stl_initialize(&stl_to_merge, file_to_merge);

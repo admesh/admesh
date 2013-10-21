@@ -24,6 +24,7 @@
 
 
 #include "stl.h"
+#include "config.h"
 
 static void usage(int status, char *program_name);
 
@@ -241,7 +242,7 @@ main(int argc, char **argv)
     }
   if(version_flag)
     {
-      printf("ADMesh - version 0.95\n");
+      printf("ADMesh - version " VERSION "\n");
       return 0;
     }
   
@@ -257,7 +258,7 @@ main(int argc, char **argv)
     }
 
   printf("\
-ADMesh version 0.95, Copyright (C) 1995, 1996 Anthony D. Martin\n\
+ADMesh version " VERSION ", Copyright (C) 1995, 1996 Anthony D. Martin\n\
 ADMesh comes with NO WARRANTY.  This is free software, and you are welcome to\n\
 redistribute it under certain conditions.  See the file COPYING for details.\n");
 
@@ -436,7 +437,7 @@ All facets connected.  No further nearby check necessary.\n");
   if(write_dxf_flag)
     {
       printf("Writing DXF file %s\n", dxf_name);
-      stl_write_dxf(&stl_in, dxf_name, "Created by ADMesh version 0.95");
+      stl_write_dxf(&stl_in, dxf_name, "Created by ADMesh version " VERSION);
     }
 
   if(write_vrml_flag)
@@ -449,14 +450,14 @@ All facets connected.  No further nearby check necessary.\n");
     {
       printf("Writing ascii file %s\n", ascii_name);
       stl_write_ascii(&stl_in, ascii_name, 
-		      "Processed by ADMesh version 0.95");
+		      "Processed by ADMesh version " VERSION);
     }
   
   if(write_binary_stl_flag)
     {
       printf("Writing binary file %s\n", binary_name);
       stl_write_binary(&stl_in, binary_name,
-		       "Processed by ADMesh version 0.95");
+		       "Processed by ADMesh version " VERSION);
     }
   
   if(exact_flag)
@@ -479,7 +480,7 @@ usage(int status, char *program_name)
   else
     {
       printf("\n\
-ADMesh version 0.95\n\
+ADMesh version " VERSION "\n\
 Copyright (C) 1995, 1996  Anthony D. Martin\n\
 Usage: %s [OPTION]... file\n", program_name);
       printf("\n\

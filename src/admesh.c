@@ -232,7 +232,7 @@ main(int argc, char **argv)
 	  break;
     	 default:
 	  usage(1, program_name);
-	  return 0;
+	  return 1;
 	}
     }
   
@@ -251,7 +251,7 @@ main(int argc, char **argv)
     {
       printf("No input file name given.\n");
       usage(1, program_name);
-      return 0;
+      return 1;
     }
   else
     {

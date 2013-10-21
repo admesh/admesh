@@ -1,5 +1,18 @@
-                     ADMesh version 0.95
-                    ********************
+About this release and repository:
+----------------------------------
+
+ADMesh was released as a application in 1995/96. Not much happened since then.
+As code of this project might bring use for others, this "fork" was created
+to provide a shared library. Once done that, I've collected lot's of bugfixes
+from the word around us.
+
+No further development will be done, but bugs will be resolved, if possible.
+
+Don't patch this project downstream but use this code, so all can benefit from
+the changes. Pull requests are welcome.
+
+About ADMesh:
+-------------
 
 ADMesh is a program for processing triangulated solid meshes. Currently,
 ADMesh only reads the STL file format that is used for rapid prototyping

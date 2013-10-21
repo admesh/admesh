@@ -26,11 +26,7 @@ dist_man_MANS = admesh.1
 
 bin_PROGRAMS = admesh
 admesh_SOURCES = \
-	src/admesh.c \
-	src/connect.c \
-	src/normals.c \
-	src/shared.c \
-	src/util.c
+	src/admesh.c
 admesh_LDADD = \
 	libadmesh.la
 
@@ -43,8 +39,13 @@ pkginclude_HEADERS = src/stl.h
 lib_LTLIBRARIES = libadmesh.la
 
 libadmesh_la_SOURCES = \
+	src/connect.c \
+	src/normals.c \
+	src/shared.c \
 	src/stlinit.c \
-	src/stl_io.c
+	src/stl_io.c \
+	src/util.c
+
 libadmesh_la_LDFLAGS = \
 	$(AM_LDFLAGS) \
 	-version-info $(LIBADMESH_CURRENT):$(LIBADMESH_REVISION):$(LIBADMESH_AGE)

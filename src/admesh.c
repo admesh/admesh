@@ -479,42 +479,42 @@ usage(int status, char *program_name)
     }
   else
     {
-      printf("\n\
-ADMesh version " VERSION "\n\
-Copyright (C) 1995, 1996  Anthony D. Martin\n\
-Usage: %s [OPTION]... file\n", program_name);
-      printf("\n\
-     --x-rotate=angle     Rotate CCW about x-axis by angle degrees\n\
-     --y-rotate=angle     Rotate CCW about y-axis by angle degrees\n\
-     --z-rotate=angle     Rotate CCW about z-axis by angle degrees\n\
-     --xy-mirror          Mirror about the xy plane\n\
-     --yz-mirror          Mirror about the yz plane\n\
-     --xz-mirror          Mirror about the xz plane\n\
-     --scale=factor       Scale the file by factor (multiply by factor)\n\
-     --translate=x,y,z    Translate the file to x, y, and z\n\
-     --merge=name         Merge file called name with input file\n\
- -e, --exact              Only check for perfectly matched edges\n\
- -n, --nearby             Find and connect nearby facets. Correct bad facets\n\
- -t, --tolerance=tol      Initial tolerance to use for nearby check = tol\n\
- -i, --iterations=i       Number of iterations for nearby check = i\n\
- -m, --increment=inc      Amount to increment tolerance after iteration=inc\n\
- -u, --remove-unconnected Remove facets that have 0 neighbors\n\
- -f, --fill-holes         Add facets to fill holes\n\
- -d, --normal-directions  Check and fix direction of normals(ie cw, ccw)\n\
-     --reverse-all        Reverse the directions of all facets and normals\n\
- -v, --normal-values      Check and fix normal values\n\
- -c, --no-check           Don't do any check on input file\n\
- -b, --write-binary-stl=name   Output a binary STL file called name\n\
- -a, --write-ascii-stl=name    Output an ascii STL file called name\n\
-     --write-off=name     Output a Geomview OFF format file called name\n\
-     --write-dxf=name     Output a DXF format file called name\n\
-     --write-vrml=name    Output a VRML format file called name\n\
-     --help               Display this help and exit\n\
-     --version            Output version information and exit\n\
-\n\
-The functions are executed in the same order as the options shown here.\n\
-So check here to find what happens if, for example, --translate and --merge\n\
-options are specified together.  The order of the options specified on the\n\
-command line is not important.\n");
+      printf("\n");
+      printf("ADMesh version " VERSION "\n");
+      printf("Copyright (C) 1995, 1996  Anthony D. Martin\n");
+      printf("Usage: %s [OPTION]... file\n", program_name);
+      printf("\n");
+      printf("     --x-rotate=angle     Rotate CCW about x-axis by angle degrees\n");
+      printf("     --y-rotate=angle     Rotate CCW about y-axis by angle degrees\n");
+      printf("     --z-rotate=angle     Rotate CCW about z-axis by angle degrees\n");
+      printf("     --xy-mirror          Mirror about the xy plane\n");
+      printf("     --yz-mirror          Mirror about the yz plane\n");
+      printf("     --xz-mirror          Mirror about the xz plane\n");
+      printf("     --scale=factor       Scale the file by factor (multiply by factor)\n");
+      printf("     --translate=x,y,z    Translate the file to x, y, and z\n");
+      printf("     --merge=name         Merge file called name with input file\n");
+      printf(" -e, --exact              Only check for perfectly matched edges\n");
+      printf(" -n, --nearby             Find and connect nearby facets. Correct bad facets\n");
+      printf(" -t, --tolerance=tol      Initial tolerance to use for nearby check = tol\n");
+      printf(" -i, --iterations=i       Number of iterations for nearby check = i\n");
+      printf(" -m, --increment=inc      Amount to increment tolerance after iteration=inc\n");
+      printf(" -u, --remove-unconnected Remove facets that have 0 neighbors\n");
+      printf(" -f, --fill-holes         Add facets to fill holes\n");
+      printf(" -d, --normal-directions  Check and fix direction of normals(ie cw, ccw)\n");
+      printf("     --reverse-all        Reverse the directions of all facets and normals\n");
+      printf(" -v, --normal-values      Check and fix normal values\n");
+      printf(" -c, --no-check           Don't do any check on input file\n");
+      printf(" -b, --write-binary-stl=name   Output a binary STL file called name\n");
+      printf(" -a, --write-ascii-stl=name    Output an ascii STL file called name\n");
+      printf("     --write-off=name     Output a Geomview OFF format file called name\n");
+      printf("     --write-dxf=name     Output a DXF format file called name\n");
+      printf("     --write-vrml=name    Output a VRML format file called name\n");
+      printf("     --help               Display this help and exit\n");
+      printf("     --version            Output version information and exit\n");
+      printf("\n");
+      printf("The functions are executed in the same order as the options shown here.\n");
+      printf("So check here to find what happens if, for example, --translate and --merge\n");
+      printf("options are specified together.  The order of the options specified on the\n");
+      printf("command line is not important.\n");
     }
 }  

@@ -11,6 +11,9 @@ No further development will be done, but bugs will be resolved, if possible.
 Don't patch this project downstream but use this code, so all can benefit from
 the changes. Pull requests are welcome, but be sure to generate no warnings.
 
+Grab the 0.97.0 tarball:
+https://github.com/scarabeusiv/admesh/releases/download/v0.97.0/admesh-0.97.0.tar.gz
+
 About ADMesh:
 -------------
 

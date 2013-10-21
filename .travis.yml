@@ -5,8 +5,6 @@ script:
  - ./autogen.sh
  - ./configure --enable-werror
  - make
-
-after_script:
  - cd .libs
  - export LD_LIBRARY_PATH=.
  - ./admesh ../block.stl

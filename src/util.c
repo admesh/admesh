@@ -101,6 +101,30 @@ stl_translate(stl_file *stl, float x, float y, float z)
   stl->stats.min.z = z;
 }
 
+/* Translates the stl by x,y,z, relatively from wherever it is currently */
+void
+stl_translate_relative(stl_file *stl, float x, float y, float z)
+{
+  int i;
+  int j;
+  
+  for(i = 0; i < stl->stats.number_of_facets; i++)
+    {
+      for(j = 0; j < 3; j++)
+	{
+	  stl->facet_start[i].vertex[j].x += x;
+	  stl->facet_start[i].vertex[j].y += y;
+	  stl->facet_start[i].vertex[j].z += z;
+	}
+    }
+  stl->stats.max.x += x;
+  stl->stats.max.y += y;
+  stl->stats.max.z += z;
+  stl->stats.min.x += x;
+  stl->stats.min.y += y;
+  stl->stats.min.z += z;
+}
+
 void
 stl_scale(stl_file *stl, float factor)
 {

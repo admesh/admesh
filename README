@@ -21,6 +21,11 @@ ADMesh is a program for processing triangulated solid meshes. Currently,
 ADMesh only reads the STL file format that is used for rapid prototyping
 applications, although it can write STL, VRML, OFF, and DXF files.
 
+Additional information regarding the underlying algorithms of ADMesh
+can be found in Anthony Martin's Masters Thesis available from here:
+
+http://www.varlog.com/admesh-htm/ADMeshThesis.zip
+
 Features:
 ---------
 

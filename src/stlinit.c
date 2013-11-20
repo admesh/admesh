@@ -122,6 +122,9 @@ stl_initialize(stl_file *stl, char *file)
       if(chtest[s] > 127)
 	{
 	  stl->stats.type = binary;
+	  /* close and reopen with binary flag (needed on Windows) */
+	  fclose(stl->fp);
+	  stl->fp = fopen(file, "rb");
 	  break;
 	}
     }

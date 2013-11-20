@@ -36,7 +36,6 @@ static void stl_initialize(stl_file *stl, char *file);
 static void stl_allocate(stl_file *stl);
 static void stl_read(stl_file *stl, int first_facet, int first);
 static void stl_reallocate(stl_file *stl);
-static int stl_get_little_int(FILE *fp);
 static float stl_get_little_float(FILE *fp);
 
 void
@@ -46,17 +45,6 @@ stl_open(stl_file *stl, char *file)
   stl_allocate(stl);
   stl_read(stl, 0, 1);
   fclose(stl->fp);
-}
-
-static int
-stl_get_little_int(FILE *fp)
-{
-  int value;
-  value  =  fgetc(fp) & 0xFF;
-  value |= (fgetc(fp) & 0xFF) << 0x08;
-  value |= (fgetc(fp) & 0xFF) << 0x10;
-  value |= (fgetc(fp) & 0xFF) << 0x18;
-  return(value);
 }
 
 static float
@@ -159,8 +147,7 @@ stl_initialize(stl_file *stl, char *file)
       }
 
       /* Read the int following the header.  This should contain # of facets */
-      header_num_facets = stl_get_little_int(stl->fp);
-      if(num_facets != header_num_facets)
+      if((!fread(&header_num_facets, sizeof(int), 1, stl->fp)) || (num_facets != header_num_facets))
 	{
 	  fprintf(stderr, 
 	  "Warning: File size doesn't match number of facets in the header\n");

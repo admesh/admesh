@@ -147,6 +147,7 @@ stl_scale(stl_file *stl, float factor)
 	  stl->facet_start[i].vertex[j].z *= factor;
 	}
     }
+    stl_invalidate_shared_vertices(stl);
 }
 
 static void calculate_normals(stl_file *stl)

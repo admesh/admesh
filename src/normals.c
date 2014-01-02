@@ -103,7 +103,7 @@ stl_fix_normal_directions(stl_file *stl)
   };
   struct stl_normal *head;
   struct stl_normal *tail;
-  struct stl_normal *new;
+  struct stl_normal *newn;
   struct stl_normal *temp;
   
   
@@ -157,11 +157,11 @@ stl_fix_normal_directions(stl_file *stl)
 	      if(norm_sw[stl->neighbors_start[facet_num].neighbor[j]] != 1)
 		{
 		  /* Add node to beginning of list. */
-		  new = malloc(sizeof(struct stl_normal));
-		  if(new == NULL) perror("stl_fix_normal_directions");
-		  new->facet_num = stl->neighbors_start[facet_num].neighbor[j];
-		  new->next = head->next;
-		  head->next = new;
+		  newn = malloc(sizeof(struct stl_normal));
+		  if(newn == NULL) perror("stl_fix_normal_directions");
+		  newn->facet_num = stl->neighbors_start[facet_num].neighbor[j];
+		  newn->next = head->next;
+		  head->next = newn;
 		}
 	    }
 	}

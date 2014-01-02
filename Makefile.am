@@ -11,7 +11,7 @@ pkgconfig_DATA = libadmesh.pc
 doc_DATA = \
 	admesh-doc.txt \
 	block.stl \
-	README
+	README.md
 
 EXTRA_DIST = \
 	$(doc_DATA) \

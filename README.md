@@ -46,12 +46,13 @@ Features:
  * Write a DXF file 
  * Calculate the volume of a part
 
- ** ADMesh outputs the following statistics after processing:
+ADMesh outputs the following statistics after processing:
 
-================= Results produced by ADMesh version 0.95 =================
+````
+================= Results produced by ADMesh version 0.97.3 =================
 Input file         : sphere.stl
 File type          : Binary STL file
-Header             : Processed by ADMesh version 0.95
+Header             : Processed by ADMesh version 0.97.3
 ============== Size ==============
 Min X = -1.334557, Max X = 1.370952
 Min Y = -1.377953, Max Y = 1.377230
@@ -71,6 +72,7 @@ Facets added          :     0
 Facets reversed       :     0
 Backwards edges       :     0
 Normals fixed         :     0
+````
 
 There are two different algorithms used for fixing unconnected facets.  The
 first algorithm finds an unconnected edge, and then checks nearby within a
@@ -100,17 +102,14 @@ up to about 200,000 facets.  Files larger than this can be processed, but
 the system begins to slow down significantly due to swapping.  A system with
 more memory will be able to process greater numbers of facets more easily.
 Following are some indications of process times:
-40,000  facets: 10 seconds
-80,000  facets: 20 seconds
-160,000 facets: 50 seconds
-320,000 facets: 13 minutes (heavy swapping occurred)
 
-There are a few features that are "missing" from ADMesh but that might be
-added in the future.  These include:
- * Display capability
- * Slicing
- * Splitting a file into smaller files
+ * 40,000  facets: 10 seconds
+ * 80,000  facets: 20 seconds
+ * 160,000 facets: 50 seconds
+ * 320,000 facets: 13 minutes (heavy swapping occurred)
 
-ADMesh is free but Copyrighted software.  It is distributed under the terms
+Note that those times were calculated around 1996.
+
+ADMesh is free but copyrighted software.  It is distributed under the terms
 of the GNU General Public License (GPL). Details of the GPL are in the file
 COPYING that comes with the ADMesh software package.

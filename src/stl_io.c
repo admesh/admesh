@@ -54,6 +54,11 @@ stl_print_edges(stl_file *stl, FILE *file)
 void
 stl_stats_out(stl_file *stl, FILE *file, char *input_file)
 {
+  /* this is here for Slic3r, without our config.h
+     it won't use this part of the code anyway */
+  #ifndef VERSION
+  #define VERSION "unknown"
+  #endif
   fprintf(file, "\n\
 ================= Results produced by ADMesh version " VERSION " ================\n");
   fprintf(file, "\

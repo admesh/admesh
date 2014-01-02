@@ -44,8 +44,8 @@ AS_IF([test x"$enable_werror" != "xno"], [
 ])
 AS_IF([test x"$GCC" = xyes], [
 	# Be tough with warnings and produce less careless code
-	CFLAGS="$CFLAGS -Wall -Wextra -pedantic -Wp,-D_FORTIFY_SOURCE=2"
-	CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wshadow -pedantic -Wp,-D_FORTIFY_SOURCE=2"
+	CFLAGS="$CFLAGS -Wall -Wextra -pedantic -Werror=format-security  -Wp,-D_FORTIFY_SOURCE=2"
+	CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wshadow -pedantic -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2"
 ])
 
 # =========

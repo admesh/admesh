@@ -16,7 +16,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *  
  *  Questions, comments, suggestions, etc to
- *           https://github.com/scarabeusiv/admesh/issues
+ *           https://github.com/hroncok/admesh/issues
  */
 
 #include <stdlib.h>

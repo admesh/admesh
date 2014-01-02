@@ -108,17 +108,18 @@ stl_fix_normal_directions(stl_file *stl)
   
   
   /* Initialize linked list. */
-  head = malloc(sizeof(struct stl_normal));
+  head = (struct stl_normal*)malloc(sizeof(struct stl_normal));
   if(head == NULL) perror("stl_fix_normal_directions");
-  tail = malloc(sizeof(struct stl_normal));
+  tail = (struct stl_normal*)malloc(sizeof(struct stl_normal));
   if(tail == NULL) perror("stl_fix_normal_directions");
   head->next = tail;
   tail->next = tail;
 
   /* Initialize list that keeps track of already fixed facets. */
-  norm_sw = calloc(stl->stats.number_of_facets, sizeof(char));
+  norm_sw = (char*)calloc(stl->stats.number_of_facets, sizeof(char));
   if(norm_sw == NULL) perror("stl_fix_normal_directions");
   
+
   facet_num = 0;
   /* If normal vector is not within tolerance and backwards:
      Arbitrarily starts at face 0.  If this one is wrong, we're screwed.  Thankfully, the chances
@@ -139,8 +140,7 @@ stl_fix_normal_directions(stl_file *stl)
 	  /* Reverse the neighboring facets if necessary. */
 	  if(stl->neighbors_start[facet_num].which_vertex_not[j] > 2)
 	    {
-        /* If the facet has a neighbor that is -1, it means that edge isn't shared by another
-           facet. */
+	    /* If the facet has a neighbor that is -1, it means that edge isn't shared by another facet */
 	      if(stl->neighbors_start[facet_num].neighbor[j] != -1)
 		{
 		  stl_reverse_facet
@@ -154,7 +154,7 @@ stl_fix_normal_directions(stl_file *stl)
 	      if(norm_sw[stl->neighbors_start[facet_num].neighbor[j]] != 1)
 		{
 		  /* Add node to beginning of list. */
-		  newn = malloc(sizeof(struct stl_normal));
+		  newn = (struct stl_normal*)malloc(sizeof(struct stl_normal));
 		  if(newn == NULL) perror("stl_fix_normal_directions");
 		  newn->facet_num = stl->neighbors_start[facet_num].neighbor[j];
 		  newn->next = head->next;
@@ -309,38 +309,6 @@ stl_calculate_normal(float normal[], stl_facet *facet)
   normal[1] = (float)((double)v1[2] * (double)v2[0]) - ((double)v1[0] * (double)v2[2]);
   normal[2] = (float)((double)v1[0] * (double)v2[1]) - ((double)v1[1] * (double)v2[0]);
 }
-
-/*
-static float
-stl_calculate_area(stl_facet *facet)
-{
-  float cross[3][3];
-  float sum[3];
-  float normal[3];
-  float area;
-  int i;
-  
-  for(i = 0; i < 3; i++)
-    {
-      cross[i][0] = ((facet->vertex[i].y * facet->vertex[(i + 1) % 3].z) -
-		     (facet->vertex[i].z * facet->vertex[(i + 1) % 3].y));
-      cross[i][1] = ((facet->vertex[i].z * facet->vertex[(i + 1) % 3].x) -
-		     (facet->vertex[i].x * facet->vertex[(i + 1) % 3].z));
-      cross[i][2] = ((facet->vertex[i].x * facet->vertex[(i + 1) % 3].y) -
-		     (facet->vertex[i].y * facet->vertex[(i + 1) % 3].x));
-    }
-  
-  sum[0] = cross[0][0] + cross[1][0] + cross[2][0];
-  sum[1] = cross[0][1] + cross[1][1] + cross[2][1];
-  sum[2] = cross[0][2] + cross[1][2] + cross[2][2];
-  
-  stl_calculate_normal(normal, facet);
-  stl_normalize_vector(normal);
-  area = 0.5 * (normal[0] * sum[0] + normal[1] * sum[1] +
-		normal[2] * sum[2]);
-  return ABS(area);
-}
-*/
 
 void stl_normalize_vector(float v[])
 {

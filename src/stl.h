@@ -56,7 +56,7 @@ typedef struct
 }stl_facet;
 #define SIZEOF_STL_FACET       50
 
-typedef enum {binary, ascii} stl_type;
+typedef enum {binary, ascii, inmemory} stl_type;
 
 typedef struct
 {
@@ -140,8 +140,8 @@ extern void stl_close(stl_file *stl);
 extern void stl_stats_out(stl_file *stl, FILE *file, char *input_file);
 extern void stl_print_edges(stl_file *stl, FILE *file);
 extern void stl_print_neighbors(stl_file *stl, char *file);
-extern void stl_write_ascii(stl_file *stl, char *file, char *label);
-extern void stl_write_binary(stl_file *stl, char *file, char *label);
+extern void stl_write_ascii(stl_file *stl, const char *file, const char *label);
+extern void stl_write_binary(stl_file *stl, const char *file, const char *label);
 extern void stl_check_facets_exact(stl_file *stl);
 extern void stl_check_facets_nearby(stl_file *stl, float tolerance);
 extern void stl_remove_unconnected_facets(stl_file *stl);
@@ -156,6 +156,7 @@ extern void stl_fix_normal_directions(stl_file *stl);
 extern void stl_fix_normal_values(stl_file *stl);
 extern void stl_reverse_all_facets(stl_file *stl);
 extern void stl_translate(stl_file *stl, float x, float y, float z);
+extern void stl_scale_versor(stl_file *stl, float versor[3]);
 extern void stl_scale(stl_file *stl, float factor);
 extern void stl_rotate_x(stl_file *stl, float angle);
 extern void stl_rotate_y(stl_file *stl, float angle);
@@ -174,3 +175,10 @@ extern void stl_calculate_normal(float normal[], stl_facet *facet);
 extern void stl_normalize_vector(float v[]);
 extern void stl_calculate_volume(stl_file *stl);
 
+extern void stl_initialize(stl_file *stl);
+extern void stl_count_facets(stl_file *stl, char *file);
+extern void stl_allocate(stl_file *stl);
+extern void stl_read(stl_file *stl, int first_facet, int first);
+extern void stl_facet_stats(stl_file *stl, stl_facet facet, int first);
+extern void stl_reallocate(stl_file *stl);
+extern void stl_get_size(stl_file *stl);

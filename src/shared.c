@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+
 #include "stl.h"
 
 void
@@ -55,10 +56,10 @@ stl_generate_shared_vertices(stl_file *stl)
   /* make sure this function is idempotent and does not leak memory */
   stl_invalidate_shared_vertices(stl);
   
-  stl->v_indices = 
+  stl->v_indices = (v_indices_struct*)
     calloc(stl->stats.number_of_facets, sizeof(v_indices_struct));
   if(stl->v_indices == NULL) perror("stl_generate_shared_vertices");
-  stl->v_shared = 
+  stl->v_shared = (stl_vertex*)
     calloc((stl->stats.number_of_facets / 2), sizeof(stl_vertex));
   if(stl->v_shared == NULL) perror("stl_generate_shared_vertices");
   stl->stats.shared_malloced = stl->stats.number_of_facets / 2;
@@ -84,7 +85,7 @@ stl_generate_shared_vertices(stl_file *stl)
 	  if(stl->stats.shared_vertices == stl->stats.shared_malloced)
 	    {
 	      stl->stats.shared_malloced += 1024;
-	      stl->v_shared = realloc(stl->v_shared, 
+	      stl->v_shared = (stl_vertex*)realloc(stl->v_shared, 
 			   stl->stats.shared_malloced * sizeof(stl_vertex));
 	      if(stl->v_shared == NULL) perror("stl_generate_shared_vertices");
 	    }
@@ -173,7 +174,7 @@ stl_write_off(stl_file *stl, char *file)
   fp = fopen(file, "w");
   if(fp == NULL)
     {
-      error_msg = 
+      error_msg = (char*)
 	malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
       sprintf(error_msg, "stl_write_ascii: Couldn't open %s for writing",
 	      file);
@@ -211,7 +212,7 @@ stl_write_vrml(stl_file *stl, char *file)
   fp = fopen(file, "w");
   if(fp == NULL)
     {
-      error_msg = 
+      error_msg = (char*)
 	malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
       sprintf(error_msg, "stl_write_ascii: Couldn't open %s for writing",
 	      file);

@@ -122,7 +122,7 @@ Normals fixed         : %5d\n", stl->stats.normals_fixed);
 }
 
 void
-stl_write_ascii(stl_file *stl, char *file, char *label)
+stl_write_ascii(stl_file *stl, const char *file, const char *label)
 {
   int       i;
   FILE      *fp;
@@ -133,7 +133,7 @@ stl_write_ascii(stl_file *stl, char *file, char *label)
   fp = fopen(file, "w");
   if(fp == NULL)
     {
-      error_msg = 
+      error_msg = (char*)
 	malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
       sprintf(error_msg, "stl_write_ascii: Couldn't open %s for writing",
 	      file);
@@ -179,7 +179,7 @@ stl_print_neighbors(stl_file *stl, char *file)
   fp = fopen(file, "w");
   if(fp == NULL)
     {
-      error_msg = 
+      error_msg = (char*)
 	malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
       sprintf(error_msg, "stl_print_neighbors: Couldn't open %s for writing",
 	      file);
@@ -242,7 +242,7 @@ stl_put_little_float(FILE *fp, float value_in)
 
 
 void
-stl_write_binary(stl_file *stl, char *file, char *label)
+stl_write_binary(stl_file *stl, const char *file, const char *label)
 {
   FILE      *fp;
   int       i;
@@ -253,7 +253,7 @@ stl_write_binary(stl_file *stl, char *file, char *label)
   fp = fopen(file, "w");
   if(fp == NULL)
     {
-      error_msg = 
+      error_msg = (char*)
 	malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
       sprintf(error_msg, "stl_write_binary: Couldn't open %s for writing",
 	      file);
@@ -353,7 +353,7 @@ stl_write_quad_object(stl_file *stl, char *file)
   fp = fopen(file, "w");
   if(fp == NULL)
     {
-      error_msg = 
+      error_msg = (char*)
 	malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
       sprintf(error_msg, "stl_write_quad_object: Couldn't open %s for writing",
 	      file);
@@ -429,7 +429,7 @@ stl_write_dxf(stl_file *stl, char *file, char *label)
   fp = fopen(file, "w");
   if(fp == NULL)
     {
-      error_msg = 
+      error_msg = (char*)
 	malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
       sprintf(error_msg, "stl_write_ascii: Couldn't open %s for writing",
 	      file);

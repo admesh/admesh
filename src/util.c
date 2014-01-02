@@ -27,7 +27,6 @@
 #include "stl.h"
 
 static void stl_rotate(float *x, float *y, float angle);
-static void stl_get_size(stl_file *stl);
 static float get_area(stl_facet *facet);
 static float get_volume(stl_file *stl);
 
@@ -71,8 +70,8 @@ stl_verify_neighbors(stl_file *stl)
 	      /* These edges should match but they don't.  Print results. */
 	      printf("edge %d of facet %d doesn't match edge %d of facet %d\n",
 		     j, i, vnot + 1, neighbor);
-	      stl_write_facet(stl, "first facet", i);
-	      stl_write_facet(stl, "second facet", neighbor);
+	      stl_write_facet(stl, (char*)"first facet", i);
+	      stl_write_facet(stl, (char*)"second facet", neighbor);
 	    }
 	}
     }
@@ -99,6 +98,8 @@ stl_translate(stl_file *stl, float x, float y, float z)
   stl->stats.min.x = x;
   stl->stats.min.y = y;
   stl->stats.min.z = z;
+  
+  stl_invalidate_shared_vertices(stl);
 }
 
 /* Translates the stl by x,y,z, relatively from wherever it is currently */
@@ -117,43 +118,61 @@ stl_translate_relative(stl_file *stl, float x, float y, float z)
 	  stl->facet_start[i].vertex[j].z += z;
 	}
     }
-  stl->stats.max.x += x;
-  stl->stats.max.y += y;
-  stl->stats.max.z += z;
   stl->stats.min.x += x;
   stl->stats.min.y += y;
   stl->stats.min.z += z;
+  stl->stats.max.x += x;
+  stl->stats.max.y += y;
+  stl->stats.max.z += z;
+  
+  stl_invalidate_shared_vertices(stl);
 }
 
 void
-stl_scale(stl_file *stl, float factor)
+stl_scale_versor(stl_file *stl, float versor[3])
 {
   int i;
   int j;
   
-  /* scale dimension */
-  stl->stats.min.x *= factor;
-  stl->stats.min.y *= factor;
-  stl->stats.min.z *= factor;
-  stl->stats.max.x *= factor;
-  stl->stats.max.y *= factor;
-  stl->stats.max.z *= factor;
+  /* scale extents */
+  stl->stats.min.x *= versor[0];
+  stl->stats.min.y *= versor[1];
+  stl->stats.min.z *= versor[2];
+  stl->stats.max.x *= versor[0];
+  stl->stats.max.y *= versor[1];
+  stl->stats.max.z *= versor[2];
+  
+  /* scale size */
+  stl->stats.size.x *= versor[0];
+  stl->stats.size.y *= versor[1];
+  stl->stats.size.z *= versor[2];
   
   /* scale volume */
   if (stl->stats.volume > 0.0) {
-    stl->stats.volume *= (factor * factor * factor);
+    stl->stats.volume *= (versor[0] * versor[1] * versor[2]);
   }
   
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
       for(j = 0; j < 3; j++)
 	{
-	  stl->facet_start[i].vertex[j].x *= factor;
-	  stl->facet_start[i].vertex[j].y *= factor;
-	  stl->facet_start[i].vertex[j].z *= factor;
+	  stl->facet_start[i].vertex[j].x *= versor[0];
+	  stl->facet_start[i].vertex[j].y *= versor[1];
+	  stl->facet_start[i].vertex[j].z *= versor[2];
 	}
     }
+   
     stl_invalidate_shared_vertices(stl);
+}
+
+void
+stl_scale(stl_file *stl, float factor)
+{
+    float versor[3];
+    versor[0] = factor;
+    versor[1] = factor;
+    versor[2] = factor;
+    stl_scale_versor(stl, versor);
 }
 
 static void calculate_normals(stl_file *stl)
@@ -241,7 +260,7 @@ stl_rotate(float *x, float *y, float angle)
   *y = r * sin(theta + radian_angle);
 }
 
-static void
+extern void
 stl_get_size(stl_file *stl)
 {
   int i;
@@ -272,6 +291,14 @@ stl_get_size(stl_file *stl)
 				     stl->facet_start[i].vertex[j].z);
 	}
     }
+    stl->stats.size.x = stl->stats.max.x - stl->stats.min.x;
+    stl->stats.size.y = stl->stats.max.y - stl->stats.min.y;
+    stl->stats.size.z = stl->stats.max.z - stl->stats.min.z;
+    stl->stats.bounding_diameter = sqrt(
+        stl->stats.size.x * stl->stats.size.x +
+        stl->stats.size.y * stl->stats.size.y +
+        stl->stats.size.z * stl->stats.size.z
+        );
 }
 
 void

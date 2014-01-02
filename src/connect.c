@@ -192,10 +192,10 @@ stl_initialize_facet_check_exact(stl_file *stl)
       stl->neighbors_start[i].neighbor[2] = -1;
     }
 
-  stl->heads = calloc(stl->M, sizeof(*stl->heads));
+  stl->heads = (stl_hash_edge**)calloc(stl->M, sizeof(*stl->heads));
   if(stl->heads == NULL) perror("stl_initialize_facet_check_exact");
 
-  stl->tail = malloc(sizeof(stl_hash_edge));
+  stl->tail = (stl_hash_edge*)malloc(sizeof(stl_hash_edge));
   if(stl->tail == NULL) perror("stl_initialize_facet_check_exact");
 
   stl->tail->next = stl->tail;
@@ -223,7 +223,7 @@ insert_hash_edge(stl_file *stl, stl_hash_edge edge,
   if(link == stl->tail)
     {
       /* This list doesn't have any edges currently in it.  Add this one. */
-      new_edge = malloc(sizeof(stl_hash_edge));
+      new_edge = (stl_hash_edge*)malloc(sizeof(stl_hash_edge));
       if(new_edge == NULL) perror("insert_hash_edge");
       stl->stats.malloced++;
       *new_edge = edge;
@@ -248,7 +248,7 @@ insert_hash_edge(stl_file *stl, stl_hash_edge edge,
 	  if(link->next == stl->tail)
 	    {
 	      /* This is the last item in the list. Insert a new edge. */
-	      new_edge = malloc(sizeof(stl_hash_edge));
+	      new_edge = (stl_hash_edge*)malloc(sizeof(stl_hash_edge));
 	      if(new_edge == NULL) perror("insert_hash_edge");
 	      stl->stats.malloced++;
 	      *new_edge = edge;
@@ -458,10 +458,10 @@ stl_initialize_facet_check_nearby(stl_file *stl)
 
   stl->M = 81397;
 
-  stl->heads = calloc(stl->M, sizeof(*stl->heads));
+  stl->heads = (stl_hash_edge**)calloc(stl->M, sizeof(*stl->heads));
   if(stl->heads == NULL) perror("stl_initialize_facet_check_nearby");
 
-  stl->tail = malloc(sizeof(stl_hash_edge));
+  stl->tail = (stl_hash_edge*)malloc(sizeof(stl_hash_edge));
   if(stl->tail == NULL) perror("stl_initialize_facet_check_nearby");
 
   stl->tail->next = stl->tail;
@@ -658,9 +658,11 @@ stl_change_vertices(stl_file *stl, int facet_num, int vnot,
       if(facet_num == first_facet)
 	{
 	  /* back to the beginning */
-	  printf("\
+	  /*printf("\
 Back to the first facet changing vertices: probably a mobius part.\n\
-Try using a smaller tolerance or don't do a nearby check\n");
+Try using a smaller tolerance or don't do a nearby check\n");*/
+      printf("Failed to repair mesh (back to the first facet changing vertices: probably a mobius part)\n");
+	  return;
 	  exit(1);
 	  break;
 	}
@@ -1086,9 +1088,11 @@ stl_fill_holes(stl_file *stl)
 	      if(facet_num == first_facet)
 		{
 		  /* back to the beginning */
-		  printf("\
+		  /* printf("\
 Back to the first facet filling holes: probably a mobius part.\n\
-Try using a smaller tolerance or don't do a nearby check\n");
+Try using a smaller tolerance or don't do a nearby check\n"); */
+          printf("Failed to repair mesh (back to the first facet filling holes: probably a mobius part)\n");
+          return;
 		  exit(1);
 		  break;
 		}
@@ -1103,10 +1107,10 @@ stl_add_facet(stl_file *stl, stl_facet *new_facet)
   stl->stats.facets_added += 1;
   if(stl->stats.facets_malloced < stl->stats.number_of_facets + 1)
     {
-      stl->facet_start = realloc(stl->facet_start, 
+      stl->facet_start = (stl_facet*)realloc(stl->facet_start, 
 	       (sizeof(stl_facet) * (stl->stats.facets_malloced + 256)));
       if(stl->facet_start == NULL) perror("stl_add_facet");
-      stl->neighbors_start = realloc(stl->neighbors_start, 
+      stl->neighbors_start = (stl_neighbors*)realloc(stl->neighbors_start, 
 	       (sizeof(stl_neighbors) * (stl->stats.facets_malloced + 256)));
       if(stl->neighbors_start == NULL) perror("stl_add_facet");
       stl->stats.facets_malloced += 256;

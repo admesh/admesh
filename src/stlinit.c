@@ -32,50 +32,20 @@
 #define SEEK_END 2
 #endif
 
-static void stl_initialize(stl_file *stl, char *file);
-static void stl_allocate(stl_file *stl);
-static void stl_read(stl_file *stl, int first_facet, int first);
-static void stl_reallocate(stl_file *stl);
-static float stl_get_little_float(FILE *fp);
-
 void
 stl_open(stl_file *stl, char *file)
 {
-  stl_initialize(stl, file);
+  stl_initialize(stl);
+  stl_count_facets(stl, file);
   stl_allocate(stl);
   stl_read(stl, 0, 1);
   fclose(stl->fp);
 }
 
-static float
-stl_get_little_float(FILE *fp)
+
+void
+stl_initialize(stl_file *stl)
 {
-  union 
-    {
-      int   int_value;
-      float float_value;
-    } value;
-  
-  value.int_value  =  fgetc(fp) & 0xFF;
-  value.int_value |= (fgetc(fp) & 0xFF) << 0x08;
-  value.int_value |= (fgetc(fp) & 0xFF) << 0x10;
-  value.int_value |= (fgetc(fp) & 0xFF) << 0x18;
-  return(value.float_value);
-}
-
-
-static void
-stl_initialize(stl_file *stl, char *file)
-{
-  long           file_size;
-  int            header_num_facets;
-  int            num_facets;
-  size_t         s;
-  int            i, j;
-  unsigned char  chtest[128];
-  int            num_lines = 1;
-  char           *error_msg;
-
   stl->stats.degenerate_facets = 0;
   stl->stats.edges_fixed  = 0;
   stl->stats.facets_added = 0;
@@ -91,13 +61,25 @@ stl_initialize(stl_file *stl, char *file)
   stl->facet_start = NULL;
   stl->v_indices = NULL;
   stl->v_shared = NULL;
+}
 
+void
+stl_count_facets(stl_file *stl, char *file)
+{
+  long           file_size;
+  int            header_num_facets;
+  int            num_facets;
+  int            i, j;
+  size_t         s;
+  unsigned char  chtest[128];
+  int            num_lines = 1;
+  char           *error_msg;
 
   /* Open the file */
   stl->fp = fopen(file, "r");
   if(stl->fp == NULL)
     {
-      error_msg = 
+      error_msg = (char*)
 	malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
       sprintf(error_msg, "stl_initialize: Couldn't open %s for reading",
 	      file);
@@ -187,95 +169,54 @@ stl_initialize(stl_file *stl, char *file)
   stl->stats.original_num_facets = stl->stats.number_of_facets;
 }
 
-static void
+void
 stl_allocate(stl_file *stl)
 {
   /*  Allocate memory for the entire .STL file */
-  stl->facet_start = calloc(stl->stats.number_of_facets, 
+  stl->facet_start = (stl_facet*)calloc(stl->stats.number_of_facets, 
 			    sizeof(stl_facet));
   if(stl->facet_start == NULL) perror("stl_initialize");
   stl->stats.facets_malloced = stl->stats.number_of_facets;
 
   /* Allocate memory for the neighbors list */
-  stl->neighbors_start =
+  stl->neighbors_start = (stl_neighbors*)
     calloc(stl->stats.number_of_facets, sizeof(stl_neighbors));
   if(stl->facet_start == NULL) perror("stl_initialize");
 }
 
-/* This function reads file_to_merge and ADDs the contents of the file to the 
-   already loaded and filled stl. */
 void
-stl_open_merge(stl_file *stl, char *file_to_merge)
+stl_open_merge(stl_file *stl, char *file)
 {
-  int num_facets_so_far;
-  stl_type origStlType;
-  FILE *origFp;
-  stl_file stl_to_merge;  
+  int first_facet;
   
-  /* Record how many facets we have so far from the first file.  We will start putting
-     facets in the next position.  Since we're 0-indexed, it'l be the same position. */
-  num_facets_so_far = stl->stats.number_of_facets;
-  
-  /* Record the file type we started with: */
-  origStlType=stl->stats.type;
-  /* Record the file pointer too: */
-  origFp=stl->fp;
-  
-  /* Initialize the sturucture with zero stats, header info and sizes: */
-  stl_initialize(&stl_to_merge, file_to_merge);
-  
-  /* Copy what we need to into stl so that we can read the file_to_merge directly into it
-     using stl_read:  Save the rest of the valuable info: */
-  stl->stats.type=stl_to_merge.stats.type;
-  stl->fp=stl_to_merge.fp;
-  
-  /* Add the number of facets we already have in stl with what we we found in stl_to_merge but 
-     haven't read yet. */
-  stl->stats.number_of_facets=num_facets_so_far+stl_to_merge.stats.number_of_facets;
-  
-  /* Allocate enough room for stl->stats.number_of_facets facets and neighbors: */
+  first_facet = stl->stats.number_of_facets;
+  stl_initialize(stl);
+  stl_count_facets(stl, file);
   stl_reallocate(stl);
-  
-  /* Read the file to merge directly into stl, adding it to what we have already.
-     Start at num_facets_so_far, the index to the first unused facet.  Also say
-     that this isn't our first time so we should augment stats like min and max 
-     instead of erasing them. */
-  stl_read(stl, num_facets_so_far, 0);
-  
-  /* Restore the stl information we overwrote (for stl_read) so that it still accurately
-     reflects the subject part: */
-  stl->stats.type=origStlType;
-  stl->fp=origFp;
+  stl_read(stl, first_facet, 0);
 }
 
-static void
+extern void
 stl_reallocate(stl_file *stl)
 {
   /*  Reallocate more memory for the .STL file(s) */
-  stl->facet_start = realloc(stl->facet_start, stl->stats.number_of_facets *
+  stl->facet_start = (stl_facet*)realloc(stl->facet_start, stl->stats.number_of_facets *
 			     sizeof(stl_facet));
   if(stl->facet_start == NULL) perror("stl_initialize");
   stl->stats.facets_malloced = stl->stats.number_of_facets;
 
   /* Reallocate more memory for the neighbors list */
-  stl->neighbors_start =
+  stl->neighbors_start = (stl_neighbors*)
     realloc(stl->neighbors_start, stl->stats.number_of_facets *
 	    sizeof(stl_neighbors));
   if(stl->facet_start == NULL) perror("stl_initialize");
 }
 
-/* Reads the contents of the file pointed to by stl->fp into the stl structure,
-   starting at facet first_facet.  The second argument says if it's our first
-   time running this for the stl and therefore we should reset our max and min stats. */
-static void
+void
 stl_read(stl_file *stl, int first_facet, int first)
 {
   stl_facet facet;
   int   i;
-  float diff_x;
-  float diff_y;
-  float diff_z;
-  float max_diff;
 
   if(stl->stats.type == binary)
     {
@@ -293,20 +234,14 @@ stl_read(stl_file *stl, int first_facet, int first)
       if(stl->stats.type == binary)
 	/* Read a single facet from a binary .STL file */
 	{
-	  facet.normal.x = stl_get_little_float(stl->fp);
-	  facet.normal.y = stl_get_little_float(stl->fp);
-	  facet.normal.z = stl_get_little_float(stl->fp);
-	  facet.vertex[0].x = stl_get_little_float(stl->fp);
-	  facet.vertex[0].y = stl_get_little_float(stl->fp);
-	  facet.vertex[0].z = stl_get_little_float(stl->fp);
-	  facet.vertex[1].x = stl_get_little_float(stl->fp);
-	  facet.vertex[1].y = stl_get_little_float(stl->fp);
-	  facet.vertex[1].z = stl_get_little_float(stl->fp);
-	  facet.vertex[2].x = stl_get_little_float(stl->fp);
-	  facet.vertex[2].y = stl_get_little_float(stl->fp);
-	  facet.vertex[2].z = stl_get_little_float(stl->fp);
-	  facet.extra[0] = fgetc(stl->fp);
-	  facet.extra[1] = fgetc(stl->fp);
+	    /* we assume little-endian architecture! */
+        if (fread(&facet.normal, sizeof(stl_normal), 1, stl->fp) \
+            + fread(&facet.vertex, sizeof(stl_vertex), 3, stl->fp) \
+            + fread(&facet.extra, sizeof(char), 2, stl->fp) != 6)
+	  {
+	    perror("Cannot read facet");
+	    exit(1);
+	  }
 	}
       else
 	/* Read a single facet from an ASCII .STL file */
@@ -326,12 +261,31 @@ stl_read(stl_file *stl, int first_facet, int first)
       /* Write the facet into memory. */
       stl->facet_start[i] = facet;
       
+      stl_facet_stats(stl, facet, first);
+      first = 0;
+    }
+    stl->stats.size.x = stl->stats.max.x - stl->stats.min.x;
+    stl->stats.size.y = stl->stats.max.y - stl->stats.min.y;
+    stl->stats.size.z = stl->stats.max.z - stl->stats.min.z;
+    stl->stats.bounding_diameter = sqrt(
+        stl->stats.size.x * stl->stats.size.x +
+        stl->stats.size.y * stl->stats.size.y +
+        stl->stats.size.z * stl->stats.size.z
+        );
+}
+
+void
+stl_facet_stats(stl_file *stl, stl_facet facet, int first)
+{
+    float diff_x;
+    float diff_y;
+    float diff_z;
+    float max_diff;
       /* while we are going through all of the facets, let's find the  */
       /* maximum and minimum values for x, y, and z  */
 
       /* Initialize the max and min values the first time through*/
-      if(first)
-	{
+    if (first) {
 	  stl->stats.max.x = facet.vertex[0].x;
 	  stl->stats.min.x = facet.vertex[0].x;
 	  stl->stats.max.y = facet.vertex[0].y;
@@ -348,6 +302,7 @@ stl_read(stl_file *stl, int first_facet, int first)
 
 	  first = 0;
 	}
+    
       /* now find the max and min values */
       stl->stats.max.x = STL_MAX(stl->stats.max.x, facet.vertex[0].x);
       stl->stats.min.x = STL_MIN(stl->stats.min.x, facet.vertex[0].x);
@@ -369,16 +324,7 @@ stl_read(stl_file *stl, int first_facet, int first)
       stl->stats.min.y = STL_MIN(stl->stats.min.y, facet.vertex[2].y);
       stl->stats.max.z = STL_MAX(stl->stats.max.z, facet.vertex[2].z);
       stl->stats.min.z = STL_MIN(stl->stats.min.z, facet.vertex[2].z);
-    }
-  stl->stats.size.x = stl->stats.max.x - stl->stats.min.x;
-  stl->stats.size.y = stl->stats.max.y - stl->stats.min.y;
-  stl->stats.size.z = stl->stats.max.z - stl->stats.min.z;
-  stl->stats.bounding_diameter = 
-    sqrt(stl->stats.size.x * stl->stats.size.x +
-	 stl->stats.size.y * stl->stats.size.y +
-	 stl->stats.size.z * stl->stats.size.z);
 }
-
 
 void
 stl_close(stl_file *stl)

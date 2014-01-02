@@ -128,9 +128,6 @@ stl_fix_normal_directions(stl_file *stl)
      
   /* Say that we've fixed this facet: */
   norm_sw[facet_num] = 1;
-  /*  edge_num = 0;
-      vnot = stl->neighbors_start[0].which_vertex_not[0];
-      */
   checked++;
 
   for(;;)

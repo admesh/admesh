@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "stl.h"
+#include "config.h"
 
 #if !defined(SEEK_SET)
 #define SEEK_SET 0
@@ -54,7 +55,7 @@ void
 stl_stats_out(stl_file *stl, FILE *file, char *input_file)
 {
   fprintf(file, "\n\
-================= Results produced by ADMesh version 0.95 ================\n");
+================= Results produced by ADMesh version " VERSION " ================\n");
   fprintf(file, "\
 Input file         : %s\n", input_file);
   if(stl->stats.type == binary)

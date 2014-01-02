@@ -658,13 +658,10 @@ stl_change_vertices(stl_file *stl, int facet_num, int vnot,
       if(facet_num == first_facet)
 	{
 	  /* back to the beginning */
-	  /*printf("\
+	  printf("\
 Back to the first facet changing vertices: probably a mobius part.\n\
-Try using a smaller tolerance or don't do a nearby check\n");*/
-      printf("Failed to repair mesh (back to the first facet changing vertices: probably a mobius part)\n");
+Try using a smaller tolerance or don't do a nearby check\n");
 	  return;
-	  exit(1);
-	  break;
 	}
     }
 }
@@ -812,7 +809,7 @@ stl_remove_facet(stl_file *stl, int facet_number)
 in stl_remove_facet: neighbor = %d numfacets = %d this is wrong\n",
 		  stl->neighbors_start[neighbor[i]].neighbor[(vnot[i] + 1)% 3],
 		     stl->stats.number_of_facets);
-	      exit(1);
+	      return;
 	    }
 	  stl->neighbors_start[neighbor[i]].neighbor[(vnot[i] + 1)% 3]
 	    = facet_number;
@@ -1088,13 +1085,10 @@ stl_fill_holes(stl_file *stl)
 	      if(facet_num == first_facet)
 		{
 		  /* back to the beginning */
-		  /* printf("\
+		  printf("\
 Back to the first facet filling holes: probably a mobius part.\n\
-Try using a smaller tolerance or don't do a nearby check\n"); */
-          printf("Failed to repair mesh (back to the first facet filling holes: probably a mobius part)\n");
-          return;
-		  exit(1);
-		  break;
+Try using a smaller tolerance or don't do a nearby check\n");
+                  return;
 		}
 	    }
 	}

@@ -1,9 +1,9 @@
 About this release and repository:
 ----------------------------------
 
-ADMesh was released as a application in 1995/96. Not much happened since then.
-As code of this project might bring use for others, this "fork" was created
-to provide a shared library. Once done that, I've collected lot's of bugfixes
+ADMesh was released as an application in 1995/96. Not much happened since then.
+As the code of this project might bring use for others, this "fork" was created
+to provide a shared library. Once done that, I've collected lots of bugfixes
 from the world around us.
 
 No further development will be done, but bugs will be resolved, if possible.

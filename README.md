@@ -12,7 +12,7 @@ Don't patch this project downstream but use this code, so all can benefit from
 the changes. Pull requests are welcome, but be sure to generate no warnings.
 
 Grab the 0.97.3 tarball:
-https://github.com/hroncok/admesh/releases/download/v0.97.3/admesh-0.97.3.tar.gz
+https://github.com/admesh/admesh/releases/download/v0.97.3/admesh-0.97.3.tar.gz
 
 About ADMesh:
 -------------

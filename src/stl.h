@@ -20,6 +20,9 @@
  *           https://github.com/admesh/admesh/issues
  */
 
+#ifndef __admesh_stl__
+#define __admesh_stl__
+
 #include <stdio.h>
 
 #ifdef __cplusplus
@@ -191,4 +194,6 @@ extern void stl_get_size(stl_file *stl);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

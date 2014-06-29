@@ -321,6 +321,8 @@ stl_mirror_xy(stl_file *stl)
   stl->stats.max.z = temp_size;
   stl->stats.min.z *= -1.0;
   stl->stats.max.z *= -1.0;
+  stl_reverse_all_facets(stl);
+  stl->stats.facets_reversed -= stl->stats.number_of_facets;  /* for not altering stats */
 }
 
 void
@@ -342,6 +344,8 @@ stl_mirror_yz(stl_file *stl)
   stl->stats.max.x = temp_size;
   stl->stats.min.x *= -1.0;
   stl->stats.max.x *= -1.0;
+  stl_reverse_all_facets(stl);
+  stl->stats.facets_reversed -= stl->stats.number_of_facets;  /* for not altering stats */
 }
 
 void
@@ -363,6 +367,8 @@ stl_mirror_xz(stl_file *stl)
   stl->stats.max.y = temp_size;
   stl->stats.min.y *= -1.0;
   stl->stats.max.y *= -1.0;
+  stl_reverse_all_facets(stl);
+  stl->stats.facets_reversed -= stl->stats.number_of_facets;  /* for not altering stats */
 }
 
 static float get_volume(stl_file *stl)

@@ -266,6 +266,7 @@ stl_get_size(stl_file *stl)
 {
   int i;
   int j;
+  if (stl->stats.number_of_facets == 0) return;
 
   stl->stats.min.x = stl->facet_start[0].vertex[0].x;
   stl->stats.min.y = stl->facet_start[0].vertex[0].y;

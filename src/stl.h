@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License along
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *  
+ *
  *  Questions, comments, suggestions, etc to
  *           https://github.com/admesh/admesh/issues
  */
@@ -40,60 +40,52 @@ extern "C" {
 #define ASCII_LINES_PER_FACET  7
 #define SIZEOF_EDGE_SORT       24
 
-typedef struct 
-{
+typedef struct {
   float x;
   float y;
   float z;
-}stl_vertex;
+} stl_vertex;
 
-typedef struct
-{
+typedef struct {
   float x;
   float y;
   float z;
-}stl_normal;
+} stl_normal;
 
 typedef char stl_extra[2];
 
-typedef struct
-{
+typedef struct {
   stl_normal normal;
   stl_vertex vertex[3];
   stl_extra  extra;
-}stl_facet;
+} stl_facet;
 #define SIZEOF_STL_FACET       50
 
 typedef enum {binary, ascii, inmemory} stl_type;
 
-typedef struct
-{
+typedef struct {
   stl_vertex p1;
   stl_vertex p2;
   int        facet_number;
-}stl_edge;
+} stl_edge;
 
-typedef struct stl_hash_edge
-{
+typedef struct stl_hash_edge {
   unsigned       key[6];
   int            facet_number;
   int            which_edge;
   struct stl_hash_edge  *next;
-}stl_hash_edge;
+} stl_hash_edge;
 
-typedef struct
-{
+typedef struct {
   int   neighbor[3];
   char  which_vertex_not[3];
-}stl_neighbors;
+} stl_neighbors;
 
-typedef struct
-{
+typedef struct {
   int   vertex[3];
-}v_indices_struct;
+} v_indices_struct;
 
-typedef struct
-{
+typedef struct {
   char          header[81];
   stl_type      type;
   int           number_of_facets;
@@ -126,10 +118,9 @@ typedef struct
   int           collisions;
   int           shared_vertices;
   int           shared_malloced;
-}stl_stats;  
+} stl_stats;
 
-typedef struct
-{
+typedef struct {
   FILE          *fp;
   stl_facet     *facet_start;
   stl_edge      *edge_start;
@@ -141,7 +132,7 @@ typedef struct
   stl_vertex    *v_shared;
   stl_stats     stats;
   char          error;
-}stl_file;
+} stl_file;
 
 
 extern void stl_open(stl_file *stl, char *file);

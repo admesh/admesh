@@ -42,6 +42,8 @@ stl_verify_neighbors(stl_file *stl)
   int neighbor;
   int vnot;
 
+  if (stl->error) return;
+
   stl->stats.backwards_edges = 0;
 
   for(i = 0; i < stl->stats.number_of_facets; i++)
@@ -84,6 +86,8 @@ stl_translate(stl_file *stl, float x, float y, float z)
   int i;
   int j;
   
+  if (stl->error) return;
+  
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
       for(j = 0; j < 3; j++)
@@ -110,6 +114,8 @@ stl_translate_relative(stl_file *stl, float x, float y, float z)
   int i;
   int j;
   
+  if (stl->error) return;
+  
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
       for(j = 0; j < 3; j++)
@@ -134,6 +140,8 @@ stl_scale_versor(stl_file *stl, float versor[3])
 {
   int i;
   int j;
+  
+  if (stl->error) return;
   
   /* scale extents */
   stl->stats.min.x *= versor[0];
@@ -170,6 +178,9 @@ void
 stl_scale(stl_file *stl, float factor)
 {
     float versor[3];
+    
+    if (stl->error) return;
+    
     versor[0] = factor;
     versor[1] = factor;
     versor[2] = factor;
@@ -180,6 +191,8 @@ static void calculate_normals(stl_file *stl)
 {
 	long i;
 	float normal[3];
+	
+	if (stl->error) return;
 	
 	for(i = 0; i < stl->stats.number_of_facets; i++){
 		stl_calculate_normal(normal, &stl->facet_start[i]);
@@ -195,6 +208,8 @@ stl_rotate_x(stl_file *stl, float angle)
 {
   int i;
   int j;
+  
+  if (stl->error) return;
   
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
@@ -214,6 +229,8 @@ stl_rotate_y(stl_file *stl, float angle)
   int i;
   int j;
   
+  if (stl->error) return;
+  
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
       for(j = 0; j < 3; j++)
@@ -231,6 +248,8 @@ stl_rotate_z(stl_file *stl, float angle)
 {
   int i;
   int j;
+  
+  if (stl->error) return;
   
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
@@ -266,6 +285,8 @@ stl_get_size(stl_file *stl)
 {
   int i;
   int j;
+  
+  if (stl->error) return;
   if (stl->stats.number_of_facets == 0) return;
 
   stl->stats.min.x = stl->facet_start[0].vertex[0].x;
@@ -310,6 +331,8 @@ stl_mirror_xy(stl_file *stl)
   int j;
   float temp_size;
   
+  if (stl->error) return;
+  
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
       for(j = 0; j < 3; j++)
@@ -333,6 +356,8 @@ stl_mirror_yz(stl_file *stl)
   int j;
   float temp_size;
   
+  if (stl->error) return;
+  
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
       for(j = 0; j < 3; j++)
@@ -355,6 +380,8 @@ stl_mirror_xz(stl_file *stl)
   int i;
   int j;
   float temp_size;
+  
+  if (stl->error) return;
   
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
@@ -382,6 +409,8 @@ static float get_volume(stl_file *stl)
 	float area;
 	float volume = 0.0;
 	
+	if (stl->error) return 0;
+	
 	/* Choose a point, any point as the reference */
 	p0.x = stl->facet_start[0].vertex[0].x;
 	p0.y = stl->facet_start[0].vertex[0].y;
@@ -402,6 +431,7 @@ static float get_volume(stl_file *stl)
 
 void stl_calculate_volume(stl_file *stl)
 {
+        if (stl->error) return;
 	stl->stats.volume = get_volume(stl);
 	if(stl->stats.volume < 0.0){
 		stl_reverse_all_facets(stl);

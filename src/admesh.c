@@ -84,6 +84,8 @@ main(int argc, char **argv)
   int      increment_flag = 0;
   char     *input_file = NULL;
   
+  int ret = 0;
+  
   enum {rotate_x = 1000, rotate_y, rotate_z, merge, help, version,
       mirror_xy, mirror_yz, mirror_xz, scale, translate, reverse_all,
       off_file, dxf_file, vrml_file};
@@ -267,6 +269,7 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
   
   printf("Opening %s\n", input_file);
   stl_open(&stl_in, input_file);
+  stl_exit_on_error(&stl_in);
   
   if(rotate_x_flag)
     {
@@ -434,18 +437,30 @@ All facets connected.  No further nearby check necessary.\n");
     {
       printf("Writing OFF file %s\n", off_name);
       stl_write_off(&stl_in, off_name);
+      if (stl_in.error) {
+        stl_clear_error(&stl_in);
+	ret = 1;
+      }
     }
 
   if(write_dxf_flag)
     {
       printf("Writing DXF file %s\n", dxf_name);
       stl_write_dxf(&stl_in, dxf_name, "Created by ADMesh version " VERSION);
+      if (stl_in.error) {
+        stl_clear_error(&stl_in);
+	ret = 1;
+      }
     }
 
   if(write_vrml_flag)
     {
       printf("Writing VRML file %s\n", vrml_name);
       stl_write_vrml(&stl_in, vrml_name);
+      if (stl_in.error) {
+        stl_clear_error(&stl_in);
+	ret = 1;
+      }
     }
 
   if(write_ascii_stl_flag)
@@ -453,6 +468,10 @@ All facets connected.  No further nearby check necessary.\n");
       printf("Writing ascii file %s\n", ascii_name);
       stl_write_ascii(&stl_in, ascii_name, 
 		      "Processed by ADMesh version " VERSION);
+      if (stl_in.error) {
+        stl_clear_error(&stl_in);
+	ret = 1;
+      }
     }
   
   if(write_binary_stl_flag)
@@ -460,6 +479,10 @@ All facets connected.  No further nearby check necessary.\n");
       printf("Writing binary file %s\n", binary_name);
       stl_write_binary(&stl_in, binary_name,
 		       "Processed by ADMesh version " VERSION);
+      if (stl_in.error) {
+        stl_clear_error(&stl_in);
+	ret = 1;
+      }
     }
   
   if(exact_flag)
@@ -469,7 +492,10 @@ All facets connected.  No further nearby check necessary.\n");
   
   stl_close(&stl_in);
 
-  return 0;
+  if (ret)
+    fprintf(stderr, "Some part of the procedure failed, see the above log for more information about what happened.\n");
+
+  return ret;
 }
 
 static void 

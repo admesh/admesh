@@ -28,6 +28,8 @@
 void
 stl_invalidate_shared_vertices(stl_file *stl)
 {
+    if (stl->error) return;
+    
     if (stl->v_indices != NULL)
       {
         free(stl->v_indices);
@@ -53,6 +55,8 @@ stl_generate_shared_vertices(stl_file *stl)
   int pivot_vertex;
   int next_facet;
   int reversed;
+  
+  if (stl->error) return;
   
   /* make sure this function is idempotent and does not leak memory */
   stl_invalidate_shared_vertices(stl);
@@ -170,6 +174,7 @@ stl_write_off(stl_file *stl, char *file)
   FILE      *fp;
   char      *error_msg;
   
+  if (stl->error) return;
   
   /* Open the file */
   fp = fopen(file, "w");
@@ -181,7 +186,8 @@ stl_write_off(stl_file *stl, char *file)
 	      file);
       perror(error_msg);
       free(error_msg);
-      exit(1);
+      stl->error = 1;
+      return;
     }
   
   fprintf(fp, "OFF\n");
@@ -208,6 +214,7 @@ stl_write_vrml(stl_file *stl, char *file)
   FILE      *fp;
   char      *error_msg;
   
+  if (stl->error) return;
   
   /* Open the file */
   fp = fopen(file, "w");
@@ -219,7 +226,8 @@ stl_write_vrml(stl_file *stl, char *file)
 	      file);
       perror(error_msg);
       free(error_msg);
-      exit(1);
+      stl->error = 1;
+      return;
     }
   
   fprintf(fp, "#VRML V1.0 ascii\n\n");
@@ -263,15 +271,19 @@ stl_write_vrml(stl_file *stl, char *file)
 
 void stl_write_obj (stl_file *stl, char *file) {
     int i;
+    FILE* fp;
+    
+    if (stl->error) return;
     
     /* Open the file */
-    FILE* fp = fopen(file, "w");
+    fp = fopen(file, "w");
     if (fp == NULL) {
         char* error_msg = (char*)malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
         sprintf(error_msg, "stl_write_ascii: Couldn't open %s for writing", file);
         perror(error_msg);
         free(error_msg);
-        exit(1);
+        stl->error = 1;
+	return;
     }
     
     for (i = 0; i < stl->stats.shared_vertices; i++) {

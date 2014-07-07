@@ -140,6 +140,7 @@ typedef struct
   v_indices_struct *v_indices;
   stl_vertex    *v_shared;
   stl_stats     stats;
+  char          error;
 }stl_file;
 
 
@@ -192,6 +193,9 @@ extern void stl_facet_stats(stl_file *stl, stl_facet facet, int first);
 extern void stl_reallocate(stl_file *stl);
 extern void stl_add_facet(stl_file *stl, stl_facet *new_facet);
 extern void stl_get_size(stl_file *stl);
+
+extern void stl_clear_error(stl_file *stl);
+extern void stl_exit_on_error(stl_file *stl);
 
 #ifdef __cplusplus
 }

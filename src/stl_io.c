@@ -40,6 +40,8 @@ stl_print_edges(stl_file *stl, FILE *file)
   int i;
   int edges_allocated;
 
+  if (stl->error) return;
+
   edges_allocated = stl->stats.number_of_facets * 3;
   for(i = 0; i < edges_allocated; i++)
     {
@@ -55,6 +57,8 @@ stl_print_edges(stl_file *stl, FILE *file)
 void
 stl_stats_out(stl_file *stl, FILE *file, char *input_file)
 {
+  if (stl->error) return;
+  
   /* this is here for Slic3r, without our config.h
      it won't use this part of the code anyway */
   #ifndef VERSION
@@ -135,6 +139,7 @@ stl_write_ascii(stl_file *stl, const char *file, const char *label)
   FILE      *fp;
   char      *error_msg;
   
+  if (stl->error) return;
   
   /* Open the file */
   fp = fopen(file, "w");
@@ -146,7 +151,8 @@ stl_write_ascii(stl_file *stl, const char *file, const char *label)
 	      file);
       perror(error_msg);
       free(error_msg);
-      exit(1);
+      stl->error = 1;
+      return;
     }
   
   fprintf(fp, "solid  %s\n", label);
@@ -182,6 +188,8 @@ stl_print_neighbors(stl_file *stl, char *file)
   FILE *fp;
   char *error_msg;
 
+  if (stl->error) return;
+
   /* Open the file */
   fp = fopen(file, "w");
   if(fp == NULL)
@@ -192,7 +200,8 @@ stl_print_neighbors(stl_file *stl, char *file)
 	      file);
       perror(error_msg);
       free(error_msg);
-      exit(1);
+      stl->error = 1;
+      return;
     }
 
   for(i = 0; i < stl->stats.number_of_facets; i++)
@@ -255,6 +264,7 @@ stl_write_binary(stl_file *stl, const char *file, const char *label)
   int       i;
   char      *error_msg;
 
+  if (stl->error) return;
   
   /* Open the file */
   fp = fopen(file, "w");
@@ -266,7 +276,8 @@ stl_write_binary(stl_file *stl, const char *file, const char *label)
 	      file);
       perror(error_msg);
       free(error_msg);
-      exit(1);
+      stl->error = 1;
+      return;
     }
 
   fprintf(fp, "%s", label);
@@ -300,6 +311,7 @@ stl_write_binary(stl_file *stl, const char *file, const char *label)
 void
 stl_write_vertex(stl_file *stl, int facet, int vertex)
 {
+  if (stl->error) return;
   printf("  vertex %d/%d % .8E % .8E % .8E\n", vertex, facet,
 	 stl->facet_start[facet].vertex[vertex].x,
 	 stl->facet_start[facet].vertex[vertex].y,
@@ -309,6 +321,7 @@ stl_write_vertex(stl_file *stl, int facet, int vertex)
 void
 stl_write_facet(stl_file *stl, char *label, int facet)
 {
+  if (stl->error) return;
   printf("facet (%d)/ %s\n", facet, label);
   stl_write_vertex(stl, facet, 0);
   stl_write_vertex(stl, facet, 1);
@@ -318,6 +331,7 @@ stl_write_facet(stl_file *stl, char *label, int facet)
 void
 stl_write_edge(stl_file *stl, char *label, stl_hash_edge edge)
 {
+  if (stl->error) return;
   printf("edge (%d)/(%d) %s\n", edge.facet_number, edge.which_edge, label);
   if(edge.which_edge < 3)
     {
@@ -334,6 +348,7 @@ stl_write_edge(stl_file *stl, char *label, stl_hash_edge edge)
 void
 stl_write_neighbor(stl_file *stl, int facet)
 {
+  if (stl->error) return;
   printf("Neighbors %d: %d, %d, %d ;  %d, %d, %d\n", facet,
 	 stl->neighbors_start[facet].neighbor[0],
 	 stl->neighbors_start[facet].neighbor[1],
@@ -356,6 +371,8 @@ stl_write_quad_object(stl_file *stl, char *file)
   stl_vertex uncon_3_color;
   stl_vertex color;
   
+  if (stl->error) return;
+  
   /* Open the file */
   fp = fopen(file, "w");
   if(fp == NULL)
@@ -366,7 +383,8 @@ stl_write_quad_object(stl_file *stl, char *file)
 	      file);
       perror(error_msg);
       free(error_msg);
-      exit(1);
+      stl->error = 1;
+      return;
     }
 
   connect_color.x = 0.0;
@@ -431,6 +449,7 @@ stl_write_dxf(stl_file *stl, char *file, char *label)
   FILE      *fp;
   char      *error_msg;
   
+  if (stl->error) return;
   
   /* Open the file */
   fp = fopen(file, "w");
@@ -442,7 +461,8 @@ stl_write_dxf(stl_file *stl, char *file, char *label)
 	      file);
       perror(error_msg);
       free(error_msg);
-      exit(1);
+      stl->error = 1;
+      return;
     }
   
   fprintf(fp, "999\n%s\n", label);
@@ -473,4 +493,19 @@ stl_write_dxf(stl_file *stl, char *file, char *label)
   fprintf(fp, "0\nENDSEC\n0\nEOF\n");
   
   fclose(fp);
+}
+
+void
+stl_clear_error(stl_file *stl)
+{
+  stl->error = 0;
+}
+
+void
+stl_exit_on_error(stl_file *stl)
+{
+  if (!stl->error) return;
+  stl->error = 0;
+  stl_close(stl);
+  exit(1);
 }

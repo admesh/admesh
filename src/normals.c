@@ -28,7 +28,6 @@
 #include "stl.h"
 
 static void stl_reverse_facet(stl_file *stl, int facet_num);
-/* static float stl_calculate_area(stl_facet *facet); */
 static void stl_reverse_vector(float v[]);
 int stl_check_normal_vector(stl_file *stl, int facet_num, int normal_fix_flag);
 
@@ -107,6 +106,7 @@ stl_fix_normal_directions(stl_file *stl)
   struct stl_normal *newn;
   struct stl_normal *temp;
   
+  if (stl->error) return;
   
   /* Initialize linked list. */
   head = (struct stl_normal*)malloc(sizeof(struct stl_normal));
@@ -337,6 +337,8 @@ stl_fix_normal_values(stl_file *stl)
 {
   int i;
   
+  if (stl->error) return;
+  
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
       stl_check_normal_vector(stl, i, 1);
@@ -348,6 +350,8 @@ stl_reverse_all_facets(stl_file *stl)
 {
   int i;
   float normal[3];
+  
+  if (stl->error) return;
   
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {

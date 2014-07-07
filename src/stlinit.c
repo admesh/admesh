@@ -36,17 +36,19 @@
 void
 stl_open(stl_file *stl, char *file)
 {
+  stl->error = 0;
   stl_initialize(stl);
   stl_count_facets(stl, file);
   stl_allocate(stl);
   stl_read(stl, 0, 1);
-  fclose(stl->fp);
+  if (!stl->error) fclose(stl->fp);
 }
 
 
 void
 stl_initialize(stl_file *stl)
 {
+  if (stl->error) return;
   stl->stats.degenerate_facets = 0;
   stl->stats.edges_fixed  = 0;
   stl->stats.facets_added = 0;
@@ -77,6 +79,8 @@ stl_count_facets(stl_file *stl, char *file)
   int            num_lines = 1;
   char           *error_msg;
 
+  if (stl->error) return;
+
   /* Open the file */
   stl->fp = fopen(file, "r");
   if(stl->fp == NULL)
@@ -87,7 +91,8 @@ stl_count_facets(stl_file *stl, char *file)
 	      file);
       perror(error_msg);
       free(error_msg);
-      exit(1);
+      stl->error = 1;
+      return;
     }
   /* Find size of file */
   fseek(stl->fp, 0, SEEK_END);
@@ -98,7 +103,8 @@ stl_count_facets(stl_file *stl, char *file)
   if (!fread(chtest, sizeof(chtest), 1, stl->fp))
   {
     perror("The input is an empty file");
-    exit(1);
+    stl->error = 1;
+    return;
   }
   stl->stats.type = ascii;
   for(s = 0; s < sizeof(chtest); s++)
@@ -123,7 +129,8 @@ stl_count_facets(stl_file *stl, char *file)
 	 || (file_size < STL_MIN_FILE_SIZE))
 	{
 	  fprintf(stderr, "The file %s has the wrong size.\n", file);
-	  exit(1);
+	  stl->error = 1;
+	  return;
 	}
       num_facets = (file_size - HEADER_SIZE) / SIZEOF_STL_FACET;
 
@@ -174,6 +181,8 @@ stl_count_facets(stl_file *stl, char *file)
 void
 stl_allocate(stl_file *stl)
 {
+  if (stl->error) return;
+  
   /*  Allocate memory for the entire .STL file */
   stl->facet_start = (stl_facet*)calloc(stl->stats.number_of_facets, 
 			    sizeof(stl_facet));
@@ -193,6 +202,8 @@ stl_open_merge(stl_file *stl, char *file_to_merge)
   stl_type origStlType;
   FILE *origFp;
   stl_file stl_to_merge;  
+  
+  if (stl->error) return;
   
   /* Record how many facets we have so far from the first file.  We will start putting
      facets in the next position.  Since we're 0-indexed, it'l be the same position. */
@@ -234,6 +245,7 @@ stl_open_merge(stl_file *stl, char *file_to_merge)
 extern void
 stl_reallocate(stl_file *stl)
 {
+  if (stl->error) return;
   /*  Reallocate more memory for the .STL file(s) */
   stl->facet_start = (stl_facet*)realloc(stl->facet_start, stl->stats.number_of_facets *
 			     sizeof(stl_facet));
@@ -257,6 +269,8 @@ stl_read(stl_file *stl, int first_facet, int first)
   stl_facet facet;
   int   i;
 
+  if (stl->error) return;
+
   if(stl->stats.type == binary)
     {
       fseek(stl->fp, HEADER_SIZE, SEEK_SET);
@@ -279,7 +293,8 @@ stl_read(stl_file *stl, int first_facet, int first)
             + fread(&facet.extra, sizeof(char), 2, stl->fp) != 6)
 	  {
 	    perror("Cannot read facet");
-	    exit(1);
+	    stl->error = 1;
+	    return;
 	  }
 	}
       else
@@ -294,7 +309,8 @@ stl_read(stl_file *stl, int first_facet, int first)
 	     fscanf(stl->fp, "%*s")) != 12)
 	  {
 	    perror("Something is syntactically very wrong with this ASCII STL!");
-	    exit(1);
+	    stl->error = 1;
+	    return;
 	  }
 	}
       /* Write the facet into memory. */
@@ -320,6 +336,9 @@ stl_facet_stats(stl_file *stl, stl_facet facet, int first)
     float diff_y;
     float diff_z;
     float max_diff;
+    
+    if (stl->error) return;
+    
       /* while we are going through all of the facets, let's find the  */
       /* maximum and minimum values for x, y, and z  */
 
@@ -368,6 +387,8 @@ stl_facet_stats(stl_file *stl, stl_facet facet, int first)
 void
 stl_close(stl_file *stl)
 {
+    if (stl->error) return;
+  
     if(stl->neighbors_start != NULL)
 	free(stl->neighbors_start);
     if(stl->facet_start != NULL)

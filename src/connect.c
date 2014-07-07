@@ -72,6 +72,8 @@ stl_check_facets_exact(stl_file *stl)
   int            i;
   int            j;
 
+  if (stl->error) return;
+
   stl->stats.connected_edges = 0;
   stl->stats.connected_facets_1_edge = 0;
   stl->stats.connected_facets_2_edge = 0;
@@ -120,6 +122,7 @@ stl_load_edge_exact(stl_file *stl, stl_hash_edge *edge,
   float diff_z;
   float max_diff;
   
+  if (stl->error) return;
   
   diff_x = ABS(a->x - b->x);
   diff_y = ABS(a->y - b->y);
@@ -177,6 +180,8 @@ stl_initialize_facet_check_exact(stl_file *stl)
 {
   int i;
 
+  if (stl->error) return;
+
   stl->stats.malloced = 0;
   stl->stats.freed = 0;
   stl->stats.collisions = 0;
@@ -215,6 +220,8 @@ insert_hash_edge(stl_file *stl, stl_hash_edge edge,
   stl_hash_edge *new_edge;
   stl_hash_edge *temp;
   int            chain_number;
+
+  if (stl->error) return;
 
   chain_number = stl_get_hash_for_edge(stl->M, &edge);
 
@@ -308,6 +315,7 @@ stl_check_facets_nearby(stl_file *stl, float tolerance)
   int            i;
   int            j;
 
+  if (stl->error) return;
 
   if(   (stl->stats.connected_facets_1_edge == stl->stats.number_of_facets)
      && (stl->stats.connected_facets_2_edge == stl->stats.number_of_facets)
@@ -426,6 +434,8 @@ stl_free_edges(stl_file *stl)
   int i;
   stl_hash_edge *temp;
   
+  if (stl->error) return;
+  
   if(stl->stats.malloced != stl->stats.freed)
     {
       for(i = 0; i < stl->M; i++)
@@ -447,6 +457,8 @@ static void
 stl_initialize_facet_check_nearby(stl_file *stl)
 {
   int i;
+
+  if (stl->error) return;
 
   stl->stats.malloced = 0;
   stl->stats.freed = 0;
@@ -480,7 +492,9 @@ stl_record_neighbors(stl_file *stl,
 {
   int i;
   int j;
-
+  
+  if (stl->error) return;
+  
   /* Facet a's neighbor is facet b */
   stl->neighbors_start[edge_a->facet_number].neighbor[edge_a->which_edge % 3] =
     edge_b->facet_number;	/* sets the .neighbor part */
@@ -549,6 +563,7 @@ static void
 stl_match_neighbors_exact(stl_file *stl,
 			       stl_hash_edge *edge_a, stl_hash_edge *edge_b)
 {
+  if (stl->error) return;
   stl_record_neighbors(stl, edge_a, edge_b);
 }
 
@@ -564,6 +579,8 @@ stl_match_neighbors_nearby(stl_file *stl,
   int vnot2;
   stl_vertex new_vertex1;
   stl_vertex new_vertex2;
+
+  if (stl->error) return;
 
   stl_record_neighbors(stl, edge_a, edge_b);
   stl_which_vertices_to_change(stl, edge_a, edge_b, &facet1, &vertex1,
@@ -612,6 +629,8 @@ stl_change_vertices(stl_file *stl, int facet_num, int vnot,
   int direction;
   int next_edge;
   int pivot_vertex;
+
+  if (stl->error) return;
 
   first_facet = facet_num;
   direction = 0;
@@ -677,8 +696,7 @@ stl_which_vertices_to_change(stl_file *stl, stl_hash_edge *edge_a,
   int v1b;			/* pair 1, facet b */
   int v2a;			/* pair 2, facet a */
   int v2b;			/* pair 2, facet b */
-
-
+  
   /* Find first pair */
   if(edge_a->which_edge < 3)
     {
@@ -764,6 +782,8 @@ stl_remove_facet(stl_file *stl, int facet_number)
   int i;
   int j;
 
+  if (stl->error) return;
+
   stl->stats.facets_removed += 1;
   /* Update list of connected edges */
   j = ((stl->neighbors_start[facet_number].neighbor[0] == -1) +
@@ -828,6 +848,8 @@ stl_remove_unconnected_facets(stl_file *stl)
 
   int i;
   
+  if (stl->error) return;
+  
   /* remove degenerate facets */
   for(i = 0; i < stl->stats.number_of_facets; i++)
     {
@@ -872,6 +894,8 @@ stl_remove_degenerate(stl_file *stl, int facet)
   int vnot1;
   int vnot2;
   int vnot3;
+
+  if (stl->error) return;
 
   if(   !memcmp(&stl->facet_start[facet].vertex[0], 
 		&stl->facet_start[facet].vertex[1], sizeof(stl_vertex))
@@ -949,6 +973,7 @@ stl_update_connects_remove_1(stl_file *stl, int facet_num)
 {
   int j;
   
+  if (stl->error) return;
   /* Update list of connected edges */
   j = ((stl->neighbors_start[facet_num].neighbor[0] == -1) +
        (stl->neighbors_start[facet_num].neighbor[1] == -1) +
@@ -984,6 +1009,8 @@ stl_fill_holes(stl_file *stl)
   int i;
   int j;
   int k;
+
+  if (stl->error) return;
 
   /* Insert all unconnected edges into hash list */
   stl_initialize_facet_check_nearby(stl);
@@ -1098,6 +1125,8 @@ Try using a smaller tolerance or don't do a nearby check\n");
 void
 stl_add_facet(stl_file *stl, stl_facet *new_facet)
 {
+  if (stl->error) return;
+  
   stl->stats.facets_added += 1;
   if(stl->stats.facets_malloced < stl->stats.number_of_facets + 1)
     {

@@ -468,3 +468,8 @@ stl_exit_on_error(stl_file *stl) {
   stl_close(stl);
   exit(1);
 }
+
+int
+stl_get_error(stl_file *stl) {
+  return stl->error;
+}

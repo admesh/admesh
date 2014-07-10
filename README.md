@@ -11,8 +11,8 @@ No further development will be done, but bugs will be resolved, if possible.
 Don't patch this project downstream but use this code, so all can benefit from
 the changes. Pull requests are welcome, but be sure to generate no warnings.
 
-Grab the 0.97.5 tarball:
-https://github.com/admesh/admesh/releases/download/v0.97.5/admesh-0.97.5.tar.gz
+Grab the 0.98.0alpha tarball:
+https://github.com/admesh/admesh/releases/download/v0.98.0alpha/admesh-0.98.0alpha.tar.gz
 
 About ADMesh:
 -------------
@@ -49,10 +49,10 @@ Features:
 ADMesh outputs the following statistics after processing:
 
 ````
-================= Results produced by ADMesh version 0.97.5 =================
+=============== Results produced by ADMesh version 0.98.0alpha ===============
 Input file         : sphere.stl
 File type          : Binary STL file
-Header             : Processed by ADMesh version 0.97.5
+Header             : Processed by ADMesh version 0.98.0alpha
 ============== Size ==============
 Min X = -1.334557, Max X = 1.370952
 Min Y = -1.377953, Max Y = 1.377230

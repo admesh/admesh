@@ -33,8 +33,6 @@ static void usage(int status, char *program_name);
 int
 main(int argc, char **argv) {
   stl_file stl_in;
-  int      i;
-  int      last_edges_fixed = 0;
   float    tolerance = 0;
   float    increment = 0;
   float    x_trans;
@@ -302,92 +300,22 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
     stl_open_merge(&stl_in, merge_name);
   }
 
-  if(exact_flag || fixall_flag || nearby_flag || remove_unconnected_flag
-      || fill_holes_flag || normal_directions_flag) {
-    printf("Checking exact...\n");
-    exact_flag = 1;
-    stl_check_facets_exact(&stl_in);
-    stl_in.stats.facets_w_1_bad_edge =
-      (stl_in.stats.connected_facets_2_edge -
-       stl_in.stats.connected_facets_3_edge);
-    stl_in.stats.facets_w_2_bad_edge =
-      (stl_in.stats.connected_facets_1_edge -
-       stl_in.stats.connected_facets_2_edge);
-    stl_in.stats.facets_w_3_bad_edge =
-      (stl_in.stats.number_of_facets -
-       stl_in.stats.connected_facets_1_edge);
-  }
+  stl_repair(&stl_in,
+             fixall_flag,
+             exact_flag,
+             tolerance_flag,
+             tolerance,
+             increment_flag,
+             increment,
+             nearby_flag,
+             iterations,
+             remove_unconnected_flag,
+             fill_holes_flag,
+             normal_directions_flag,
+             normal_values_flag,
+             reverse_all_flag,
+             1);
 
-  if(nearby_flag || fixall_flag) {
-    if(!tolerance_flag) {
-      tolerance = stl_in.stats.shortest_edge;
-    }
-    if(!increment_flag) {
-      increment = stl_in.stats.bounding_diameter / 10000.0;
-    }
-
-    if(stl_in.stats.connected_facets_3_edge < stl_in.stats.number_of_facets) {
-      for(i = 0; i < iterations; i++) {
-        if(stl_in.stats.connected_facets_3_edge <
-            stl_in.stats.number_of_facets) {
-          printf("\
-Checking nearby. Tolerance= %f Iteration=%d of %d...",
-                 tolerance, i + 1, iterations);
-          stl_check_facets_nearby(&stl_in, tolerance);
-          printf("  Fixed %d edges.\n",
-                 stl_in.stats.edges_fixed - last_edges_fixed);
-          last_edges_fixed = stl_in.stats.edges_fixed;
-          tolerance += increment;
-        } else {
-          printf("\
-All facets connected.  No further nearby check necessary.\n");
-          break;
-        }
-      }
-    } else {
-      printf("All facets connected.  No nearby check necessary.\n");
-    }
-  }
-
-  if(remove_unconnected_flag || fixall_flag || fill_holes_flag) {
-    if(stl_in.stats.connected_facets_3_edge <  stl_in.stats.number_of_facets) {
-      printf("Removing unconnected facets...\n");
-      stl_remove_unconnected_facets(&stl_in);
-    } else
-      printf("No unconnected need to be removed.\n");
-  }
-
-  if(fill_holes_flag || fixall_flag) {
-    if(stl_in.stats.connected_facets_3_edge <  stl_in.stats.number_of_facets) {
-      printf("Filling holes...\n");
-      stl_fill_holes(&stl_in);
-    } else
-      printf("No holes need to be filled.\n");
-  }
-
-  if(reverse_all_flag) {
-    printf("Reversing all facets...\n");
-    stl_reverse_all_facets(&stl_in);
-  }
-
-  if(normal_directions_flag || fixall_flag) {
-    printf("Checking normal directions...\n");
-    stl_fix_normal_directions(&stl_in);
-  }
-
-  if(normal_values_flag || fixall_flag) {
-    printf("Checking normal values...\n");
-    stl_fix_normal_values(&stl_in);
-  }
-
-  /* Always calculate the volume.  It shouldn't take too long */
-  printf("Calculating volume...\n");
-  stl_calculate_volume(&stl_in);
-
-  if(exact_flag) {
-    printf("Verifying neighbors...\n");
-    stl_verify_neighbors(&stl_in);
-  }
 
   if(generate_shared_vertices_flag) {
     printf("Generating shared vertices...\n");
@@ -441,9 +369,7 @@ All facets connected.  No further nearby check necessary.\n");
     }
   }
 
-  if(exact_flag) {
-    stl_stats_out(&stl_in, stdout, input_file);
-  }
+  stl_stats_out(&stl_in, stdout, input_file);
 
   stl_close(&stl_in);
 

@@ -427,3 +427,126 @@ static float get_area(stl_facet *facet) {
   area = 0.5 * (n[0] * sum[0] + n[1] * sum[1] + n[2] * sum[2]);
   return area;
 }
+
+void stl_repair(stl_file *stl,
+                int fixall_flag,
+                int exact_flag,
+                int tolerance_flag,
+                float tolerance,
+                int increment_flag,
+                float increment,
+                int nearby_flag,
+                int iterations,
+                int remove_unconnected_flag,
+                int fill_holes_flag,
+                int normal_directions_flag,
+                int normal_values_flag,
+                int reverse_all_flag,
+                int verbose_flag) {
+  
+  int i;
+  int last_edges_fixed = 0;
+
+  if (stl->error) return;
+
+  if(exact_flag || fixall_flag || nearby_flag || remove_unconnected_flag
+      || fill_holes_flag || normal_directions_flag) {
+    if (verbose_flag)
+      printf("Checking exact...\n");
+    exact_flag = 1;
+    stl_check_facets_exact(stl);
+    stl->stats.facets_w_1_bad_edge =
+      (stl->stats.connected_facets_2_edge -
+       stl->stats.connected_facets_3_edge);
+    stl->stats.facets_w_2_bad_edge =
+      (stl->stats.connected_facets_1_edge -
+       stl->stats.connected_facets_2_edge);
+    stl->stats.facets_w_3_bad_edge =
+      (stl->stats.number_of_facets -
+       stl->stats.connected_facets_1_edge);
+  }
+
+  if(nearby_flag || fixall_flag) {
+    if(!tolerance_flag) {
+      tolerance = stl->stats.shortest_edge;
+    }
+    if(!increment_flag) {
+      increment = stl->stats.bounding_diameter / 10000.0;
+    }
+
+    if(stl->stats.connected_facets_3_edge < stl->stats.number_of_facets) {
+      for(i = 0; i < iterations; i++) {
+        if(stl->stats.connected_facets_3_edge <
+            stl->stats.number_of_facets) {
+          if (verbose_flag)
+            printf("\
+Checking nearby. Tolerance= %f Iteration=%d of %d...",
+                 tolerance, i + 1, iterations);
+          stl_check_facets_nearby(stl, tolerance);
+          if (verbose_flag)
+            printf("  Fixed %d edges.\n",
+                 stl->stats.edges_fixed - last_edges_fixed);
+          last_edges_fixed = stl->stats.edges_fixed;
+          tolerance += increment;
+        } else {
+          if (verbose_flag)
+            printf("\
+All facets connected.  No further nearby check necessary.\n");
+          break;
+        }
+      }
+    } else {
+      if (verbose_flag)
+        printf("All facets connected.  No nearby check necessary.\n");
+    }
+  }
+
+  if(remove_unconnected_flag || fixall_flag || fill_holes_flag) {
+    if(stl->stats.connected_facets_3_edge <  stl->stats.number_of_facets) {
+      if (verbose_flag)
+        printf("Removing unconnected facets...\n");
+      stl_remove_unconnected_facets(stl);
+    } else
+      if (verbose_flag)
+        printf("No unconnected need to be removed.\n");
+  }
+
+  if(fill_holes_flag || fixall_flag) {
+    if(stl->stats.connected_facets_3_edge <  stl->stats.number_of_facets) {
+      if (verbose_flag)
+        printf("Filling holes...\n");
+      stl_fill_holes(stl);
+    } else
+      if (verbose_flag)
+        printf("No holes need to be filled.\n");
+  }
+
+  if(reverse_all_flag) {
+    if (verbose_flag)
+      printf("Reversing all facets...\n");
+    stl_reverse_all_facets(stl);
+  }
+
+  if(normal_directions_flag || fixall_flag) {
+    if (verbose_flag)
+      printf("Checking normal directions...\n");
+    stl_fix_normal_directions(stl);
+  }
+
+  if(normal_values_flag || fixall_flag) {
+    if (verbose_flag)
+      printf("Checking normal values...\n");
+    stl_fix_normal_values(stl);
+  }
+
+  /* Always calculate the volume.  It shouldn't take too long */
+  if (verbose_flag)
+    printf("Calculating volume...\n");
+  stl_calculate_volume(stl);
+
+  if(exact_flag) {
+    if (verbose_flag)
+      printf("Verifying neighbors...\n");
+    stl_verify_neighbors(stl);
+  }
+}

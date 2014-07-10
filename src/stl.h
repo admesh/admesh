@@ -176,21 +176,7 @@ extern void stl_calculate_normal(float normal[], stl_facet *facet);
 extern void stl_normalize_vector(float v[]);
 extern void stl_calculate_volume(stl_file *stl);
 
-extern void stl_repair(stl_file *stl,
-                       int fixall_flag,
-                       int exact_flag,
-                       int tolerance_flag,
-                       float tolerance,
-                       int increment_flag,
-                       float increment,
-                       int nearby_flag,
-                       int iterations,
-                       int remove_unconnected_flag,
-                       int fill_holes_flag,
-                       int normal_directions_flag,
-                       int normal_values_flag,
-                       int reverse_all_flag,
-                       int verbose_flag);
+extern void stl_repair(stl_file *stl, int fixall_flag, int exact_flag, int tolerance_flag, float tolerance, int increment_flag, float increment, int nearby_flag, int iterations, int remove_unconnected_flag, int fill_holes_flag, int normal_directions_flag, int normal_values_flag, int reverse_all_flag, int verbose_flag);
 
 extern void stl_initialize(stl_file *stl);
 extern void stl_count_facets(stl_file *stl, char *file);

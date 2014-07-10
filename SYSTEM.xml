@@ -1,0 +1,11 @@
+<version>
+    installed
+</version>
+
+<headers>
+    /usr/include/admesh/stl.h
+</headers>
+
+<libs>
+    /usr/lib64/libadmesh.so
+</libs>

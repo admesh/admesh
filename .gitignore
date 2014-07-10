@@ -27,3 +27,4 @@ m4/
 *.pc
 stamp-h1
 *.tar.*
+compat_reports

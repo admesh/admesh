@@ -1,0 +1,11 @@
+<version>
+    dev
+</version>
+
+<headers>
+    src/stl.h
+</headers>
+
+<libs>
+    .libs/libadmesh.so
+</libs>

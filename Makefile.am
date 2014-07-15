@@ -1,9 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 
-AM_LDFLAGS = \
-	-Wl,--gc-sections \
-	-Wl,--as-needed \
-	-no-undefined
+AM_LDFLAGS = @DEAD_STRIP@
+AM_LDFLAGS += -no-undefined
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libadmesh.pc

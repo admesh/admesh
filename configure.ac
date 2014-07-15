@@ -31,6 +31,21 @@ AC_PROG_LIBTOOL
 AC_PROG_SED
 AC_PROG_MKDIR_P
 
+# =======================
+# Platform specific setup
+# =======================
+
+AC_CANONICAL_HOST
+case $host_os in
+	darwin* )
+		DEAD_STRIP="-Wl,-dead_strip"
+		;;
+	*)
+		DEAD_STRIP="-Wl,--gc-sections -Wl,--as-needed"
+		;;
+esac
+AC_SUBST(DEAD_STRIP)
+
 # ================
 # Check for cflags
 # ================

@@ -8,8 +8,8 @@ pkgconfig_DATA = libadmesh.pc
 
 doc_DATA = \
 	admesh-doc.txt \
-	block.stl \
-	README.md
+	README.md \
+	COPYING
 
 EXTRA_DIST = \
 	$(doc_DATA) \

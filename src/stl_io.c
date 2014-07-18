@@ -31,9 +31,6 @@
 #define SEEK_END 2
 #endif
 
-static void stl_put_little_int(FILE *fp, int value);
-static void stl_put_little_float(FILE *fp, float value_in);
-
 void
 stl_print_edges(stl_file *stl, FILE *file) {
   int i;
@@ -206,7 +203,7 @@ stl_print_neighbors(stl_file *stl, char *file) {
   fclose(fp);
 }
 
-static void
+void
 stl_put_little_int(FILE *fp, int value_in) {
   int new_value;
   union {
@@ -223,7 +220,7 @@ stl_put_little_int(FILE *fp, int value_in) {
   fwrite(&new_value, sizeof(int), 1, fp);
 }
 
-static void
+void
 stl_put_little_float(FILE *fp, float value_in) {
   int new_value;
   union {
@@ -240,6 +237,28 @@ stl_put_little_float(FILE *fp, float value_in) {
   fwrite(&new_value, sizeof(int), 1, fp);
 }
 
+void
+stl_write_binary_block(stl_file *stl, FILE *fp)
+{
+  int i;
+  for(i = 0; i < stl->stats.number_of_facets; i++)
+    {
+      stl_put_little_float(fp, stl->facet_start[i].normal.x);
+      stl_put_little_float(fp, stl->facet_start[i].normal.y);
+      stl_put_little_float(fp, stl->facet_start[i].normal.z);
+      stl_put_little_float(fp, stl->facet_start[i].vertex[0].x);
+      stl_put_little_float(fp, stl->facet_start[i].vertex[0].y);
+      stl_put_little_float(fp, stl->facet_start[i].vertex[0].z);
+      stl_put_little_float(fp, stl->facet_start[i].vertex[1].x);
+      stl_put_little_float(fp, stl->facet_start[i].vertex[1].y);
+      stl_put_little_float(fp, stl->facet_start[i].vertex[1].z);
+      stl_put_little_float(fp, stl->facet_start[i].vertex[2].x);
+      stl_put_little_float(fp, stl->facet_start[i].vertex[2].y);
+      stl_put_little_float(fp, stl->facet_start[i].vertex[2].z);
+      fputc(stl->facet_start[i].extra[0], fp);
+      fputc(stl->facet_start[i].extra[1], fp);
+    }
+}
 
 void
 stl_write_binary(stl_file *stl, const char *file, const char *label) {
@@ -269,22 +288,7 @@ stl_write_binary(stl_file *stl, const char *file, const char *label) {
 
   stl_put_little_int(fp, stl->stats.number_of_facets);
 
-  for(i = 0; i < stl->stats.number_of_facets; i++) {
-    stl_put_little_float(fp, stl->facet_start[i].normal.x);
-    stl_put_little_float(fp, stl->facet_start[i].normal.y);
-    stl_put_little_float(fp, stl->facet_start[i].normal.z);
-    stl_put_little_float(fp, stl->facet_start[i].vertex[0].x);
-    stl_put_little_float(fp, stl->facet_start[i].vertex[0].y);
-    stl_put_little_float(fp, stl->facet_start[i].vertex[0].z);
-    stl_put_little_float(fp, stl->facet_start[i].vertex[1].x);
-    stl_put_little_float(fp, stl->facet_start[i].vertex[1].y);
-    stl_put_little_float(fp, stl->facet_start[i].vertex[1].z);
-    stl_put_little_float(fp, stl->facet_start[i].vertex[2].x);
-    stl_put_little_float(fp, stl->facet_start[i].vertex[2].y);
-    stl_put_little_float(fp, stl->facet_start[i].vertex[2].z);
-    fputc(stl->facet_start[i].extra[0], fp);
-    fputc(stl->facet_start[i].extra[1], fp);
-  }
+  stl_write_binary_block(stl, fp);
 
   fclose(fp);
 }

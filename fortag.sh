@@ -1,0 +1,13 @@
+#!/bin/bash
+lasttag=''
+total=''
+for tag in `git tag`; do
+  if [[ x$lasttag != x ]]; then
+    e="${tag#v}: "
+    e="$e`git  --no-pager log -1 --format=%ai $tag`\n\n"
+    e="$e`git --no-pager log --pretty=\"format: * %s\" $lasttag..$tag`\n\n"
+    total="$e$total"
+  fi
+  lasttag=$tag
+done
+echo -en "$total"

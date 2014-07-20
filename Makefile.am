@@ -9,14 +9,16 @@ pkgconfig_DATA = libadmesh.pc
 doc_DATA = \
 	admesh-doc.txt \
 	README.md \
-	COPYING
+	COPYING \
+	AUTHORS \
+	ChangeLog \
+	ChangeLog.old
 
 EXTRA_DIST = \
 	$(doc_DATA) \
-	COPYING \
 	INSTALL \
-	ChangeLog.old \
-	libadmesh.pc.in	
+	libadmesh.pc.in \
+	block.stl
 
 CLEANFILES = libadmesh.pc
 
@@ -51,6 +53,10 @@ libadmesh_la_LDFLAGS = \
 distclean-local:
 	rm -rf *.cache *~
 
-dist-hook:
-	git log --date=short --pretty="format:@%cd  %an  <%ae>  [%H]%n%n%s%n%n%e%b" | sed -e "s|^\([^@]\)|\t\1|" -e "s|^@||" >$(distdir)/ChangeLog
-	git log --format='%aN <%aE>' | sort -u >$(distdir)/AUTHORS
+AUTHORS:
+	git log --format='%aN <%aE>' | sort -u > $@
+
+ChangeLog:
+	git log --date=short --pretty="format:@%cd  %an  <%ae>  [%H]%n%n%s%n%n%e%b" | sed -e "s|^\([^@]\)|\t\1|" -e "s|^@||" >$@
+
+dist-hook: AUTHORS ChangeLog

@@ -28,3 +28,5 @@ m4/
 stamp-h1
 *.tar.*
 compat_reports
+AUTHORS
+ChangeLog

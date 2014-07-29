@@ -59,7 +59,7 @@ stl_stats_out(stl_file *stl, FILE *file, char *input_file) {
 #define VERSION "unknown"
 #endif
   fprintf(file, "\n\
-=============== Results produced by ADMesh version " VERSION " ==============\n");
+================= Results produced by ADMesh version " VERSION " ================\n");
   fprintf(file, "\
 Input file         : %s\n", input_file);
   if(stl->stats.type == binary) {

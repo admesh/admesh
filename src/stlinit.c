@@ -35,7 +35,6 @@
 
 void
 stl_open(stl_file *stl, char *file) {
-  stl->error = 0;
   stl_initialize(stl);
   stl_count_facets(stl, file);
   stl_allocate(stl);
@@ -46,7 +45,7 @@ stl_open(stl_file *stl, char *file) {
 
 void
 stl_initialize(stl_file *stl) {
-  if (stl->error) return;
+  stl->error = 0;
   stl->stats.degenerate_facets = 0;
   stl->stats.edges_fixed  = 0;
   stl->stats.facets_added = 0;

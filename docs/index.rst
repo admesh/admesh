@@ -12,6 +12,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   stl
    cli
    c_api
    python
@@ -21,6 +22,33 @@ Contents
 Overview
 --------
 
-ADMesh is a STL mesh manipulation tool writen in ANSI C, licensed under GPLv2+.
+ADMesh is a program for processing triangulated solid meshes. Currently,
+ADMesh only reads the STL file format that is used for rapid prototyping
+applications, although it can write STL, VRML, OFF, and DXF files.
+Additional information regarding the underlying algorithms of ADMesh can be found in
+`Anthony Martin's Masters Thesis <http://www.varlog.com/admesh-htm/ADMeshThesis.zip>`_.
 
-This is documentation for version |release|.
+ADMesh is written in ANSI C, licensed under GPLv2+. This is documentation for version |release|.
+
+.. _features:
+
+Features
+^^^^^^^^
+
+* Read and write binary and ASCII STL files
+* Check STL files for flaws (i.e. unconnected facets, bad normals)
+* Repair facets by connecting nearby facets that are within a given tolerance
+* Fill holes in the mesh by adding facets
+* Repair normal directions (i.e. facets should be CCW)
+* Repair normal values (i.e. should be perpendicular to facet with length=1)
+* Remove degenerate facets (i.e. facets with 2 or more vertices equal)
+* Translate in x, y, and z directions
+* Rotate about the x, y, and z axes
+* Mirror about the xy, yz, and xz planes
+* Scale the part by a factor
+* Merge 2 STL files into one
+* Write an OFF file
+* Write a VRML file
+* Write a DXF file
+* Calculate the volume of a part
+* Get other statistics about the mesh

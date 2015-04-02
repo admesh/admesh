@@ -1,4 +1,4 @@
 The C library API
 =================
 
-.. autodoxygenfile:: stl.h
+.. doxygenfile:: admesh/stl.h

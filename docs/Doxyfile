@@ -1,0 +1,10 @@
+PROJECT_NAME           = ADMesh
+STRIP_FROM_PATH        = ../src
+STRIP_FROM_INC_PATH    = ../src
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+INPUT                  = ../src/admesh
+GENERATE_LATEX         = NO
+GENERATE_XML           = YES
+XML_OUTPUT             = _doxyxml
+QUIET                  = YES

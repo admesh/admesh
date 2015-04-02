@@ -12,6 +12,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import subprocess
 import sys
 import os
 
@@ -25,16 +26,29 @@ import os
 # If your documentation needs a minimal Sphinx version, state it here.
 #needs_sphinx = '1.0'
 
+# Dirty trick to have proper #include statements in the documentation
+try:
+    os.mkdir('../src/admesh')
+except OSError:
+    pass
+try:
+    os.symlink('../stl.h', '../src/admesh/stl.h')
+except OSError:
+    pass
+# Generate the XML
+subprocess.call('doxygen', shell=True)
+
+# Clean the mess
+os.remove('../src/admesh/stl.h')
+os.rmdir('../src/admesh')
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['breathe']
 
 # Tell breathe what Doxygen projects to use
-breathe_projects_source = {
-   "ADMesh" :
-       ( "../src", [ "stl.h" ] )
-   }
+breathe_projects = { "ADMesh": "_doxyxml" }
 breathe_default_project = "ADMesh"
 
 # Add any paths that contain templates here, relative to this directory.
@@ -189,22 +203,22 @@ htmlhelp_basename = 'ADMeshdoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'ADMesh.tex', u'ADMesh Documentation',
-   u'ADMesh contributors', 'manual'),
+    ('index', 'ADMesh.tex', u'ADMesh Documentation',
+     u'ADMesh contributors', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -247,9 +261,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'ADMesh', u'ADMesh Documentation',
-   u'ADMesh contributors', 'ADMesh', 'One line description of project.',
-   'Miscellaneous'),
+    ('index', 'ADMesh', u'ADMesh Documentation',
+     u'ADMesh contributors', 'ADMesh', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

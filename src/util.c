@@ -391,10 +391,6 @@ static float get_volume(stl_file *stl) {
 void stl_calculate_volume(stl_file *stl) {
   if (stl->error) return;
   stl->stats.volume = get_volume(stl);
-  if(stl->stats.volume < 0.0) {
-    stl_reverse_all_facets(stl);
-    stl->stats.volume = -stl->stats.volume;
-  }
 }
 
 static float get_area(stl_facet *facet) {
@@ -543,6 +539,15 @@ All facets connected.  No further nearby check necessary.\n");
   if (verbose_flag)
     printf("Calculating volume...\n");
   stl_calculate_volume(stl);
+
+  if(fixall_flag) {
+    if(stl->stats.volume < 0.0) {
+      if (verbose_flag)
+        printf("Reversing all facets because volume is negative...\n");
+      stl_reverse_all_facets(stl);
+      stl->stats.volume = -stl->stats.volume;
+    }
+  }
 
   if(exact_flag) {
     if (verbose_flag)

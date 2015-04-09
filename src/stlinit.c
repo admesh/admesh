@@ -46,6 +46,7 @@ stl_open(stl_file *stl, char *file) {
 void
 stl_initialize(stl_file *stl) {
   stl->error = 0;
+  stl->stats.backwards_edges = 0;
   stl->stats.degenerate_facets = 0;
   stl->stats.edges_fixed  = 0;
   stl->stats.facets_added = 0;

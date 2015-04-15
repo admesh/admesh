@@ -146,10 +146,30 @@ typedef struct {
   char          error;            /**< error flag, when something went wrong, this is not 0 */
 } stl_file;
 
+/** Open an STL file and load it's contents.
+ * \warning As IO operation, this could result in an error,
+ * always check the error flag with stl_get_error() or use stl_exit_on_error() after using stl_open()
+ * \param stl The struct to load the file data to
+ * \param file Path to the STL file */
 extern void stl_open(stl_file *stl, char *file);
+
+/** Perform cleanup on \ref stl_file.
+ * This function frees memory, always use it, when you no longer needs the stl_file instance
+ * \param stl What to close */
 extern void stl_close(stl_file *stl);
+
+/** Print statistics in human readable form to some file.
+ * \param stl Where to obtain the statisctics
+ * \param file Where to print the statisctics to (can be stdout)
+ * \param input_file What filename to use in the human readable output */
 extern void stl_stats_out(stl_file *stl, FILE *file, char *input_file);
+
+/** Print edges to some file.
+ * \warning This prints from edge_start array, that is never populated and thus this will never actually work
+ * \param stl From what data
+ * \param file Where to print the edges to (can be stdout) */
 extern void stl_print_edges(stl_file *stl, FILE *file);
+
 extern void stl_print_neighbors(stl_file *stl, char *file);
 extern void stl_put_little_int(FILE *fp, int value_in);
 extern void stl_put_little_float(FILE *fp, float value_in);

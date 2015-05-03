@@ -17,7 +17,7 @@ m4_define([admesh_version],[admesh_version_major.admesh_version_minor.admesh_ver
 AC_INIT([admesh],[admesh_version])
 AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER([config.h])
-AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz subdir-objects])
 AM_SILENT_RULES([yes])
 LT_INIT([disable-static pic-only])
 AC_LANG([C])

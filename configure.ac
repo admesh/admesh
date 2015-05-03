@@ -7,7 +7,7 @@ AC_PREREQ([2.65])
 # ====================
 m4_define([admesh_version_major],[0])
 m4_define([admesh_version_minor],[98])
-m4_define([admesh_version_micro],[1])
+m4_define([admesh_version_micro],[2])
 m4_define([admesh_version_suffix],[])
 m4_define([admesh_version],[admesh_version_major.admesh_version_minor.admesh_version_micro''admesh_version_suffix])
 

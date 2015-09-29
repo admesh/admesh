@@ -147,11 +147,6 @@ stl_scale_versor(stl_file *stl, float versor[3]) {
     stl->stats.volume *= (versor[0] * versor[1] * versor[2]);
   }
 
-  /* scale surface area */
-  if (stl->stats.surface_area > 0.0) {
-    stl->stats.surface_area *= (versor[0] * versor[1] * versor[2]);
-  }
-
   for(i = 0; i < stl->stats.number_of_facets; i++) {
     for(j = 0; j < 3; j++) {
       stl->facet_start[i].vertex[j].x *= versor[0];
@@ -161,6 +156,12 @@ stl_scale_versor(stl_file *stl, float versor[3]) {
   }
 
   stl_invalidate_shared_vertices(stl);
+
+  /* recalculate surface area */
+  if (stl->stats.surface_area > 0.0) {
+    stl_calculate_surface_area(stl);
+  }
+
 }
 
 void

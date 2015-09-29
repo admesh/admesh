@@ -147,6 +147,11 @@ stl_scale_versor(stl_file *stl, float versor[3]) {
     stl->stats.volume *= (versor[0] * versor[1] * versor[2]);
   }
 
+  /* scale surface area */
+  if (stl->stats.surface_area > 0.0) {
+    stl->stats.surface_area *= (versor[0] * versor[1] * versor[2]);
+  }
+
   for(i = 0; i < stl->stats.number_of_facets; i++) {
     for(j = 0; j < 3; j++) {
       stl->facet_start[i].vertex[j].x *= versor[0];
@@ -388,9 +393,26 @@ static float get_volume(stl_file *stl) {
   return volume;
 }
 
+static float get_surface_area(stl_file *stl) {
+  long i;
+  float area = 0.0;
+  
+  if (stl->error) return 0;
+
+  for(i = 0; i < stl->stats.number_of_facets; i++)
+    area += get_area(&stl->facet_start[i]);
+
+  return area;
+}
+
 void stl_calculate_volume(stl_file *stl) {
   if (stl->error) return;
   stl->stats.volume = get_volume(stl);
+}
+
+void stl_calculate_surface_area(stl_file *stl) {
+  if (stl->error) return;
+  stl->stats.surface_area = get_surface_area(stl);
 }
 
 static float get_area(stl_facet *facet) {
@@ -540,12 +562,17 @@ All facets connected.  No further nearby check necessary.\n");
     printf("Calculating volume...\n");
   stl_calculate_volume(stl);
 
+  if (verbose_flag)
+    printf("Calculate surfacea area...\n");
+  stl_calculate_surface_area(stl);
+
   if(fixall_flag) {
     if(stl->stats.volume < 0.0) {
       if (verbose_flag)
         printf("Reversing all facets because volume is negative...\n");
       stl_reverse_all_facets(stl);
       stl->stats.volume = -stl->stats.volume;
+      stl->stats.surface_area = -stl->stats.surface_area;
     }
   }
 

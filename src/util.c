@@ -156,6 +156,12 @@ stl_scale_versor(stl_file *stl, float versor[3]) {
   }
 
   stl_invalidate_shared_vertices(stl);
+
+  /* recalculate surface area */
+  if (stl->stats.surface_area > 0.0) {
+    stl_calculate_surface_area(stl);
+  }
+
 }
 
 void
@@ -388,9 +394,26 @@ static float get_volume(stl_file *stl) {
   return volume;
 }
 
+static float get_surface_area(stl_file *stl) {
+  int i;
+  float area = 0.0;
+  
+  if (stl->error) return 0;
+
+  for(i = 0; i < stl->stats.number_of_facets; i++)
+    area += get_area(&stl->facet_start[i]);
+
+  return area;
+}
+
 void stl_calculate_volume(stl_file *stl) {
   if (stl->error) return;
   stl->stats.volume = get_volume(stl);
+}
+
+void stl_calculate_surface_area(stl_file *stl) {
+  if (stl->error) return;
+  stl->stats.surface_area = get_surface_area(stl);
 }
 
 static float get_area(stl_facet *facet) {
@@ -539,6 +562,10 @@ All facets connected.  No further nearby check necessary.\n");
   if (verbose_flag)
     printf("Calculating volume...\n");
   stl_calculate_volume(stl);
+
+  if (verbose_flag)
+    printf("Calculate surfacea area...\n");
+  stl_calculate_surface_area(stl);
 
   if(fixall_flag) {
     if(stl->stats.volume < 0.0) {

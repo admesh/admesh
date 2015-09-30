@@ -395,7 +395,7 @@ static float get_volume(stl_file *stl) {
 }
 
 static float get_surface_area(stl_file *stl) {
-  long i;
+  int i;
   float area = 0.0;
   
   if (stl->error) return 0;
@@ -573,7 +573,6 @@ All facets connected.  No further nearby check necessary.\n");
         printf("Reversing all facets because volume is negative...\n");
       stl_reverse_all_facets(stl);
       stl->stats.volume = -stl->stats.volume;
-      stl->stats.surface_area = -stl->stats.surface_area;
     }
   }
 

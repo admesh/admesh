@@ -805,10 +805,14 @@ stl_remove_degenerate(stl_file *stl, int facet) {
   vnot2 = stl->neighbors_start[facet].which_vertex_not[edge2];
   vnot3 = stl->neighbors_start[facet].which_vertex_not[edge3];
 
-  stl->neighbors_start[neighbor1].neighbor[(vnot1 + 1) % 3] = neighbor2;
-  stl->neighbors_start[neighbor2].neighbor[(vnot2 + 1) % 3] = neighbor1;
-  stl->neighbors_start[neighbor1].which_vertex_not[(vnot1 + 1) % 3] = vnot2;
-  stl->neighbors_start[neighbor2].which_vertex_not[(vnot2 + 1) % 3] = vnot1;
+  if(neighbor1 != -1){
+    stl->neighbors_start[neighbor1].neighbor[(vnot1 + 1) % 3] = neighbor2;
+    stl->neighbors_start[neighbor1].which_vertex_not[(vnot1 + 1) % 3] = vnot2;
+  }
+  if(neighbor2 != -1){
+    stl->neighbors_start[neighbor2].neighbor[(vnot2 + 1) % 3] = neighbor1;
+    stl->neighbors_start[neighbor2].which_vertex_not[(vnot2 + 1) % 3] = vnot1;
+  }
 
   stl_remove_facet(stl, facet);
 

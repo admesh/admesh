@@ -1,10 +1,19 @@
 language: c
-compiler: gcc
+matrix:
+  include:
+    - compiler: gcc
+      os: linux
+      env: EXTRA=--enable-werror
+    - compiler: clang
+      os: linux
+    - compiler: clang
+      os: osx
 
 script:
  - ./autogen.sh
- - ./configure --enable-werror
+ - ./configure $EXTRA
  - make
  - cd .libs
- - export LD_LIBRARY_PATH=.
+ - if [[ $TRAVIS_OS_NAME == linux ]]; then LD_LIBRARY_PATH=. && export LD_LIBRARY_PATH ; fi
+ - if [[ $TRAVIS_OS_NAME == osx ]]; then DYLD_LIBRARY_PATH=. && export DYLD_LIBRARY_PATH ; fi
  - ./admesh ../block.stl

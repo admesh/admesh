@@ -20,6 +20,8 @@
  *           https://github.com/admesh/admesh/issues
  */
 
+#include <endian.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -69,7 +71,7 @@ stl_initialize(stl_file *stl) {
 void
 stl_count_facets(stl_file *stl, char *file) {
   long           file_size;
-  int            header_num_facets;
+  uint32_t       header_num_facets;
   int            num_facets;
   int            i, j;
   size_t         s;
@@ -129,7 +131,7 @@ stl_count_facets(stl_file *stl, char *file) {
     }
 
     /* Read the int following the header.  This should contain # of facets */
-    if((!fread(&header_num_facets, sizeof(int), 1, stl->fp)) || (num_facets != header_num_facets)) {
+    if((!fread(&header_num_facets, sizeof(uint32_t), 1, stl->fp)) || (uint32_t)num_facets != le32toh(header_num_facets)) {
       fprintf(stderr,
               "Warning: File size doesn't match number of facets in the header\n");
     }
@@ -253,7 +255,16 @@ stl_reallocate(stl_file *stl) {
 void
 stl_read(stl_file *stl, int first_facet, int first) {
   stl_facet facet;
-  int   i;
+  int   i, j;
+  float *facet_floats[] = {
+    &facet.normal.x, &facet.normal.y, &facet.normal.z,
+    &facet.vertex[0].x, &facet.vertex[0].y, &facet.vertex[0].z,
+    &facet.vertex[1].x, &facet.vertex[1].y, &facet.vertex[1].z,
+    &facet.vertex[2].x, &facet.vertex[2].y, &facet.vertex[2].z
+  };
+  const int facet_float_length = sizeof(facet_floats) / sizeof(*facet_floats);
+  char facet_buffer[facet_float_length * sizeof(float)];
+  uint32_t endianswap_buffer;  /* for byteswapping operations */
 
   if (stl->error) return;
 
@@ -269,13 +280,18 @@ stl_read(stl_file *stl, int first_facet, int first) {
     if(stl->stats.type == binary)
       /* Read a single facet from a binary .STL file */
     {
-      /* we assume little-endian architecture! */
-      if (fread(&facet.normal, sizeof(stl_normal), 1, stl->fp) \
-          + fread(&facet.vertex, sizeof(stl_vertex), 3, stl->fp) \
-          + fread(&facet.extra, sizeof(char), 2, stl->fp) != 6) {
+      if(fread(facet_buffer, sizeof(facet_buffer), 1, stl->fp)
+         + fread(&facet.extra, sizeof(char), 2, stl->fp) != 3) {
         perror("Cannot read facet");
         stl->error = 1;
         return;
+      }
+
+      for(j = 0; j < facet_float_length; j++) {
+        /* convert LE float to host byte order */
+        memcpy(&endianswap_buffer, facet_buffer + j * sizeof(float), 4);
+        endianswap_buffer = le32toh(endianswap_buffer);
+        memcpy(facet_floats[j], &endianswap_buffer, 4);
       }
     } else
       /* Read a single facet from an ASCII .STL file */

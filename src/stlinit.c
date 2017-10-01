@@ -256,15 +256,23 @@ void
 stl_read(stl_file *stl, int first_facet, int first) {
   stl_facet facet;
   int   i, j;
-  float *facet_floats[] = {
-    &facet.normal.x, &facet.normal.y, &facet.normal.z,
-    &facet.vertex[0].x, &facet.vertex[0].y, &facet.vertex[0].z,
-    &facet.vertex[1].x, &facet.vertex[1].y, &facet.vertex[1].z,
-    &facet.vertex[2].x, &facet.vertex[2].y, &facet.vertex[2].z
-  };
-  const int facet_float_length = sizeof(facet_floats) / sizeof(*facet_floats);
-  char facet_buffer[facet_float_length * sizeof(float)];
+  const int facet_float_length = 12;
+  float *facet_floats[12];
+  char facet_buffer[12 * sizeof(float)];
   uint32_t endianswap_buffer;  /* for byteswapping operations */
+
+  facet_floats[0] = &facet.normal.x;
+  facet_floats[1] = &facet.normal.y;
+  facet_floats[2] = &facet.normal.z;
+  facet_floats[3] = &facet.vertex[0].x;
+  facet_floats[4] = &facet.vertex[0].y;
+  facet_floats[5] = &facet.vertex[0].z;
+  facet_floats[6] = &facet.vertex[1].x;
+  facet_floats[7] = &facet.vertex[1].y;
+  facet_floats[8] = &facet.vertex[1].z;
+  facet_floats[9] = &facet.vertex[2].x;
+  facet_floats[10] = &facet.vertex[2].y;
+  facet_floats[11] = &facet.vertex[2].z;
 
   if (stl->error) return;
 

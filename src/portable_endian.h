@@ -1,12 +1,13 @@
-// portable_endian.h
-// from https://gist.github.com/panzi/6856583
-// "License": Public Domain
-// I, Mathias Panzenböck, place this file hereby into the public domain. Use it
-// at your own risk for whatever you like.  In case there are jurisdictions
-// that don't support putting things in the public domain you can also consider
-// it to be "dual licensed" under the BSD, MIT and Apache licenses, if you want
-// to. This code is trivial anyway. Consider it an example on how to get the
-// endian conversion functions on different platforms.
+/* portable_endian.h
+ * from https://gist.github.com/panzi/6856583
+ * "License": Public Domain
+ * I, Mathias Panzenböck, place this file hereby into the public domain. Use it
+ * at your own risk for whatever you like.  In case there are jurisdictions
+ * that don't support putting things in the public domain you can also consider
+ * it to be "dual licensed" under the BSD, MIT and Apache licenses, if you want
+ * to. This code is trivial anyway. Consider it an example on how to get the
+ * endian conversion functions on different platforms.
+ */
 
 #ifndef PORTABLE_ENDIAN_H__
 #define PORTABLE_ENDIAN_H__
@@ -64,7 +65,7 @@
 
 #elif defined(__WINDOWS__)
 
-//#	include <winsock2.h>
+/* #	include <winsock2.h> */
 #	include <sys/param.h>
 
 #	if BYTE_ORDER == LITTLE_ENDIAN

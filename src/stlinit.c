@@ -20,13 +20,13 @@
  *           https://github.com/admesh/admesh/issues
  */
 
-#include <endian.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
+#include "portable_endian.h"
 #include "stl.h"
 
 #if !defined(SEEK_SET)

@@ -6,6 +6,13 @@ matrix:
       env: EXTRA=--enable-werror
     - compiler: clang
       os: linux
+    - compiler: gcc
+      os: linux
+      arch: arm64
+      addons:
+        apt:
+          packages:
+          - libtool
     - compiler: clang
       os: osx
 

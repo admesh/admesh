@@ -261,6 +261,9 @@ stl_read(stl_file *stl, int first_facet, int first) {
   char facet_buffer[12 * sizeof(float)];
   uint32_t endianswap_buffer;  /* for byteswapping operations */
 
+  facet.extra[0] = 0;
+  facet.extra[1] = 0;
+
   facet_floats[0] = &facet.normal.x;
   facet_floats[1] = &facet.normal.y;
   facet_floats[2] = &facet.normal.z;

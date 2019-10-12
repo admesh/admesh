@@ -44,7 +44,8 @@ libadmesh_la_SOURCES = \
 	src/shared.c \
 	src/stlinit.c \
 	src/stl_io.c \
-	src/util.c
+	src/util.c \
+	src/portable_endian.h
 
 libadmesh_la_LDFLAGS = \
 	$(AM_LDFLAGS) \

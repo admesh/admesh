@@ -67,6 +67,7 @@ main(int argc, char **argv) {
   int      write_dxf_flag = 0;
   int      write_vrml_flag = 0;
   int      translate_flag = 0;
+  int      translate_rel_flag = 0;
   int      scale_versor_flag = 0;
   int      scale_flag = 0;
   int      rotate_x_flag = 0;
@@ -86,7 +87,7 @@ main(int argc, char **argv) {
   int ret = 0;
 
   enum {rotate_x = 1000, rotate_y, rotate_z, merge, help, version,
-        mirror_xy, mirror_yz, mirror_xz, scale, translate, reverse_all,
+        mirror_xy, mirror_yz, mirror_xz, scale, translate, translate_rel, reverse_all,
         off_file, dxf_file, vrml_file, scale_xyz
        };
 
@@ -108,6 +109,7 @@ main(int argc, char **argv) {
     {"write-dxf",          required_argument, NULL, dxf_file},
     {"write-vrml",         required_argument, NULL, vrml_file},
     {"translate",          required_argument, NULL, translate},
+    {"translate-rel",      required_argument, NULL, translate_rel},
     {"scale",              required_argument, NULL, scale},
     {"scale-xyz",          required_argument, NULL, scale_xyz},
     {"x-rotate",           required_argument, NULL, rotate_x},
@@ -194,6 +196,10 @@ main(int argc, char **argv) {
       break;
     case translate:
       translate_flag = 1;
+      sscanf(optarg, "%f,%f,%f", &x_trans, &y_trans, &z_trans);
+      break;
+    case translate_rel:
+      translate_rel_flag = 1;
       sscanf(optarg, "%f,%f,%f", &x_trans, &y_trans, &z_trans);
       break;
     case scale:
@@ -304,6 +310,10 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
     printf("Translating to %f, %f, %f ...\n", x_trans, y_trans, z_trans);
     stl_translate(&stl_in, x_trans, y_trans, z_trans);
   }
+  if(translate_rel_flag) {
+    printf("Translating by %f, %f, %f ...\n", x_trans, y_trans, z_trans);
+    stl_translate_relative(&stl_in, x_trans, y_trans, z_trans);
+  }
   if(merge_flag) {
     printf("Merging %s with %s\n", input_file, merge_name);
     /* Open the file and add the contents to stl_in: */
@@ -408,6 +418,7 @@ usage(int status, char *program_name) {
     printf("     --scale=factor       Scale the file by factor (multiply by factor)\n");
     printf("     --scale-xyz=x,y,z    Scale the file by a non uniform factor\n");
     printf("     --translate=x,y,z    Translate the file to x, y, and z\n");
+    printf("     --translate-rel=x,y,z     Translate the file by x, y, and z\n");
     printf("     --merge=name         Merge file called name with input file\n");
     printf(" -e, --exact              Only check for perfectly matched edges\n");
     printf(" -n, --nearby             Find and connect nearby facets. Correct bad facets\n");

@@ -8,14 +8,28 @@ matrix:
       os: linux
     - compiler: gcc
       os: linux
-      arch: arm64
       addons:
         apt:
           packages:
           - libtool
     - compiler: clang
       os: osx
-
+   #power jobs
+    - compiler: gcc
+      os: linux
+      arch: ppc64le
+      env: EXTRA=--enable-werror
+    - compiler: clang
+      os: linux
+      arch: ppc64le
+    - compiler: gcc
+      os: linux
+      arch: ppc64le
+      addons:
+        apt:
+          packages:
+          - libtool  
+      
 script:
  - ./autogen.sh
  - ./configure $EXTRA
@@ -24,3 +38,4 @@ script:
  - if [[ $TRAVIS_OS_NAME == linux ]]; then LD_LIBRARY_PATH=. && export LD_LIBRARY_PATH ; fi
  - if [[ $TRAVIS_OS_NAME == osx ]]; then DYLD_LIBRARY_PATH=. && export DYLD_LIBRARY_PATH ; fi
  - ./admesh ../block.stl
+

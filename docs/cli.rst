@@ -81,6 +81,13 @@ Mesh Transformation and Manipulation Options
    --xz-mirror          Mirror about the xz plane
    --scale=factor       Scale the file by factor (multiply by factor)
    --translate=x,y,z    Translate the file to x, y, and z
+   --translate-rel=x,y,z    Translate the file by x, y, and z
+   --stretch=x_min:x_max:x_off,y_min:y_max:y_off,z_min:z_max:z_off
+                        Selectively translate some of the points, if they fall within a bounding box.
+                        Any of the parameters can be dropped:
+                        *_min parameters will be replaced with -infinity to satisty the min requirements for all points
+                        *_max parameters will be replaced with +infinity to satisty the max requirements for all points
+                        *_off parameters will be replaced with 0 so that noi point will move on this axis
    --merge=name         Merge file called name with input file
 
 Mesh Checking and Repairing Options
@@ -191,6 +198,50 @@ if the option ``--translate=1,2,3`` is specified, the final values will be::
 The translate option is often used to translate a mesh with arbitrary
 minimum and maximum coordinates to 0,0,0.  Usually, translation is also
 required when merging two files.
+
+::
+
+   --translate-rel=x_off,y_off,z_off
+
+Translate the mesh by the offset x_off,y_off,z_off.  This moves the minimum x, y,
+and z values of the mesh by the specified offset.  For example, given a
+mesh that has the following initial minimum and maximum coordinate values::
+
+   Min X =  4.000000, Max X =  5.000000
+   Min Y =  1.000000, Max Y =  3.000000
+   Min Z = -7.000000, Max Z = -2.000000
+
+if the option ``--translate-rel=1,2,3`` is specified, the final values will be::
+
+   Min X =  5.000000, Max X =  6.000000
+   Min Y =  3.000000, Max Y =  5.000000
+   Min Z = -4.000000, Max Z =  1.000000
+
+The translate-rel option is often used to duplicate an STL multiple times.
+
+::
+
+   --stretch=x_min:x_max:off,y_min:y_max:y_off,z_min:z_max:z_off
+
+Translate part of the mesh contrainted by a bounding box defined by the two corners of m_min,y_min,z_min and x_max,y_max,z_max.
+
+Points within this bounding box will be translated by the offset x_off,y_off,z_off.
+
+Points outside this bounding box are not affected.
+
+Notice that the parameters are divided into 3 groups for x,y,z, separated by commas. Each group is arranged as ``min:max:off`` , separated by colons (:).
+
+Since typing 9 parameters each time is too explicit, there are reasonable defaults for each parameter:
+
+* ``*_min`` parameters default to -infinity, which means the bounding box has no minimum corner  
+* ``*_max`` parameters default to +infinity, which means the bounding box has no maximum corner  
+* ``*_off`` parameters defaults to 0, which means that if they are not given, there is no movement on that axis.  
+
+This command is useful when there is a need to make part of an STL longer or shorter. For example:
+
+--stretch=::,::,10::2
+
+This will stretch the STL by 2mm aroud the 10mm Z plane.
 
 ::
 

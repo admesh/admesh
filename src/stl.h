@@ -161,6 +161,7 @@ extern void stl_fix_normal_values(stl_file *stl);
 extern void stl_reverse_all_facets(stl_file *stl);
 extern void stl_translate(stl_file *stl, float x, float y, float z);
 extern void stl_translate_relative(stl_file *stl, float x, float y, float z);
+extern void stl_stretch(stl_file *stl, float x_min, float x_max, float x_off, float y_min, float y_max, float y_off, float z_min, float z_max, float z_off);
 extern void stl_scale_versor(stl_file *stl, float versor[3]);
 extern void stl_scale(stl_file *stl, float factor);
 extern void stl_rotate_x(stl_file *stl, float angle);

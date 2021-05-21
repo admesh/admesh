@@ -1,4 +1,4 @@
-name: WIndows-x64 C/C++ CI
+name: Windows-x64 C/C++ CI
 
 on:
   push:
@@ -24,4 +24,6 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: admesh.zip
-        path: .libs/admesh.exe .libs/libadmesh-1.dll
+        path: |
+          .libs/admesh.exe
+          .libs/libadmesh-1.dll

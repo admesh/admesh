@@ -20,10 +20,16 @@ jobs:
       run: ./configure --host=x86_64-w64-mingw32
     - name: make
       run: make
+    - name: Declare some variables
+      id: vars
+      shell: bash
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
     - name: upload windows
       uses: actions/upload-artifact@v2
       with:
-        name: admesh.zip
+        name: admesh-${{ steps.vars.outputs.sha_short }}
         path: |
           .libs/admesh.exe
           .libs/libadmesh-1.dll

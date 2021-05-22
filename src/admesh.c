@@ -24,6 +24,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "stl.h"
 #include "config.h"
@@ -244,10 +245,10 @@ main(int argc, char **argv) {
           if (stretch_idx[i]+1 == stretch_idx[i+1]) {
             switch (i % 3) {
               case 0:
-                *stretch_ptr[i] = -1e39; // min value
+                *stretch_ptr[i] = -INFINITY; // min value
                 break;
               case 1:
-                *stretch_ptr[i] = 1e39; // max value
+                *stretch_ptr[i] = INFINITY; // max value
                 break;
               case 2:
                 *stretch_ptr[i] = 0; // delta value

@@ -23,7 +23,8 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <stdlib.h>
-
+#include <string.h>
+#include <math.h>
 
 #include "stl.h"
 #include "config.h"
@@ -43,6 +44,15 @@ main(int argc, char **argv) {
   float    rotate_x_angle = 0;
   float    rotate_y_angle = 0;
   float    rotate_z_angle = 0;
+  float    str_x_min = 0;
+  float    str_x_max = 0;
+  float    str_x     = 0;
+  float    str_y_min = 0;
+  float    str_y_max = 0;
+  float    str_y     = 0;
+  float    str_z_min = 0;
+  float    str_z_max = 0;
+  float    str_z     = 0;
   int      c;
   char     *program_name;
   char     *binary_name = NULL;
@@ -67,6 +77,8 @@ main(int argc, char **argv) {
   int      write_dxf_flag = 0;
   int      write_vrml_flag = 0;
   int      translate_flag = 0;
+  int      translate_rel_flag = 0;
+  int      stretch_flag = 0;
   int      scale_versor_flag = 0;
   int      scale_flag = 0;
   int      rotate_x_flag = 0;
@@ -86,8 +98,8 @@ main(int argc, char **argv) {
   int ret = 0;
 
   enum {rotate_x = 1000, rotate_y, rotate_z, merge, help, version,
-        mirror_xy, mirror_yz, mirror_xz, scale, translate, reverse_all,
-        off_file, dxf_file, vrml_file, scale_xyz
+        mirror_xy, mirror_yz, mirror_xz, scale, translate, translate_rel,
+        stretch, reverse_all, off_file, dxf_file, vrml_file, scale_xyz
        };
 
   struct option long_options[] = {
@@ -108,6 +120,8 @@ main(int argc, char **argv) {
     {"write-dxf",          required_argument, NULL, dxf_file},
     {"write-vrml",         required_argument, NULL, vrml_file},
     {"translate",          required_argument, NULL, translate},
+    {"translate-rel",      required_argument, NULL, translate_rel},
+    {"stretch",            required_argument, NULL, stretch},
     {"scale",              required_argument, NULL, scale},
     {"scale-xyz",          required_argument, NULL, scale_xyz},
     {"x-rotate",           required_argument, NULL, rotate_x},
@@ -195,6 +209,55 @@ main(int argc, char **argv) {
     case translate:
       translate_flag = 1;
       sscanf(optarg, "%f,%f,%f", &x_trans, &y_trans, &z_trans);
+      break;
+    case translate_rel:
+      translate_rel_flag = 1;
+      sscanf(optarg, "%f,%f,%f", &x_trans, &y_trans, &z_trans);
+      break;
+    case stretch:
+      stretch_flag = 1;
+      {
+        float *stretch_ptr[] = {&str_x_min, &str_x_max, &str_x , &str_y_min, &str_y_max, &str_y , &str_z_min, &str_z_max, &str_z};
+        int stretch_idx[10];
+        int optarg_idx;
+        int stretch_arg_cnt = 0;
+        stretch_idx[stretch_arg_cnt++] = -1;
+        for (optarg_idx = 0; optarg[optarg_idx]; optarg_idx++) {
+          if ((stretch_arg_cnt % 3 == 0) ? (optarg[optarg_idx] == ':') : (optarg[optarg_idx] == ',')) {
+            printf("Incorrect stretch arguments.\n");
+            usage(1, program_name);
+            return 1;
+          } else if ((optarg[optarg_idx] == ':') || (optarg[optarg_idx] == ',')) {
+            if (stretch_arg_cnt == 9) {
+              printf("Too many stretch arguments\n");
+              return 1;
+            }
+            stretch_idx[stretch_arg_cnt++] = optarg_idx;
+          }
+        }
+        stretch_idx[stretch_arg_cnt] = strlen(optarg);
+        if (!optarg[optarg_idx] && stretch_arg_cnt != 9) {
+          printf("Incorrect stretch arguments: %d.\n", stretch_arg_cnt);
+          usage(1, program_name);
+          return 1;
+        }
+        for (int i = 0; i < 9 ; i++) {
+          if (stretch_idx[i]+1 == stretch_idx[i+1]) {
+            switch (i % 3) {
+              case 0:
+                *stretch_ptr[i] = -INFINITY; // min value
+                break;
+              case 1:
+                *stretch_ptr[i] = INFINITY; // max value
+                break;
+              case 2:
+                *stretch_ptr[i] = 0; // delta value
+            }
+          } else {
+              *stretch_ptr[i] = atof(optarg+stretch_idx[i]+1);
+          }
+        }
+      }
       break;
     case scale:
       scale_flag = 1;
@@ -304,6 +367,14 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
     printf("Translating to %f, %f, %f ...\n", x_trans, y_trans, z_trans);
     stl_translate(&stl_in, x_trans, y_trans, z_trans);
   }
+  if(stretch_flag) {
+    printf("Stretching: X: %f:%f:%f Y:%f:%f:%f Z: %f:%f:%f\n", str_x_min, str_x_max, str_x , str_y_min, str_y_max, str_y , str_z_min, str_z_max, str_z);
+    stl_stretch(&stl_in, str_x_min, str_x_max, str_x , str_y_min, str_y_max, str_y , str_z_min, str_z_max, str_z);
+  }
+  if(translate_rel_flag) {
+    printf("Translating by %f, %f, %f ...\n", x_trans, y_trans, z_trans);
+    stl_translate_relative(&stl_in, x_trans, y_trans, z_trans);
+  }
   if(merge_flag) {
     printf("Merging %s with %s\n", input_file, merge_name);
     /* Open the file and add the contents to stl_in: */
@@ -408,6 +479,8 @@ usage(int status, char *program_name) {
     printf("     --scale=factor       Scale the file by factor (multiply by factor)\n");
     printf("     --scale-xyz=x,y,z    Scale the file by a non uniform factor\n");
     printf("     --translate=x,y,z    Translate the file to x, y, and z\n");
+    printf("     --translate-rel=x,y,z     Translate the file by x, y, and z\n");
+    printf("     --stretch=xmin:xmax:x,ymin:ymax:y,zmin:zmax:z     Translate the file by x, y, z but only within the given bounding box\n");
     printf("     --merge=name         Merge file called name with input file\n");
     printf(" -e, --exact              Only check for perfectly matched edges\n");
     printf(" -n, --nearby             Find and connect nearby facets. Correct bad facets\n");

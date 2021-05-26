@@ -122,6 +122,57 @@ stl_translate_relative(stl_file *stl, float x, float y, float z) {
   stl_invalidate_shared_vertices(stl);
 }
 
+/* stretch the STL, i.e. move a point by a relative XYZ offset if it fits within a given bounding box */
+void
+stl_stretch(stl_file *stl, float x_min, float x_max, float x_off, float y_min, float y_max, float y_off, float z_min, float z_max, float z_off) {
+  int i;
+  int j;
+
+  if (stl->error) return;
+
+  float min_x = stl->stats.min.x;
+  float min_y = stl->stats.min.y;
+  float min_z = stl->stats.min.z;
+  float max_x = stl->stats.max.x;
+  float max_y = stl->stats.max.y;
+  float max_z = stl->stats.max.z;
+
+  for(i = 0; i < stl->stats.number_of_facets; i++) {
+    for(j = 0; j < 3; j++) {
+      if (x_min < stl->facet_start[i].vertex[j].x &&
+          x_max > stl->facet_start[i].vertex[j].x &&
+          y_min < stl->facet_start[i].vertex[j].y &&
+          y_max > stl->facet_start[i].vertex[j].y &&
+          z_min < stl->facet_start[i].vertex[j].z &&
+          z_max > stl->facet_start[i].vertex[j].z) {
+        stl->facet_start[i].vertex[j].x += x_off;
+        stl->facet_start[i].vertex[j].y += y_off;
+        stl->facet_start[i].vertex[j].z += z_off;
+        if (stl->facet_start[i].vertex[j].x < min_x)
+          min_x = stl->facet_start[i].vertex[j].x;
+        if (stl->facet_start[i].vertex[j].x > max_x)
+          max_x = stl->facet_start[i].vertex[j].x;
+        if (stl->facet_start[i].vertex[j].y < min_y)
+          min_y = stl->facet_start[i].vertex[j].y;
+        if (stl->facet_start[i].vertex[j].y > max_y)
+          max_y = stl->facet_start[i].vertex[j].y;
+        if (stl->facet_start[i].vertex[j].z < min_z)
+          min_z = stl->facet_start[i].vertex[j].z;
+        if (stl->facet_start[i].vertex[j].z > max_z)
+          max_z = stl->facet_start[i].vertex[j].z;
+      }
+    }
+  }
+  stl->stats.min.x = min_x;
+  stl->stats.min.y = min_y;
+  stl->stats.min.z = min_z;
+  stl->stats.max.x = max_x;
+  stl->stats.max.y = max_y;
+  stl->stats.max.z = max_z;
+
+  stl_invalidate_shared_vertices(stl);
+}
+
 void
 stl_scale_versor(stl_file *stl, float versor[3]) {
   int i;

@@ -27,7 +27,6 @@
 #include <math.h>
 
 #include "stl.h"
-#include "config.h"
 
 static void usage(int status, char *program_name);
 

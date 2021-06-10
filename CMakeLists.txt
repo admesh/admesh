@@ -52,4 +52,22 @@ install(EXPORT admesh DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/admesh)
 target_compile_definitions(libadmesh PUBLIC -DVERSION="${VERSION}")
 
 enable_testing()
-add_test(basic ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/block.stl )
+# Basic test
+add_test(basic ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/block.stl -a ${CMAKE_BINARY_DIR}/basic.stl )
+add_test(basic-compare ${CMAKE_COMMAND} -E compare_files ${CMAKE_SOURCE_DIR}/test/basic.stl ${CMAKE_BINARY_DIR}/basic.stl)
+
+# x-rotate-30
+add_test(x-rotate-30 ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/block.stl --x-rotate=30  -a ${CMAKE_BINARY_DIR}/x-rotate-30.stl )
+add_test(x-rotate-30-compare ${CMAKE_COMMAND} -E compare_files ${CMAKE_SOURCE_DIR}/test/x-rotate-30.stl ${CMAKE_BINARY_DIR}/x-rotate-30.stl)
+
+# y-rotate-30
+add_test(y-rotate-30 ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/block.stl --y-rotate=30  -a ${CMAKE_BINARY_DIR}/y-rotate-30.stl )
+add_test(y-rotate-30-compare ${CMAKE_COMMAND} -E compare_files ${CMAKE_SOURCE_DIR}/test/y-rotate-30.stl ${CMAKE_BINARY_DIR}/y-rotate-30.stl)
+
+# z-rotate-30
+add_test(z-rotate-30 ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/block.stl --z-rotate=30  -a ${CMAKE_BINARY_DIR}/z-rotate-30.stl )
+add_test(z-rotate-30-compare ${CMAKE_COMMAND} -E compare_files ${CMAKE_SOURCE_DIR}/test/z-rotate-30.stl ${CMAKE_BINARY_DIR}/z-rotate-30.stl)
+
+# x-y-z-rotate-30
+add_test(x-y-z-rotate-30 ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/block.stl --x-rotate=30 --y-rotate=30 --z-rotate=30 -a ${CMAKE_BINARY_DIR}/x-y-z-rotate-30.stl )
+add_test(x-y-z-rotate-30-compare ${CMAKE_COMMAND} -E compare_files ${CMAKE_SOURCE_DIR}/test/x-y-z-rotate-30.stl ${CMAKE_BINARY_DIR}/x-y-z-rotate-30.stl)

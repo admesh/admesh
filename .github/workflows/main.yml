@@ -63,6 +63,7 @@ jobs:
       run: cmake --build . --parallel --config $BUILD_TYPE
 
     - name: Test
+      if: contains(matrix.name, 'ubuntu')
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: make test

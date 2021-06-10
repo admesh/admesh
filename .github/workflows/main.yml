@@ -62,6 +62,11 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --parallel --config $BUILD_TYPE
 
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: make test
+
     - name: upload windows
       if: contains(matrix.name, 'windows')
       uses: actions/upload-artifact@v2

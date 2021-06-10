@@ -50,3 +50,6 @@ install(FILES ${CMAKE_BINARY_DIR}/libadmesh.pc DESTINATION ${CMAKE_INSTALL_LIBDI
 install(FILES FindADMESH.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/admesh)
 install(EXPORT admesh DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/admesh)
 target_compile_definitions(libadmesh PUBLIC -DVERSION="${VERSION}")
+
+enable_testing()
+add_test(basic ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/block.stl )

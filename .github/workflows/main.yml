@@ -73,7 +73,7 @@ jobs:
       working-directory: ${{github.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --parallel --config $BUILD_TYPE
+      run: cmake --build . --parallel --config ${{ matrix.build_type }}
 
     - name: Test
       if: contains(matrix.systemname, 'Linux')

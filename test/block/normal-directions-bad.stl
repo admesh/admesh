@@ -1,8 +1,8 @@
 solid  Processed by ADMesh version 1.0.0
-  facet normal  0.00000000E+00  0.00000000E+00  1.00000000E+00
+  facet normal  0.00000000E+00  0.00000000E+00  -1.00000000E+00
     outer loop
-      vertex -1.96850395E+00 -1.96850395E+00  1.96850395E+00
       vertex  1.96850395E+00 -1.96850395E+00  1.96850395E+00
+      vertex -1.96850395E+00 -1.96850395E+00  1.96850395E+00
       vertex -1.96850395E+00  1.96850395E+00  1.96850395E+00
     endloop
   endfacet

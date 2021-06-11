@@ -55,7 +55,7 @@ enable_testing()
 
 
 #foreach(testfile "block" "conveyor" "hourglass")
-foreach(testfile "block" "conveyor")
+foreach(testfile "block" "conveyor" "hourglass")
   MESSAGE("Test ${testfile}")
 
   # basic

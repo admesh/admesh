@@ -945,8 +945,6 @@ Try using a smaller tolerance or don't do a nearby check\n");
       }
     }
   }
-  free(stl->heads);
-  free(stl->tail);
 }
 
 void

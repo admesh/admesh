@@ -448,7 +448,7 @@ static float get_volume(stl_file *stl) {
 static float get_surface_area(stl_file *stl) {
   int i;
   float area = 0.0;
-  
+
   if (stl->error) return 0;
 
   for(i = 0; i < stl->stats.number_of_facets; i++)
@@ -513,7 +513,7 @@ void stl_repair(stl_file *stl,
                 int normal_values_flag,
                 int reverse_all_flag,
                 int verbose_flag) {
-  
+
   int i;
   int last_edges_fixed = 0;
 

@@ -4,9 +4,6 @@ on:
   push:
   pull_request:
     branches: [ master ]
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
 
 jobs:
   build:
@@ -20,15 +17,31 @@ jobs:
           - name: ubuntu-latest-g++
             os: ubuntu-latest
             cc: gcc
+            cflags: ""
+            linker_flage: ""
             systemname: Linux
+            build_type: Release
+          - name: ubuntu-latest-g++-asan
+            os: ubuntu-latest
+            cc: gcc
+            cflags: "-fno-omit-frame-pointer -fsanitize=address"
+            linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
+            systemname: Linux
+            build_type: Debug
           - name: ubuntu-latest-clang
             os: ubuntu-latest
             cc: clang
+            cflags: ""
+            linker_flage: ""
             systemname: Linux
+            build_type: Release
           - name: windows-mingw64
             os: ubuntu-latest
             cc: x86_64-w64-mingw32-gcc
+            cflags: ""
+            linker_flage: ""
             systemname: Windows
+            build_type: Release
 
     steps:
     - uses: actions/checkout@v2
@@ -54,7 +67,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_SYSTEM_NAME=${{ matrix.systemname }}
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_SYSTEM_NAME=${{ matrix.systemname }}
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -63,7 +76,7 @@ jobs:
       run: cmake --build . --parallel --config $BUILD_TYPE
 
     - name: Test
-      if: contains(matrix.name, 'ubuntu')
+      if: contains(matrix.systemname, 'Linux')
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: make test

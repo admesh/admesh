@@ -35,6 +35,13 @@ jobs:
             linker_flage: ""
             systemname: Linux
             build_type: Release
+          - name: ubuntu-latest-clang-asan
+            os: ubuntu-latest
+            cc: clang
+            cflags: "-fno-omit-frame-pointer -fsanitize=address"
+            linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
+            systemname: Linux
+            build_type: Debug
           - name: windows-mingw64
             os: ubuntu-latest
             cc: x86_64-w64-mingw32-gcc

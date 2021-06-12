@@ -4,7 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: libadmesh
-Description: Library for woring with admesh
+Description: Library for working with admesh
 Version: @VERSION@
 Libs: -L${libdir} -ladmesh
 Libs.private:

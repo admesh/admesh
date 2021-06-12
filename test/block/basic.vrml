@@ -1,0 +1,41 @@
+#VRML V1.0 ascii
+
+Separator {
+	DEF STLShape ShapeHints {
+		vertexOrdering COUNTERCLOCKWISE
+		faceType CONVEX
+		shapeType SOLID
+		creaseAngle 0.0
+	}
+	DEF STLModel Separator {
+		DEF STLColor Material {
+			emissiveColor 0.700000 0.700000 0.000000
+		}
+		DEF STLVertices Coordinate3 {
+			point [
+				-1.968504 1.968504 1.968504,
+				-1.968504 -1.968504 1.968504,
+				1.968504 -1.968504 1.968504,
+				1.968504 1.968504 1.968504,
+				1.968504 1.968504 -1.968504,
+				1.968504 -1.968504 -1.968504,
+				-1.968504 -1.968504 -1.968504,
+				-1.968504 1.968504 -1.968504]
+		}
+		DEF STLTriangles IndexedFaceSet {
+			coordIndex [
+				0, 1, 2, -1,
+				2, 3, 0, -1,
+				4, 5, 6, -1,
+				6, 7, 4, -1,
+				7, 6, 1, -1,
+				1, 0, 7, -1,
+				3, 2, 5, -1,
+				5, 4, 3, -1,
+				1, 6, 5, -1,
+				5, 2, 1, -1,
+				7, 0, 3, -1,
+				3, 4, 7, -1]
+		}
+	}
+}

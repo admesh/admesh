@@ -1,3 +1,5 @@
+build
+.vscode
 aclocal.m4
 admesh
 admesh-*/

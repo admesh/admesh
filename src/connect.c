@@ -792,10 +792,10 @@ stl_remove_degenerate(stl_file *stl, int facet) {
   neighbor1 = stl->neighbors_start[facet].neighbor[edge1];
   neighbor2 = stl->neighbors_start[facet].neighbor[edge2];
 
-  if(neighbor1 == -1) {
+  if(neighbor1 == -1 && neighbor2 != -1) {
     stl_update_connects_remove_1(stl, neighbor2);
   }
-  if(neighbor2 == -1) {
+  else if (neighbor2 == -1 && neighbor1 != -1) {
     stl_update_connects_remove_1(stl, neighbor1);
   }
 
@@ -826,7 +826,10 @@ void
 stl_update_connects_remove_1(stl_file *stl, int facet_num) {
   int j;
 
-  if (stl->error) return;
+  if (
+    stl->error ||
+    facet_num < 0
+  ) return;
   /* Update list of connected edges */
   j = ((stl->neighbors_start[facet_num].neighbor[0] == -1) +
        (stl->neighbors_start[facet_num].neighbor[1] == -1) +

@@ -135,6 +135,10 @@ stl_count_facets(stl_file *stl, char *file) {
     if((!fread(&header_num_facets, sizeof(uint32_t), 1, stl->fp)) || (uint32_t)num_facets != le32toh(header_num_facets)) {
       fprintf(stderr,
               "Warning: File size doesn't match number of facets in the header\n");
+      if(stl->fail_if_invalid){
+        stl->error = 1;
+        return;
+      }
     }
   }
   /* Otherwise, if the .STL file is ASCII, then do the following */

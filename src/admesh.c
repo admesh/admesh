@@ -69,6 +69,7 @@ main(int argc, char **argv) {
   int      normal_directions_flag = 0;
   int      normal_values_flag = 0;
   int      reverse_all_flag = 0;
+  int      fail_if_invalid_flag = 0;
   int      write_binary_stl_flag = 0;
   int      write_ascii_stl_flag = 0;
   int      generate_shared_vertices_flag = 0;
@@ -98,7 +99,8 @@ main(int argc, char **argv) {
 
   enum {rotate_x = 1000, rotate_y, rotate_z, merge, help, version,
         mirror_xy, mirror_yz, mirror_xz, scale, translate, translate_rel,
-        stretch, reverse_all, off_file, dxf_file, vrml_file, scale_xyz
+        stretch, reverse_all, off_file, dxf_file, vrml_file, scale_xyz,
+        fail_if_invalid
        };
 
   struct option long_options[] = {
@@ -113,6 +115,7 @@ main(int argc, char **argv) {
     {"normal-values",      no_argument,       NULL, 'v'},
     {"no-check",           no_argument,       NULL, 'c'},
     {"reverse-all",        no_argument,       NULL, reverse_all},
+    {"fail-if-invalid",    no_argument,       NULL, fail_if_invalid},
     {"write-binary-stl",   required_argument, NULL, 'b'},
     {"write-ascii-stl",    required_argument, NULL, 'a'},
     {"write-off",          required_argument, NULL, off_file},
@@ -182,6 +185,9 @@ main(int argc, char **argv) {
     case reverse_all:
       reverse_all_flag = 1;
       fixall_flag = 0;
+      break;
+    case fail_if_invalid:
+      fail_if_invalid_flag = 1;
       break;
     case 'b':
       write_binary_stl_flag = 1;
@@ -311,6 +317,8 @@ main(int argc, char **argv) {
     printf("ADMesh - version " VERSION "\n");
     return 0;
   }
+  
+  stl_in.fail_if_invalid = fail_if_invalid_flag;
 
   if(optind == argc) {
     printf("No input file name given.\n");

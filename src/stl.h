@@ -122,17 +122,18 @@ typedef struct {
 } stl_stats;
 
 typedef struct {
-  FILE          *fp;
-  stl_facet     *facet_start;
-  stl_edge      *edge_start;
-  stl_hash_edge **heads;
-  stl_hash_edge *tail;
-  int           M;
-  stl_neighbors *neighbors_start;
-  v_indices_struct *v_indices;
-  stl_vertex    *v_shared;
-  stl_stats     stats;
-  char          error;
+  FILE              *fp;
+  stl_facet         *facet_start;
+  stl_edge          *edge_start;
+  stl_hash_edge     **heads;
+  stl_hash_edge     *tail;
+  int               M;
+  stl_neighbors     *neighbors_start;
+  v_indices_struct  *v_indices;
+  stl_vertex        *v_shared;
+  stl_stats         stats;
+  char              error;
+  int               fail_if_invalid;
 } stl_file;
 
 

@@ -191,11 +191,11 @@ main(int argc, char **argv) {
       break;
     case 'b':
       write_binary_stl_flag = 1;
-      binary_name = optarg;	       /* I'm not sure if this is safe. */
+      binary_name = optarg;
       break;
     case 'a':
       write_ascii_stl_flag = 1;
-      ascii_name = optarg;	       /* I'm not sure if this is safe. */
+      ascii_name = optarg;
       break;
     case off_file:
       generate_shared_vertices_flag = 1;

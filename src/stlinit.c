@@ -35,13 +35,18 @@
 #define SEEK_END 2
 #endif
 
-void
+int
 stl_open(stl_file *stl, char *file) {
+  
+  int ret;
+  
   stl_initialize(stl);
-  stl_count_facets(stl, file);
+  ret = stl_count_facets(stl, file);
   stl_allocate(stl);
   stl_read(stl, 0, 1);
   if (!stl->error) fclose(stl->fp);
+
+  return ret;
 }
 
 
@@ -69,7 +74,7 @@ stl_initialize(stl_file *stl) {
   stl->v_shared = NULL;
 }
 
-void
+int
 stl_count_facets(stl_file *stl, char *file) {
   long           file_size;
   uint32_t       header_num_facets;
@@ -79,8 +84,9 @@ stl_count_facets(stl_file *stl, char *file) {
   unsigned char  chtest[128];
   int            num_lines = 1;
   char           *error_msg;
+  int            ret = 0;
 
-  if (stl->error) return;
+  if (stl->error) return 1;
 
   /* Open the file in binary mode first */
   stl->fp = fopen(file, "rb");
@@ -92,7 +98,7 @@ stl_count_facets(stl_file *stl, char *file) {
     perror(error_msg);
     free(error_msg);
     stl->error = 1;
-    return;
+    return 1;
   }
   /* Find size of file */
   fseek(stl->fp, 0, SEEK_END);
@@ -103,7 +109,7 @@ stl_count_facets(stl_file *stl, char *file) {
   if (!fread(chtest, sizeof(chtest), 1, stl->fp)) {
     perror("The input is an empty file");
     stl->error = 1;
-    return;
+    return 1;
   }
   stl->stats.type = ascii;
   for(s = 0; s < sizeof(chtest); s++) {
@@ -122,7 +128,7 @@ stl_count_facets(stl_file *stl, char *file) {
         || (file_size < STL_MIN_FILE_SIZE)) {
       fprintf(stderr, "The file %s has the wrong size.\n", file);
       stl->error = 1;
-      return;
+      return 1;
     }
     num_facets = (file_size - HEADER_SIZE) / SIZEOF_STL_FACET;
 
@@ -135,10 +141,7 @@ stl_count_facets(stl_file *stl, char *file) {
     if((!fread(&header_num_facets, sizeof(uint32_t), 1, stl->fp)) || (uint32_t)num_facets != le32toh(header_num_facets)) {
       fprintf(stderr,
               "Warning: File size doesn't match number of facets in the header\n");
-      if(stl->fail_if_invalid){
-        stl->error = 1;
-        return;
-      }
+      ret = 1;
     }
   }
   /* Otherwise, if the .STL file is ASCII, then do the following */
@@ -147,7 +150,7 @@ stl_count_facets(stl_file *stl, char *file) {
     if (freopen(file, "r", stl->fp) == NULL) {
       perror("Could not reopen the file, something went wrong");
       stl->error = 1;
-      return;
+      return 1;
     }
 
     /* Find the number of facets */
@@ -173,6 +176,8 @@ stl_count_facets(stl_file *stl, char *file) {
   }
   stl->stats.number_of_facets += num_facets;
   stl->stats.original_num_facets = stl->stats.number_of_facets;
+
+  return ret;
 }
 
 void

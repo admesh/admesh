@@ -317,8 +317,6 @@ main(int argc, char **argv) {
     printf("ADMesh - version " VERSION "\n");
     return 0;
   }
-  
-  stl_in.fail_if_invalid = fail_if_invalid_flag;
 
   if(optind == argc) {
     printf("No input file name given.\n");
@@ -335,7 +333,7 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
 
 
   printf("Opening %s\n", input_file);
-  stl_open(&stl_in, input_file);
+  ret = stl_open(&stl_in, input_file);
   stl_exit_on_error(&stl_in);
 
   if(rotate_x_flag) {

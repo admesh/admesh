@@ -133,11 +133,10 @@ typedef struct {
   stl_vertex        *v_shared;
   stl_stats         stats;
   char              error;
-  int               fail_if_invalid;
 } stl_file;
 
 
-extern void stl_open(stl_file *stl, char *file);
+extern int  stl_open(stl_file *stl, char *file);
 extern void stl_close(stl_file *stl);
 extern void stl_stats_out(stl_file *stl, FILE *file, char *input_file);
 extern void stl_print_edges(stl_file *stl, FILE *file);
@@ -186,7 +185,7 @@ extern void stl_calculate_surface_area(stl_file *stl);
 extern void stl_repair(stl_file *stl, int fixall_flag, int exact_flag, int tolerance_flag, float tolerance, int increment_flag, float increment, int nearby_flag, int iterations, int remove_unconnected_flag, int fill_holes_flag, int normal_directions_flag, int normal_values_flag, int reverse_all_flag, int verbose_flag);
 
 extern void stl_initialize(stl_file *stl);
-extern void stl_count_facets(stl_file *stl, char *file);
+extern int  stl_count_facets(stl_file *stl, char *file);
 extern void stl_allocate(stl_file *stl);
 extern void stl_read(stl_file *stl, int first_facet, int first);
 extern void stl_facet_stats(stl_file *stl, stl_facet facet, int first);

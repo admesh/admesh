@@ -333,10 +333,7 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
 
 
   printf("Opening %s\n", input_file);
-  if(fail_if_invalid_flag)
-    ret = stl_open(&stl_in, input_file);
-  else
-    stl_open(&stl_in, input_file);
+  stl_open(&stl_in, input_file);
   stl_exit_on_error(&stl_in);
 
   if(rotate_x_flag) {
@@ -459,7 +456,8 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
   }
 
   stl_stats_out(&stl_in, stdout, input_file);
-
+  if(!stl_check_results(&stl_in))
+    ret = 1;
   stl_close(&stl_in);
 
   if (ret)

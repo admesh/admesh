@@ -456,7 +456,7 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
   }
 
   stl_stats_out(&stl_in, stdout, input_file);
-  if(!stl_check_results(&stl_in))
+  if(fail_if_invalid_flag && stl_check_results(&stl_in, reverse_all_flag))
     ret = 1;
   stl_close(&stl_in);
 

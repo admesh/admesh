@@ -146,4 +146,17 @@ foreach(testfile "block" "conveyor" "hourglass")
   add_test(${testfile}-vrml-stl ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/examples/${testfile}.stl --write-vrml ${CMAKE_BINARY_DIR}/basic.vrml )
   add_test(${testfile}-vrml-stl-compare ${CMAKE_COMMAND} -E compare_files ${CMAKE_SOURCE_DIR}/test/${testfile}/basic.vrml ${CMAKE_BINARY_DIR}/basic.vrml)
 
+  # fail-if-invalid tests
+  add_test(${testfile}-fail-if-invalid-1 ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/test/${testfile}/nearby-bad.stl -n -t 0.1)
+  add_test(${testfile}-fail-if-invalid-1-f ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/test/${testfile}/nearby-bad.stl --fail-if-invalid -n -t 0.1)
+  set_property(TEST ${testfile}-fail-if-invalid-1-f PROPERTY WILL_FAIL TRUE)
+
+  add_test(${testfile}-fail-if-invalid-2 ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/test/${testfile}/remove-unconnected-bad.stl --remove-unconnected)
+  add_test(${testfile}-fail-if-invalid-2-f ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/test/${testfile}/remove-unconnected-bad.stl --fail-if-invalid --remove-unconnected)
+  set_property(TEST ${testfile}-fail-if-invalid-2-f PROPERTY WILL_FAIL TRUE)
+
+  add_test(${testfile}-fail-if-invalid-3 ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/test/${testfile}/fill-holes-bad.stl --fill-holes)
+  add_test(${testfile}-fail-if-invalid-3-f ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/test/${testfile}/fill-holes-bad.stl --fail-if-invalid --fill-holes)
+  set_property(TEST ${testfile}-fail-if-invalid-3-f PROPERTY WILL_FAIL TRUE)
+
 endforeach()

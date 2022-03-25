@@ -122,17 +122,18 @@ typedef struct {
 } stl_stats;
 
 typedef struct {
-  FILE          *fp;
-  stl_facet     *facet_start;
-  stl_edge      *edge_start;
-  stl_hash_edge **heads;
-  stl_hash_edge *tail;
-  int           M;
-  stl_neighbors *neighbors_start;
-  v_indices_struct *v_indices;
-  stl_vertex    *v_shared;
-  stl_stats     stats;
-  char          error;
+  FILE              *fp;
+  stl_facet         *facet_start;
+  stl_edge          *edge_start;
+  stl_hash_edge     **heads;
+  stl_hash_edge     *tail;
+  int               M;
+  stl_neighbors     *neighbors_start;
+  v_indices_struct  *v_indices;
+  stl_vertex        *v_shared;
+  stl_stats         stats;
+  char              error;
+  char              *error_buffer;
 } stl_file;
 
 
@@ -193,6 +194,7 @@ extern void stl_reallocate(stl_file *stl);
 extern void stl_add_facet(stl_file *stl, stl_facet *new_facet);
 extern void stl_get_size(stl_file *stl);
 
+extern void stl_write_error_message(stl_file *stl, const char *msg);
 extern void stl_clear_error(stl_file *stl);
 extern int stl_get_error(stl_file *stl);
 extern void stl_exit_on_error(stl_file *stl);

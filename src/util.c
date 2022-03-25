@@ -633,3 +633,10 @@ All facets connected.  No further nearby check necessary.\n");
     stl_verify_neighbors(stl);
   }
 }
+
+void stl_write_error_message(stl_file *stl, const char *msg){
+
+  if(stl->error_buffer != NULL)
+    free(stl->error_buffer);
+  stl->error_buffer = strdup(msg);
+}

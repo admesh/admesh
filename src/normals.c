@@ -107,15 +107,15 @@ stl_fix_normal_directions(stl_file *stl) {
 
   /* Initialize linked list. */
   head = (struct stl_normal*)malloc(sizeof(struct stl_normal));
-  if(head == NULL) perror("stl_fix_normal_directions");
+  if(head == NULL) stl_write_error_message(stl, "stl_fix_normal_directions");
   tail = (struct stl_normal*)malloc(sizeof(struct stl_normal));
-  if(tail == NULL) perror("stl_fix_normal_directions");
+  if(tail == NULL) stl_write_error_message(stl, "stl_fix_normal_directions");
   head->next = tail;
   tail->next = tail;
 
   /* Initialize list that keeps track of already fixed facets. */
   norm_sw = (char*)calloc(stl->stats.number_of_facets, sizeof(char));
-  if(norm_sw == NULL) perror("stl_fix_normal_directions");
+  if(norm_sw == NULL) stl_write_error_message(stl, "stl_fix_normal_directions");
 
 
   facet_num = 0;
@@ -147,7 +147,7 @@ stl_fix_normal_directions(stl_file *stl) {
         if(norm_sw[stl->neighbors_start[facet_num].neighbor[j]] != 1) {
           /* Add node to beginning of list. */
           newn = (struct stl_normal*)malloc(sizeof(struct stl_normal));
-          if(newn == NULL) perror("stl_fix_normal_directions");
+          if(newn == NULL) stl_write_error_message(stl, "stl_fix_normal_directions");
           newn->facet_num = stl->neighbors_start[facet_num].neighbor[j];
           newn->next = head->next;
           head->next = newn;

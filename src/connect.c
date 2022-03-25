@@ -177,10 +177,10 @@ stl_initialize_facet_check_exact(stl_file *stl) {
   }
 
   stl->heads = (stl_hash_edge**)calloc(stl->M, sizeof(*stl->heads));
-  if(stl->heads == NULL) perror("stl_initialize_facet_check_exact");
+  if(stl->heads == NULL) stl_write_error_message(stl, "stl_initialize_facet_check_exact");
 
   stl->tail = (stl_hash_edge*)malloc(sizeof(stl_hash_edge));
-  if(stl->tail == NULL) perror("stl_initialize_facet_check_exact");
+  if(stl->tail == NULL) stl_write_error_message(stl, "stl_initialize_facet_check_exact");
 
   stl->tail->next = stl->tail;
 
@@ -207,7 +207,7 @@ insert_hash_edge(stl_file *stl, stl_hash_edge edge,
   if(link == stl->tail) {
     /* This list doesn't have any edges currently in it.  Add this one. */
     new_edge = (stl_hash_edge*)malloc(sizeof(stl_hash_edge));
-    if(new_edge == NULL) perror("insert_hash_edge");
+    if(new_edge == NULL) stl_write_error_message(stl, "insert_hash_edge");
     stl->stats.malloced++;
     *new_edge = edge;
     new_edge->next = stl->tail;
@@ -227,7 +227,7 @@ insert_hash_edge(stl_file *stl, stl_hash_edge edge,
       if(link->next == stl->tail) {
         /* This is the last item in the list. Insert a new edge. */
         new_edge = (stl_hash_edge*)malloc(sizeof(stl_hash_edge));
-        if(new_edge == NULL) perror("insert_hash_edge");
+        if(new_edge == NULL) stl_write_error_message(stl, "insert_hash_edge");
         stl->stats.malloced++;
         *new_edge = edge;
         new_edge->next = stl->tail;
@@ -406,10 +406,10 @@ stl_initialize_facet_check_nearby(stl_file *stl) {
   stl->M = 81397;
 
   stl->heads = (stl_hash_edge**)calloc(stl->M, sizeof(*stl->heads));
-  if(stl->heads == NULL) perror("stl_initialize_facet_check_nearby");
+  if(stl->heads == NULL) stl_write_error_message(stl, "stl_initialize_facet_check_nearby");
 
   stl->tail = (stl_hash_edge*)malloc(sizeof(stl_hash_edge));
-  if(stl->tail == NULL) perror("stl_initialize_facet_check_nearby");
+  if(stl->tail == NULL) stl_write_error_message(stl, "stl_initialize_facet_check_nearby");
 
   stl->tail->next = stl->tail;
 
@@ -957,10 +957,10 @@ stl_add_facet(stl_file *stl, stl_facet *new_facet) {
   if(stl->stats.facets_malloced < stl->stats.number_of_facets + 1) {
     stl->facet_start = (stl_facet*)realloc(stl->facet_start,
                                            (sizeof(stl_facet) * (stl->stats.facets_malloced + 256)));
-    if(stl->facet_start == NULL) perror("stl_add_facet");
+    if(stl->facet_start == NULL) stl_write_error_message(stl, "stl_add_facet");
     stl->neighbors_start = (stl_neighbors*)realloc(stl->neighbors_start,
                            (sizeof(stl_neighbors) * (stl->stats.facets_malloced + 256)));
-    if(stl->neighbors_start == NULL) perror("stl_add_facet");
+    if(stl->neighbors_start == NULL) stl_write_error_message(stl, "stl_add_facet");
     stl->stats.facets_malloced += 256;
   }
   stl->facet_start[stl->stats.number_of_facets] = *new_facet;

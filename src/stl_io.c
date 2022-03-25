@@ -137,7 +137,7 @@ stl_write_ascii(stl_file *stl, const char *file, const char *label) {
                 malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
     sprintf(error_msg, "stl_write_ascii: Couldn't open %s for writing",
             file);
-    perror(error_msg);
+    stl_write_error_message(stl, error_msg);
     free(error_msg);
     stl->error = 1;
     return;
@@ -183,7 +183,7 @@ stl_print_neighbors(stl_file *stl, char *file) {
                 malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
     sprintf(error_msg, "stl_print_neighbors: Couldn't open %s for writing",
             file);
-    perror(error_msg);
+    stl_write_error_message(stl, error_msg);
     free(error_msg);
     stl->error = 1;
     return;
@@ -274,7 +274,7 @@ stl_write_binary(stl_file *stl, const char *file, const char *label) {
                 malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
     sprintf(error_msg, "stl_write_binary: Couldn't open %s for writing",
             file);
-    perror(error_msg);
+    stl_write_error_message(stl, error_msg);
     free(error_msg);
     stl->error = 1;
     return;
@@ -356,7 +356,7 @@ stl_write_quad_object(stl_file *stl, char *file) {
                 malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
     sprintf(error_msg, "stl_write_quad_object: Couldn't open %s for writing",
             file);
-    perror(error_msg);
+    stl_write_error_message(stl, error_msg);
     free(error_msg);
     stl->error = 1;
     return;
@@ -424,7 +424,7 @@ stl_write_dxf(stl_file *stl, char *file, char *label) {
                 malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
     sprintf(error_msg, "stl_write_ascii: Couldn't open %s for writing",
             file);
-    perror(error_msg);
+    stl_write_error_message(stl, error_msg);
     free(error_msg);
     stl->error = 1;
     return;
@@ -468,6 +468,9 @@ void
 stl_exit_on_error(stl_file *stl) {
   if (!stl->error) return;
   stl->error = 0;
+  // Simulate a perror call - print an error string to stderr followed by a newline.
+  fputs(stl->error_buffer, stderr);
+  fputc('\n', stderr);
   stl_close(stl);
   exit(1);
 }

@@ -634,10 +634,63 @@ All facets connected.  No further nearby check necessary.\n");
   }
 }
 
-stl_file* stl_copy(stl_file *dst, stl_file *src){
+stl_file *stl_copy(stl_file *dst, const stl_file *src){
 
-  dst->fp = NULL;
-  for(size_t i = 0; i < src->stats.number_of_facets; i++){
-    dst->facet_start[i] = src->facet_start[i];
+  if(src->error) return NULL;
+
+  dst->fp               = NULL;
+  dst->facet_start      = NULL;
+  dst->edge_start       = NULL;       // edge_start is never allocated nor populated.
+  dst->heads            = NULL;       // Allocated and used only by stl_fill_holes and immediately freed.
+  dst->tail             = NULL;       // Same as ->heads.
+  dst->M                = src->M;
+  dst->neighbors_start  = NULL;
+  dst->v_indices        = NULL;
+  dst->v_shared         = NULL;
+  dst->stats            = src->stats;
+  dst->stats.type       = inmemory;
+  dst->error            = src->error;
+
+  if(src->facet_start != NULL){
+    
+    dst->neighbors_start = (stl_neighbors*)
+      calloc(dst->stats.number_of_facets, sizeof(stl_neighbors));
+    if(dst->neighbors_start == NULL) perror("stl_copy");
+
+    for(int i = 0; i < dst->stats.number_of_facets; i++){
+      dst->neighbors_start[i] = src->neighbors_start[i];
+    }  
   }
+
+  if(src->neighbors_start != NULL){
+
+    dst->facet_start = (stl_facet*)calloc(dst->stats.number_of_facets, sizeof(stl_facet));
+    if(dst->facet_start == NULL) perror("stl_copy");
+    for(int i = 0; i < dst->stats.number_of_facets; i++){
+      dst->neighbors_start[i] = src->neighbors_start[i];
+    }  
+  }
+
+  if(src->v_indices != NULL){
+    
+    dst->v_indices = (v_indices_struct*)
+      calloc(dst->stats.number_of_facets, sizeof(v_indices_struct));
+    if(dst->v_indices == NULL) perror("stl_copy");  
+
+    for(int i = 0; i < dst->stats.number_of_facets; i++)
+      dst->v_indices[i] = src->v_indices[i];
+  }
+
+  if(src->v_shared != NULL){
+
+    dst->v_shared = (stl_vertex*)
+      calloc((dst->stats.number_of_facets / 2), sizeof(stl_vertex));
+    if(dst->v_shared == NULL) perror("stl_copy");
+
+    for(int i = 0; i < dst->stats.number_of_facets / 2; i++){
+      dst->v_shared[i] = src->v_shared[i];
+    }
+  }
+
+  return dst;
 }

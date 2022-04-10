@@ -633,3 +633,11 @@ All facets connected.  No further nearby check necessary.\n");
     stl_verify_neighbors(stl);
   }
 }
+
+stl_file* stl_copy(stl_file *dst, stl_file *src){
+
+  dst->fp = NULL;
+  for(size_t i = 0; i < src->stats.number_of_facets; i++){
+    dst->facet_start[i] = src->facet_start[i];
+  }
+}

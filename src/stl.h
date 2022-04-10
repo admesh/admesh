@@ -197,6 +197,8 @@ extern void stl_clear_error(stl_file *stl);
 extern int stl_get_error(stl_file *stl);
 extern void stl_exit_on_error(stl_file *stl);
 
+extern stl_file* stl_copy(stl_file *dst, stl_file *src);
+
 #ifdef __cplusplus
 }
 #endif

@@ -171,11 +171,54 @@ extern void stl_stats_out(stl_file *stl, FILE *file, char *input_file);
  * \param file Where to print the edges to (can be stdout) */
 extern void stl_print_edges(stl_file *stl, FILE *file);
 
+/**
+ * @brief Print neighbor list to the specified file.
+ * 
+ * @param stl Source STL.
+ * @param file Target file to print to.
+ */
 extern void stl_print_neighbors(stl_file *stl, char *file);
+
+/**
+ * @brief Store a integer value to a specified file in a little-endian format.
+ * 
+ * @param fp Target file.
+ * @param value_in A value to write.
+ */
 extern void stl_put_little_int(FILE *fp, int value_in);
+
+/**
+ * @brief Store a float value to a specified file in a little-endian format.
+ * 
+ * @param fp Target file.
+ * @param value_in A value to write.
+ */
 extern void stl_put_little_float(FILE *fp, float value_in);
+
+/**
+ * @brief Write STL data to the STL file in the ASCII format.
+ * 
+ * @param stl Data to write to a file.
+ * @param file Target file location.
+ * @param label A label to use in the file. (Name of the solid.)
+ */
 extern void stl_write_ascii(stl_file *stl, const char *file, const char *label);
+
+/**
+ * @brief Write STL data to the STL file in the binary format.
+ * 
+ * @param stl Data to write to a file.
+ * @param file Target file location.
+ * @param label A label to use in the file. (Name of the solid.)
+ */
 extern void stl_write_binary(stl_file *stl, const char *file, const char *label);
+
+/**
+ * @brief Write STL facets to a file. Used internally by @ref stl_write_binary.
+ * 
+ * @param stl Data from which to extract facets.
+ * @param fp Target file.
+ */
 extern void stl_write_binary_block(stl_file *stl, FILE *fp);
 extern void stl_check_facets_exact(stl_file *stl);
 extern void stl_check_facets_nearby(stl_file *stl, float tolerance);

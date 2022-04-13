@@ -87,6 +87,7 @@ ADMesh supports the following options, grouped by type.
      --yz-mirror          Mirror about the yz plane
      --xz-mirror          Mirror about the xz plane
      --scale=factor       Scale the file by factor (multiply by factor)
+     --scale-xyz=x,y,z    Scale the file by a non uniform factor
      --translate=x,y,z    Translate the file to x, y, and z
      --merge=name         Merge file called name with input file
 
@@ -151,6 +152,14 @@ Mesh Transformation and Manipulation Options
    the "units" (there are no units explicitly specified in an STL file) of
    the mesh.  For example, to change a part from inches to millimeters, just
    use the --scale=25.4 option.
+
+'--scale-xyz=x,y,z'
+   Scale the mesh by the given factors.  This multiplies all of the
+   coordinates components by the specified number.  This option could be used
+   to compensate along the coordinate system of the mesh.  For example,
+   annealing FDM printed PLA shrinks it ~5% along X and Y but grows it along
+   Z about 2%, to compensate for this, juse use
+   the --scale-xyz=1.0526,1.0526,.9804 option.
 
 '--translate=x,y,z'
    Translate the mesh to the position x,y,z.  This moves the minimum x, y,

@@ -105,6 +105,7 @@ typedef struct {
   float         shortest_edge;           /**< length of the shortest edge */
   float         volume;                  /**< volume of the mesh, has to be calculated by stl_calculate_volume() */
   unsigned      number_of_blocks;        /**< should be number of blocks, but is never set */
+  float         surface_area;
   int           connected_edges;         /**< how many edges have been connected by ADMesh */
   int           connected_facets_1_edge; /**< how many facets are connected by at least 1 edge, get's calculated during stl_check_facets_nearby() */
   int           connected_facets_2_edge; /**< how many facets are connected by at least 2 edges, get's calculated during stl_check_facets_nearby() */
@@ -191,6 +192,7 @@ extern void stl_fix_normal_values(stl_file *stl);
 extern void stl_reverse_all_facets(stl_file *stl);
 extern void stl_translate(stl_file *stl, float x, float y, float z);
 extern void stl_translate_relative(stl_file *stl, float x, float y, float z);
+extern void stl_stretch(stl_file *stl, float x_min, float x_max, float x_off, float y_min, float y_max, float y_off, float z_min, float z_max, float z_off);
 extern void stl_scale_versor(stl_file *stl, float versor[3]);
 extern void stl_scale(stl_file *stl, float factor);
 extern void stl_rotate_x(stl_file *stl, float angle);
@@ -209,6 +211,7 @@ extern void stl_write_vrml(stl_file *stl, char *file);
 extern void stl_calculate_normal(float normal[], stl_facet *facet);
 extern void stl_normalize_vector(float v[]);
 extern void stl_calculate_volume(stl_file *stl);
+extern void stl_calculate_surface_area(stl_file *stl);
 
 extern void stl_repair(stl_file *stl, int fixall_flag, int exact_flag, int tolerance_flag, float tolerance, int increment_flag, float increment, int nearby_flag, int iterations, int remove_unconnected_flag, int fill_holes_flag, int normal_directions_flag, int normal_values_flag, int reverse_all_flag, int verbose_flag);
 

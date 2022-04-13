@@ -1,0 +1,112 @@
+name: Admesh CI
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    name: ${{ matrix.name }}-build-and-test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [ubuntu-latest-g++]
+        include:
+          - name: ubuntu-latest-g++
+            os: ubuntu-latest
+            cc: gcc
+            cflags: ""
+            linker_flage: ""
+            systemname: Linux
+            build_type: Release
+          - name: ubuntu-latest-g++-asan
+            os: ubuntu-latest
+            cc: gcc
+            cflags: "-fno-omit-frame-pointer -fsanitize=address"
+            linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
+            systemname: Linux
+            build_type: Debug
+          - name: ubuntu-latest-g++-ubsan
+            os: ubuntu-latest
+            cc: gcc
+            cflags: "-fsanitize=undefined"
+            linker_flage: ""
+            systemname: Linux
+            build_type: Debug
+          - name: ubuntu-latest-clang
+            os: ubuntu-latest
+            cc: clang
+            cflags: ""
+            linker_flage: ""
+            systemname: Linux
+            build_type: Release
+          - name: ubuntu-latest-clang-asan
+            os: ubuntu-latest
+            cc: clang
+            cflags: "-fno-omit-frame-pointer -fsanitize=address"
+            linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
+            systemname: Linux
+            build_type: Debug
+          - name: ubuntu-latest-clang-ubsan
+            os: ubuntu-latest
+            cc: clang
+            cflags: "-fsanitize=undefined"
+            linker_flage: ""
+            systemname: Linux
+            build_type: Debug
+          - name: windows-mingw64
+            os: ubuntu-latest
+            cc: x86_64-w64-mingw32-gcc
+            cflags: ""
+            linker_flage: ""
+            systemname: Windows
+            build_type: Release
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: install cross compile tools
+      if: contains(matrix.name, 'windows')
+      run: sudo apt-get install mingw-w64
+
+    - name: install clang
+      if: contains(matrix.name, 'clang')
+      run: sudo apt-get install clang
+
+    - name: Create Build Environment
+      # Some projects don't allow in-source building, so create a separate build directory
+      # We'll use this as our working directory for all subsequent commands
+      run: cmake -E make_directory ${{github.workspace}}/build
+
+    - name: Configure CMake
+      # Use a bash shell so we can use the same syntax for environment variable
+      # access regardless of the host operating system
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      # Note the current convention is to use the -S and -B options here to specify source
+      # and build directories, but this is only available with CMake 3.13 and higher.
+      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_C_FLAGS="${{ matrix.cflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flage }}" -DCMAKE_SYSTEM_NAME=${{ matrix.systemname }}
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake --build . --parallel
+
+    - name: Test
+      if: contains(matrix.systemname, 'Linux')
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: make test
+
+    - name: upload windows
+      if: contains(matrix.name, 'windows')
+      uses: actions/upload-artifact@v2
+      with:
+        name: admesh-${{ steps.vars.outputs.sha_short }}
+        path: |
+          ${{github.workspace}}/build/admesh.exe
+          ${{github.workspace}}/build/libadmesh.dll

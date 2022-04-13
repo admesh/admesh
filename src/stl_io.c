@@ -23,7 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "stl.h"
-#include "config.h"
 
 #if !defined(SEEK_SET)
 #define SEEK_SET 0
@@ -103,12 +102,12 @@ Total disconnected facets        : %5d               %5d\n",
           stl->stats.connected_facets_3_edge);
 
   fprintf(file,
-          "=== Processing Statistics ===     ===== Other Statistics =====\n");
+          "=== Processing Statistics ===       ====== Other Statistics ======\n");
   fprintf(file, "\
-Number of parts       : %5d        Volume   : % f\n",
+Number of parts       : %5d       Volume          :   % f\n",
           stl->stats.number_of_parts, stl->stats.volume);
   fprintf(file, "\
-Degenerate facets     : %5d\n", stl->stats.degenerate_facets);
+Degenerate facets     : %5d       Surface area    :   % f\n", stl->stats.degenerate_facets, stl->stats.surface_area);
   fprintf(file, "\
 Edges fixed           : %5d\n", stl->stats.edges_fixed);
   fprintf(file, "\
@@ -269,7 +268,7 @@ stl_write_binary(stl_file *stl, const char *file, const char *label) {
   if (stl->error) return;
 
   /* Open the file */
-  fp = fopen(file, "w");
+  fp = fopen(file, "wb");
   if(fp == NULL) {
     error_msg = (char*)
                 malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */

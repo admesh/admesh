@@ -122,6 +122,57 @@ stl_translate_relative(stl_file *stl, float x, float y, float z) {
   stl_invalidate_shared_vertices(stl);
 }
 
+/* stretch the STL, i.e. move a point by a relative XYZ offset if it fits within a given bounding box */
+void
+stl_stretch(stl_file *stl, float x_min, float x_max, float x_off, float y_min, float y_max, float y_off, float z_min, float z_max, float z_off) {
+  int i;
+  int j;
+
+  if (stl->error) return;
+
+  float min_x = stl->stats.min.x;
+  float min_y = stl->stats.min.y;
+  float min_z = stl->stats.min.z;
+  float max_x = stl->stats.max.x;
+  float max_y = stl->stats.max.y;
+  float max_z = stl->stats.max.z;
+
+  for(i = 0; i < stl->stats.number_of_facets; i++) {
+    for(j = 0; j < 3; j++) {
+      if (x_min < stl->facet_start[i].vertex[j].x &&
+          x_max > stl->facet_start[i].vertex[j].x &&
+          y_min < stl->facet_start[i].vertex[j].y &&
+          y_max > stl->facet_start[i].vertex[j].y &&
+          z_min < stl->facet_start[i].vertex[j].z &&
+          z_max > stl->facet_start[i].vertex[j].z) {
+        stl->facet_start[i].vertex[j].x += x_off;
+        stl->facet_start[i].vertex[j].y += y_off;
+        stl->facet_start[i].vertex[j].z += z_off;
+        if (stl->facet_start[i].vertex[j].x < min_x)
+          min_x = stl->facet_start[i].vertex[j].x;
+        if (stl->facet_start[i].vertex[j].x > max_x)
+          max_x = stl->facet_start[i].vertex[j].x;
+        if (stl->facet_start[i].vertex[j].y < min_y)
+          min_y = stl->facet_start[i].vertex[j].y;
+        if (stl->facet_start[i].vertex[j].y > max_y)
+          max_y = stl->facet_start[i].vertex[j].y;
+        if (stl->facet_start[i].vertex[j].z < min_z)
+          min_z = stl->facet_start[i].vertex[j].z;
+        if (stl->facet_start[i].vertex[j].z > max_z)
+          max_z = stl->facet_start[i].vertex[j].z;
+      }
+    }
+  }
+  stl->stats.min.x = min_x;
+  stl->stats.min.y = min_y;
+  stl->stats.min.z = min_z;
+  stl->stats.max.x = max_x;
+  stl->stats.max.y = max_y;
+  stl->stats.max.z = max_z;
+
+  stl_invalidate_shared_vertices(stl);
+}
+
 void
 stl_scale_versor(stl_file *stl, float versor[3]) {
   int i;
@@ -156,6 +207,12 @@ stl_scale_versor(stl_file *stl, float versor[3]) {
   }
 
   stl_invalidate_shared_vertices(stl);
+
+  /* recalculate surface area */
+  if (stl->stats.surface_area > 0.0) {
+    stl_calculate_surface_area(stl);
+  }
+
 }
 
 void
@@ -388,13 +445,26 @@ static float get_volume(stl_file *stl) {
   return volume;
 }
 
+static float get_surface_area(stl_file *stl) {
+  int i;
+  float area = 0.0;
+
+  if (stl->error) return 0;
+
+  for(i = 0; i < stl->stats.number_of_facets; i++)
+    area += get_area(&stl->facet_start[i]);
+
+  return area;
+}
+
 void stl_calculate_volume(stl_file *stl) {
   if (stl->error) return;
   stl->stats.volume = get_volume(stl);
-  if(stl->stats.volume < 0.0) {
-    stl_reverse_all_facets(stl);
-    stl->stats.volume = -stl->stats.volume;
-  }
+}
+
+void stl_calculate_surface_area(stl_file *stl) {
+  if (stl->error) return;
+  stl->stats.surface_area = get_surface_area(stl);
 }
 
 static float get_area(stl_facet *facet) {
@@ -443,7 +513,7 @@ void stl_repair(stl_file *stl,
                 int normal_values_flag,
                 int reverse_all_flag,
                 int verbose_flag) {
-  
+
   int i;
   int last_edges_fixed = 0;
 
@@ -543,6 +613,19 @@ All facets connected.  No further nearby check necessary.\n");
   if (verbose_flag)
     printf("Calculating volume...\n");
   stl_calculate_volume(stl);
+
+  if (verbose_flag)
+    printf("Calculate surfacea area...\n");
+  stl_calculate_surface_area(stl);
+
+  if(fixall_flag) {
+    if(stl->stats.volume < 0.0) {
+      if (verbose_flag)
+        printf("Reversing all facets because volume is negative...\n");
+      stl_reverse_all_facets(stl);
+      stl->stats.volume = -stl->stats.volume;
+    }
+  }
 
   if(exact_flag) {
     if (verbose_flag)

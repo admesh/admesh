@@ -516,9 +516,40 @@ extern void stl_calculate_volume(stl_file *stl);
  */
 extern void stl_calculate_surface_area(stl_file *stl);
 
+/**
+ * @brief Perform a series of repairs to attempt to repair the mesh.
+ * 
+ * @param stl                       Mesh to repair.
+ * @param fixall_flag               Perform all fixes.
+ * @param exact_flag                Check each facet of the mesh for its 3 neighbors and remove degenerates.
+ * @param tolerance_flag            Tolerance is explicitly specified.
+ * @param tolerance                 Tolerance value.
+ * @param increment_flag            Increment is explicitly specified.
+ * @param increment                 The amount that the tolerance is increased after each iteration.
+ * @param nearby_flag               Find and connect nearby facets and correct bad facets.
+ * @param iterations                The number of times that facets are checked for nearby facets.
+ * @param remove_unconnected_flag   Remove unconnected facets.
+ * @param fill_holes_flag           Fill holes in the mesh.
+ * @param normal_directions_flag    Check and fix direction of normals.
+ * @param normal_values_flag        Check and fix normal values.
+ * @param reverse_all_flag          Reverse all facets.
+ * @param verbose_flag              Provide detailed information during the process.
+ */
 extern void stl_repair(stl_file *stl, int fixall_flag, int exact_flag, int tolerance_flag, float tolerance, int increment_flag, float increment, int nearby_flag, int iterations, int remove_unconnected_flag, int fill_holes_flag, int normal_directions_flag, int normal_values_flag, int reverse_all_flag, int verbose_flag);
 
+/**
+ * @brief Initialize the STL struct to default values.
+ * 
+ * @param stl Struct to init.
+ */
 extern void stl_initialize(stl_file *stl);
+
+/**
+ * @brief Count facets in the mesh.
+ * 
+ * @param stl 
+ * @param file 
+ */
 extern void stl_count_facets(stl_file *stl, char *file);
 extern void stl_allocate(stl_file *stl);
 extern void stl_read(stl_file *stl, int first_facet, int first);

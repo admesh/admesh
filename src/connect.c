@@ -61,10 +61,6 @@ static void stl_update_connects_remove_1(stl_file *stl, int facet_num);
 
 void
 stl_check_facets_exact(stl_file *stl) {
-  /* This function builds the neighbors list.  No modifications are made
-   *  to any of the facets.  The edges are said to match only if all six
-   *  floats of the first edge matches all six floats of the second edge.
-   */
 
   stl_hash_edge  edge;
   stl_facet      facet;
@@ -707,11 +703,6 @@ in stl_remove_facet: neighbor = %d numfacets = %d this is wrong\n",
 
 void
 stl_remove_unconnected_facets(stl_file *stl) {
-  /* A couple of things need to be done here.  One is to remove any */
-  /* completely unconnected facets (0 edges connected) since these are */
-  /* useless and could be completely wrong.   The second thing that needs to */
-  /* be done is to remove any degenerate facets that were created during */
-  /* stl_check_facets_nearby(). */
 
   int i;
 

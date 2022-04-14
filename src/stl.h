@@ -40,14 +40,14 @@ extern "C" {
 #define ASCII_LINES_PER_FACET  7
 #define SIZEOF_EDGE_SORT       24
 
-/** Vertex of a facet, defined by 3D coordinates */
+/** Vertex of a facet, defined by 3D coordinates. */
 typedef struct {
   float x;
   float y;
   float z;
 } stl_vertex;
 
-/** Normal vector of a facet, defined by 3D coordinates */
+/** Normal vector of a facet, defined by 3D coordinates. */
 typedef struct {
   float x;
   float y;
@@ -56,23 +56,27 @@ typedef struct {
 
 typedef char stl_extra[2];
 
-/** Facet, one triangle of the mesh */
+/** Facet, one triangle of the mesh. */
 typedef struct {
-  stl_normal normal;    /**< normal vector */
-  stl_vertex vertex[3]; /**< 3 vertices */
-  stl_extra  extra;     /**< extra data */
+  stl_normal normal;    ///< normal vector
+  stl_vertex vertex[3]; ///< 3 vertices
+  stl_extra  extra;     ///< extra data 
 } stl_facet;
 
 #define SIZEOF_STL_FACET       50
 
-/** Type of STL file */
-typedef enum {binary, ascii, inmemory} stl_type;
+/** Type of STL file. */
+typedef enum { 
+  binary,       ///< Binary STL format.
+  ascii,        ///< ASCII STL format.
+  inmemory      ///< No associated file, created on-the-fly e.g. via stl_copy.
+} stl_type;
 
-/** Edge between two vertices */
+/** Edge between two vertices. */
 typedef struct {
-  stl_vertex p1;           /**< start vertex */
-  stl_vertex p2;           /**< end vertex */
-  int        facet_number; /**< id of facet this edge belongs to */
+  stl_vertex p1;           ///< start vertex
+  stl_vertex p2;           ///< end vertex
+  int        facet_number; ///< id of facet this edge belongs to
 } stl_edge;
 
 typedef struct stl_hash_edge {
@@ -220,14 +224,77 @@ extern void stl_write_binary(stl_file *stl, const char *file, const char *label)
  * @param fp Target file.
  */
 extern void stl_write_binary_block(stl_file *stl, FILE *fp);
+
+/**
+ * @brief Build a neighbor list.
+ * 
+ * This function builds the neighbors list.  No modifications are made
+ * to any of the facets.  The edges are said to match only if all six
+ * floats of the first edge matches all six floats of the second edge.
+ * 
+ * @param stl 
+ */
 extern void stl_check_facets_exact(stl_file *stl);
+
+/**
+ * @brief Check nearby facets available for connection within a distance specified by tolerance.
+ * 
+ * @param stl Data to work with.
+ * @param tolerance Distance that is searched for the neighboring facet.
+ */
 extern void stl_check_facets_nearby(stl_file *stl, float tolerance);
+
+/**
+ * @brief Remove unconnected and degenerate facets.
+ * 
+ * A couple of things need to be done here. One is to remove any
+ * completely unconnected facets (0 edges connected) since these are
+ * useless and could be completely wrong. The second thing that needs to
+ * be done is to remove any degenerate facets that were created during
+ * stl_check_facets_nearby().
+ * 
+ * @param stl Data to work with.
+ */
 extern void stl_remove_unconnected_facets(stl_file *stl);
+
+/**
+ * @brief Print a specified vertex of a selected facet to stdout.
+ * 
+ * @param stl Data to get a facet from.
+ * @param facet Selected facet index.
+ * @param vertex Selected vertex index.
+ */
 extern void stl_write_vertex(stl_file *stl, int facet, int vertex);
+
+/**
+ * @brief Print a selected facet with all three vertices to stdout.
+ * 
+ * @param stl Data to get a facet from.
+ * @param label A text to print after "facet".
+ * @param facet Selected facet index.
+ */
 extern void stl_write_facet(stl_file *stl, char *label, int facet);
+
+/**
+ * @brief Print a selected facet's edge to the stdout.
+ * 
+ * @param stl Data to get an edge from.
+ * @param label A text to print after "edge".
+ * @param edge A selected edge to print.
+ */
 extern void stl_write_edge(stl_file *stl, char *label, stl_hash_edge edge);
+
+/**
+ * @brief Print a facet's neighbors to the stdout.
+ * 
+ * @param stl A data to get a facet from.
+ * @param facet Selected facet index.
+ */
 extern void stl_write_neighbor(stl_file *stl, int facet);
+
+// TODO
 extern void stl_write_quad_object(stl_file *stl, char *file);
+
 extern void stl_verify_neighbors(stl_file *stl);
 extern void stl_fill_holes(stl_file *stl);
 extern void stl_fix_normal_directions(stl_file *stl);

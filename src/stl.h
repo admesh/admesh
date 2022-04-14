@@ -287,7 +287,7 @@ extern void stl_write_edge(stl_file *stl, char *label, stl_hash_edge edge);
 /**
  * @brief Print a facet's neighbors to the stdout.
  * 
- * @param stl A data to get a facet from.
+ * @param stl Data to get a facet from.
  * @param facet Selected facet index.
  */
 extern void stl_write_neighbor(stl_file *stl, int facet);
@@ -295,32 +295,225 @@ extern void stl_write_neighbor(stl_file *stl, int facet);
 // TODO
 extern void stl_write_quad_object(stl_file *stl, char *file);
 
+/**
+ * @brief Check each facet for its neighbors. There should be 3 for every facet.
+ * 
+ * @param stl Data to check facets in.
+ */
 extern void stl_verify_neighbors(stl_file *stl);
+
+/**
+ * @brief Try to fill all holes in the mesh by adding facets.
+ * @warning The result may not be what do you expect - admesh doesn't know what the result should look like.
+ * @param stl Mesh to fill holes in.
+ */
 extern void stl_fill_holes(stl_file *stl);
+
+/**
+ * @brief Fix inverted normals - normal should point outwards from solid.
+ * @param stl Mesh in which to fix normals.
+ */
 extern void stl_fix_normal_directions(stl_file *stl);
+
+/**
+ * @brief Verify normals values and directions by calculating the value from coordinates using the right-hand rule.
+ * 
+ * @param stl Mesh to fix normals in.
+ */
 extern void stl_fix_normal_values(stl_file *stl);
+
+/**
+ * @brief Reverse all facets - coords, neighbors and normals appropriately.
+ * 
+ * @param stl Mesh to reverse facets in.
+ */
 extern void stl_reverse_all_facets(stl_file *stl);
+
+/**
+ * @brief Translate the mesh absolutely to the specified coordinates - modifies all facets and max and min values.
+ * 
+ * @param stl Mesh to translate.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ */
 extern void stl_translate(stl_file *stl, float x, float y, float z);
+
+/**
+ * @brief Translate a mesh relatively.x_off
+ * Adds specified XYZ to the vertices and max/min values.
+ * @param stl Mesh to translate.
+ * @param x X offset.
+ * @param y Y offset.
+ * @param z Z offset.
+ */
 extern void stl_translate_relative(stl_file *stl, float x, float y, float z);
+
+/**
+ * @brief Stretch the STL, i.e. move a point by a relative XYZ offset if it fits within a given bounding box.
+ * 
+ * @param stl   Mesh to stretch.
+ * @param x_min Bounding box first X coord.
+ * @param x_max Bounding box second X coord.
+ * @param x_off Relative X offset.
+ * @param y_min Bounding box first Y coord.
+ * @param y_max Bounding box second Y coord.
+ * @param y_off Relative Y offset.
+ * @param z_min Bounding box first Z coord.
+ * @param z_max Bounding box second Z coord.
+ * @param z_off Relative Z offset.
+ */
 extern void stl_stretch(stl_file *stl, float x_min, float x_max, float x_off, float y_min, float y_max, float y_off, float z_min, float z_max, float z_off);
+
+/**
+ * @brief Scale the mesh using a versor.
+ * 
+ * @param stl     Mesh to scale.
+ * @param versor  Scaling versor.
+ */
 extern void stl_scale_versor(stl_file *stl, float versor[3]);
+
+/**
+ * @brief Scale the mesh using a single factor.
+ * Converts the factor to a versor and applies stl_scale_versor.
+ * @param stl     Mesh to scale.
+ * @param factor  Scaling factor.
+ */
 extern void stl_scale(stl_file *stl, float factor);
+
+/**
+ * @brief Rotate the mesh around the X axis by a specified angle in degrees.
+ * 
+ * @param stl   Mesh to rotate.
+ * @param angle Angle in degrees.
+ */
 extern void stl_rotate_x(stl_file *stl, float angle);
+
+/**
+ * @brief Rotate the mesh around the Y axis by a specified angle in degrees.
+ * 
+ * @param stl   Mesh to rotate.
+ * @param angle Angle in degrees.
+ */
 extern void stl_rotate_y(stl_file *stl, float angle);
+
+/**
+ * @brief Rotate the mesh around the Z axis by a specified angle in degrees.
+ * 
+ * @param stl   Mesh to rotate.
+ * @param angle Angle in degrees.
+ */
 extern void stl_rotate_z(stl_file *stl, float angle);
+
+/**
+ * @brief Mirror the mesh about the XY plane.
+ * The signs of all of the Z coordinates in the mesh are reversed.
+ * @param stl Mesh to mirror.
+ */
 extern void stl_mirror_xy(stl_file *stl);
+
+/**
+ * @brief Mirror the mesh about the YZ plane.
+ * The signs of all of the X coordinates in the mesh are reversed.
+ * @param stl Mesh to mirror.
+ */
 extern void stl_mirror_yz(stl_file *stl);
+
+/**
+ * @brief Mirror the mesh about the XZ plane.
+ * The signs of all of the Y coordinates in the mesh are reversed.
+ * @param stl Mesh to mirror.
+ */
 extern void stl_mirror_xz(stl_file *stl);
+
+/**
+ * @brief Merge the mesh with a file at the location specified.
+ * No translation is done, so if, for example, a file was merged with itself,
+ * the resulting file would end up with two meshes exactly the same,
+ * occupying exactly the same space. So generally, translations need to be done to the files 
+ * to be merged so that when the two meshes are merged into one,
+ * the two resulting parts are properly spaced.
+ * If you know the nature of the parts to be merged, it is possible to “nest” one part inside the other.
+ * Note, however, that no warnings will be given if one part intersects with the other.
+ * @param stl  Mesh to which merge the file.
+ * @param file A location of the file to merge.
+ */
 extern void stl_open_merge(stl_file *stl, char *file);
+
+/**
+ * @brief Free v_indices and v_shared members of the STL struct.
+ * 
+ * @param stl STL to invalidate vertices in.
+ */
 extern void stl_invalidate_shared_vertices(stl_file *stl);
+
+/**
+ * @brief Find shared vertices and populate v_indices and v_shared accordingly.
+ * 
+ * @param stl STL to generate shared vertices in.
+ */
 extern void stl_generate_shared_vertices(stl_file *stl);
+
+/**
+ * @brief Output mesh data to a file in the OBJ format.
+ * 
+ * @param stl   Data to write.
+ * @param file  Location of the output file including filename.
+ */
 extern void stl_write_obj(stl_file *stl, char *file);
+
+/**
+ * @brief Output mesh data to a file in the Geomview OFF format.
+ * 
+ * @param stl  Data to write.
+ * @param file Location of the output file including filename.
+ */
 extern void stl_write_off(stl_file *stl, char *file);
+
+/**
+ * @brief Output mesh data to a file in the DXF format.
+ * 
+ * @param stl   Data to write.
+ * @param file  Location of the output file including filename.
+ * @param label Label to write to the file.
+ */
 extern void stl_write_dxf(stl_file *stl, char *file, char *label);
+
+/**
+ * @brief Output mesh data to a file in the VRML format.
+ * 
+ * @param stl   Data to write.
+ * @param file  Location of the output file including filename.
+ */
 extern void stl_write_vrml(stl_file *stl, char *file);
+
+/**
+ * @brief Calculate a normal vector from the facet vertices.
+ * 
+ * @param[out]  normal Output vector.
+ * @param       facet  Facet to calculate the normal from.
+ */
 extern void stl_calculate_normal(float normal[], stl_facet *facet);
+
+/**
+ * @brief Normalize a specified vector.
+ * 
+ * @param[inout] v Vector to normalize.
+ */
 extern void stl_normalize_vector(float v[]);
+
+/**
+ * @brief Calculate a volume of the mesh using get_volume() and save it to the stats.volume.
+ * 
+ * @param stl Mesh to calculate a volume of.
+ */
 extern void stl_calculate_volume(stl_file *stl);
+
+/**
+ * @brief Calculate a surface area of the mesh using get_surface_area() and save it to the stats.surface_area.
+ * 
+ * @param stl Mesh to calculate a surface area of.
+ */
 extern void stl_calculate_surface_area(stl_file *stl);
 
 extern void stl_repair(stl_file *stl, int fixall_flag, int exact_flag, int tolerance_flag, float tolerance, int increment_flag, float increment, int nearby_flag, int iterations, int remove_unconnected_flag, int fill_holes_flag, int normal_directions_flag, int normal_values_flag, int reverse_all_flag, int verbose_flag);

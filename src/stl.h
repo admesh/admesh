@@ -193,8 +193,9 @@ extern void stl_reallocate(stl_file *stl);
 extern void stl_add_facet(stl_file *stl, stl_facet *new_facet);
 extern void stl_get_size(stl_file *stl);
 
+extern int  stl_check_results(stl_file *stl, int reverse_all_flag);
 extern void stl_clear_error(stl_file *stl);
-extern int stl_get_error(stl_file *stl);
+extern int  stl_get_error(stl_file *stl);
 extern void stl_exit_on_error(stl_file *stl);
 
 #ifdef __cplusplus

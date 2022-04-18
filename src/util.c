@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 
 #include "stl.h"
 
@@ -638,5 +639,15 @@ void stl_write_error_message(stl_file *stl, const char *msg){
 
   if(stl->error_buffer != NULL)
     free(stl->error_buffer);
-  stl->error_buffer = strdup(msg);
+
+  // Check for library errors and append additional error message if available.
+  if(errno != 0) {
+    const char *delimiter = ", ";
+    stl->error_buffer = (char*)calloc(strlen(msg) + strlen(strerror(errno)) + strlen(delimiter) + 1, sizeof(char));
+    strcpy(stl->error_buffer, msg);
+    strcat(stl->error_buffer, delimiter);
+    strcat(stl->error_buffer, strerror(errno));
+  } else {
+    stl->error_buffer = strdup(msg);
+  }
 }

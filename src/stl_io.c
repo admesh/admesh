@@ -468,7 +468,7 @@ void
 stl_exit_on_error(stl_file *stl) {
   if (!stl->error) return;
   stl->error = 0;
-  // Simulate a perror call - print an error string to stderr followed by a newline.
+  /* Simulate a perror call - print an error string to stderr followed by a newline. */
   fputs(stl->error_buffer, stderr);
   fputc('\n', stderr);
   stl_close(stl);

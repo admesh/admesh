@@ -99,39 +99,39 @@ typedef struct {
  * Some of them are populated on stl_open() and after some operations,
  * others, such as volume, have to be calculated by appropriate functions. */
 typedef struct {
-  char          header[81];              /**< header of the STL file */
-  stl_type      type;                    /**< type of the STL file */
-  int           number_of_facets;        /**< total number of facets */
-  stl_vertex    max;                     /**< maximal dimensions of the mesh */
-  stl_vertex    min;                     /**< minimal dimensions of the mesh */
-  stl_vertex    size;                    /**< size of the bounding box */
-  float         bounding_diameter;       /**< diameter of the bounding box */
-  float         shortest_edge;           /**< length of the shortest edge */
-  float         volume;                  /**< volume of the mesh, has to be calculated by stl_calculate_volume() */
-  unsigned      number_of_blocks;        /**< should be number of blocks, but is never set */
+  char          header[81];              ///< header of the STL file
+  stl_type      type;                    ///< type of the STL file
+  int           number_of_facets;        ///< total number of facets
+  stl_vertex    max;                     ///< maximal dimensions of the mesh
+  stl_vertex    min;                     ///< minimal dimensions of the mesh
+  stl_vertex    size;                    ///< size of the bounding box
+  float         bounding_diameter;       ///< diameter of the bounding box
+  float         shortest_edge;           ///< length of the shortest edge
+  float         volume;                  ///< volume of the mesh, has to be calculated by stl_calculate_volume()
+  unsigned      number_of_blocks;        ///< should be number of blocks, but is never set
   float         surface_area;
-  int           connected_edges;         /**< how many edges have been connected by ADMesh */
-  int           connected_facets_1_edge; /**< how many facets are connected by at least 1 edge, get's calculated during stl_check_facets_nearby() */
-  int           connected_facets_2_edge; /**< how many facets are connected by at least 2 edges, get's calculated during stl_check_facets_nearby() */
-  int           connected_facets_3_edge; /**< how many facets are connected by all 3 edges, get's calculated during stl_check_facets_nearby() */
-  int           facets_w_1_bad_edge;     /**< how many facets have exactly 1 unconnected edge, get's calculated during stl_repair() */
-  int           facets_w_2_bad_edge;     /**< how many facets have exactly 2 unconnected edges, get's calculated during stl_repair() */
-  int           facets_w_3_bad_edge;     /**< how many facets have exactly 3 unconnected edges, get's calculated during stl_repair() */
-  int           original_num_facets;     /**< original number of facets when the file was loaded */
-  int           edges_fixed;             /**< how many edges were fixed by ADMesh */
-  int           degenerate_facets;       /**< number of removed degenerate facets */
-  int           facets_removed;          /**< number of removed degenerate facets */
-  int           facets_added;            /**< number of facets removed by stl_remove_unconnected_facets() */
-  int           facets_reversed;         /**< number of facets reversed by stl_fix_normal_directions() */
-  int           backwards_edges;         /**< number of edges that are backwards counted during stl_verify_neighbors() */
-  int           normals_fixed;           /**< number of normals fixed during stl_fix_normal_values() */
-  int           number_of_parts;         /**< number of parts (distinguished shells), calculated during stl_fix_normal_directions() */
-  int           malloced;                /**< how many edges have been malloced during stl_check_facets_nearby() */
-  int           freed;                   /**< how many edges have been freed during stl_check_facets_nearby() */
-  int           facets_malloced;         /**< how many facets have been malloced */
-  int           collisions;              /**< internal collision counter for stl_check_facets_nearby() */
-  int           shared_vertices;         /**< number of shared vertices, populated by stl_generate_shared_vertices() */
-  int           shared_malloced;         /**< how many shared vertices have been malloced by stl_generate_shared_vertices() */
+  int           connected_edges;         ///< how many edges have been connected by ADMesh
+  int           connected_facets_1_edge; ///< how many facets are connected by at least 1 edge, get's calculated during stl_check_facets_nearby()
+  int           connected_facets_2_edge; ///< how many facets are connected by at least 2 edges, get's calculated during stl_check_facets_nearby()
+  int           connected_facets_3_edge; ///< how many facets are connected by all 3 edges, get's calculated during stl_check_facets_nearby()
+  int           facets_w_1_bad_edge;     ///< how many facets have exactly 1 unconnected edge, get's calculated during stl_repair()
+  int           facets_w_2_bad_edge;     ///< how many facets have exactly 2 unconnected edges, get's calculated during stl_repair()
+  int           facets_w_3_bad_edge;     ///< how many facets have exactly 3 unconnected edges, get's calculated during stl_repair()
+  int           original_num_facets;     ///< original number of facets when the file was loaded
+  int           edges_fixed;             ///< how many edges were fixed by ADMesh
+  int           degenerate_facets;       ///< number of removed degenerate facets
+  int           facets_removed;          ///< number of removed degenerate facets
+  int           facets_added;            ///< number of facets removed by stl_remove_unconnected_facets()
+  int           facets_reversed;         ///< number of facets reversed by stl_fix_normal_directions()
+  int           backwards_edges;         ///< number of edges that are backwards counted during stl_verify_neighbors()
+  int           normals_fixed;           ///< number of normals fixed during stl_fix_normal_values()
+  int           number_of_parts;         ///< number of parts (distinguished shells), calculated during stl_fix_normal_directions()
+  int           malloced;                ///< how many edges have been malloced during stl_check_facets_nearby()
+  int           freed;                   ///< how many edges have been freed during stl_check_facets_nearby()
+  int           facets_malloced;         ///< how many facets have been malloced
+  int           collisions;              ///< internal collision counter for stl_check_facets_nearby()
+  int           shared_vertices;         ///< number of shared vertices, populated by stl_generate_shared_vertices()
+  int           shared_malloced;         ///< how many shared vertices have been malloced by stl_generate_shared_vertices()
 } stl_stats;
 
 /** STL file.
@@ -151,28 +151,38 @@ typedef struct {
   char          error;            /**< error flag, when something went wrong, this is not 0 */
 } stl_file;
 
-/** Open an STL file and load it's contents.
- * \warning As IO operation, this could result in an error,
+/** 
+ * @brief Open an STL file and load it's contents.
+ * 
+ * @warning As IO operation, this could result in an error,
  * always check the error flag with stl_get_error() or use stl_exit_on_error() after using stl_open()
- * \param stl The struct to load the file data to
- * \param file Path to the STL file */
+ * @param stl The struct to load the file data to
+ * @param file Path to the STL file *
+ */
 extern void stl_open(stl_file *stl, char *file);
 
-/** Perform cleanup on \ref stl_file.
+/**
+ * @brief Perform cleanup on \ref stl_file.
+ * 
  * This function frees memory, always use it, when you no longer needs the stl_file instance
- * \param stl What to close */
+ * @param stl What to close 
+ */
 extern void stl_close(stl_file *stl);
 
-/** Print statistics in human readable form to some file.
- * \param stl Where to obtain the statisctics
- * \param file Where to print the statisctics to (can be stdout)
- * \param input_file What filename to use in the human readable output */
+/**
+ * @brief Print statistics in human readable form to some file.
+ * 
+ * @param stl Where to obtain the statisctics
+ * @param file Where to print the statisctics to (can be stdout)
+ * @param input_file What filename to use in the human readable output */
 extern void stl_stats_out(stl_file *stl, FILE *file, char *input_file);
 
-/** Print edges to some file.
- * \warning This prints from edge_start array, that is never populated and thus this will never actually work
- * \param stl From what data
- * \param file Where to print the edges to (can be stdout) */
+/** 
+ * @brief Print edges to some file.
+ * 
+ * @warning This prints from edge_start array, that is never populated and thus this will never actually work
+ * @param stl From what data
+ * @param file Where to print the edges to (can be stdout) */
 extern void stl_print_edges(stl_file *stl, FILE *file);
 
 /**

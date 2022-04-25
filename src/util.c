@@ -642,7 +642,7 @@ void stl_write_error_message(stl_file *stl, const char *msg){
 
   // Check for library errors and append additional error message if available.
   if(errno != 0) {
-    const char *delimiter = ", ";
+    const char *delimiter = ": ";
     stl->error_buffer = (char*)calloc(strlen(msg) + strlen(strerror(errno)) + strlen(delimiter) + 1, sizeof(char));
     strcpy(stl->error_buffer, msg);
     strcat(stl->error_buffer, delimiter);

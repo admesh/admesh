@@ -456,7 +456,9 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
   }
 
   stl_stats_out(&stl_in, stdout, input_file);
-  if(fail_if_invalid_flag && stl_check_results(&stl_in, reverse_all_flag))
+  /* Calculate a number of facets that should be reversed to validate in stl_was_invalid.*/
+  int facets_reversed = (reverse_all_flag) ? stl_in.stats.number_of_facets : 0;
+  if(fail_if_invalid_flag && stl_was_invalid(&stl_in, facets_reversed))
     ret = 1;
   stl_close(&stl_in);
 
@@ -499,6 +501,7 @@ usage(int status, char *program_name) {
     printf("     --reverse-all        Reverse the directions of all facets and normals\n");
     printf(" -v, --normal-values      Check and fix normal values\n");
     printf(" -c, --no-check           Don't do any check on input file\n");
+    printf("     --fail-if-invalid    Return non-zero if the input STL was invalid\n");
     printf(" -b, --write-binary-stl=name   Output a binary STL file called name\n");
     printf(" -a, --write-ascii-stl=name    Output an ascii STL file called name\n");
     printf("     --write-off=name     Output a Geomview OFF format file called name\n");

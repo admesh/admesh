@@ -138,17 +138,17 @@ typedef struct {
  * The main structure representing the mesh.
  * All functions take reference to this as a first argument. */
 typedef struct {
-  FILE          *fp;              /**< pointer to associated file */
-  stl_facet     *facet_start;     /**< array of facets */
-  stl_edge      *edge_start;      /**< array of edges (never populated) */
-  stl_hash_edge **heads;          /**< head of linked list of edges, used internally by some repairs */
-  stl_hash_edge *tail;            /**< tail of linked list of edges, used internally by some repairs */
-  int           M;                /**< magic variable, used internally by some repairs */
-  stl_neighbors *neighbors_start; /**< array of neighbors populated by various repairs  */
-  v_indices_struct *v_indices;    /**< internal array used by stl_generate_shared_vertices() */
-  stl_vertex    *v_shared;        /**< vertices array used by stl_generate_shared_vertices() */
-  stl_stats     stats;            /**< statistics about the mesh */
-  char          error;            /**< error flag, when something went wrong, this is not 0 */
+  FILE          *fp;              ///< pointer to associated file
+  stl_facet     *facet_start;     ///< array of facets
+  stl_edge      *edge_start;      ///< array of edges (never populated)
+  stl_hash_edge **heads;          ///< head of linked list of edges, used internally by some repairs
+  stl_hash_edge *tail;            ///< tail of linked list of edges, used internally by some repairs
+  int           M;                ///< magic variable, used internally by some repairs
+  stl_neighbors *neighbors_start; ///< array of neighbors populated by various repairs
+  v_indices_struct *v_indices;    ///< internal array used by stl_generate_shared_vertices()
+  stl_vertex    *v_shared;        ///< vertices array used by stl_generate_shared_vertices()
+  stl_stats     stats;            ///< statistics about the mesh
+  char          error;            ///< error flag, when something went wrong, this is not 0
 } stl_file;
 
 /** 
@@ -156,8 +156,8 @@ typedef struct {
  * 
  * @warning As IO operation, this could result in an error,
  * always check the error flag with stl_get_error() or use stl_exit_on_error() after using stl_open()
- * @param stl The struct to load the file data to
- * @param file Path to the STL file *
+ * @param stl   The struct to load the file data to
+ * @param file  Path to the STL file *
  */
 extern void stl_open(stl_file *stl, char *file);
 
@@ -172,23 +172,23 @@ extern void stl_close(stl_file *stl);
 /**
  * @brief Print statistics in human readable form to some file.
  * 
- * @param stl Where to obtain the statisctics
- * @param file Where to print the statisctics to (can be stdout)
- * @param input_file What filename to use in the human readable output */
+ * @param stl         Where to obtain the statisctics
+ * @param file        Where to print the statisctics to (can be stdout)
+ * @param input_file  What filename to use in the human readable output */
 extern void stl_stats_out(stl_file *stl, FILE *file, char *input_file);
 
 /** 
  * @brief Print edges to some file.
  * 
  * @warning This prints from edge_start array, that is never populated and thus this will never actually work
- * @param stl From what data
- * @param file Where to print the edges to (can be stdout) */
+ * @param stl   From what data
+ * @param file  Where to print the edges to (can be stdout) */
 extern void stl_print_edges(stl_file *stl, FILE *file);
 
 /**
  * @brief Print neighbor list to the specified file.
  * 
- * @param stl Source STL.
+ * @param stl  Source STL.
  * @param file Target file to print to.
  */
 extern void stl_print_neighbors(stl_file *stl, char *file);
@@ -196,24 +196,24 @@ extern void stl_print_neighbors(stl_file *stl, char *file);
 /**
  * @brief Store a integer value to a specified file in a little-endian format.
  * 
- * @param fp Target file.
- * @param value_in A value to write.
+ * @param fp        Target file.
+ * @param value_in  A value to write.
  */
 extern void stl_put_little_int(FILE *fp, int value_in);
 
 /**
  * @brief Store a float value to a specified file in a little-endian format.
  * 
- * @param fp Target file.
- * @param value_in A value to write.
+ * @param fp        Target file.
+ * @param value_in  A value to write.
  */
 extern void stl_put_little_float(FILE *fp, float value_in);
 
 /**
  * @brief Write STL data to the STL file in the ASCII format.
  * 
- * @param stl Data to write to a file.
- * @param file Target file location.
+ * @param stl   Data to write to a file.
+ * @param file  Target file location.
  * @param label A label to use in the file. (Name of the solid.)
  */
 extern void stl_write_ascii(stl_file *stl, const char *file, const char *label);
@@ -221,8 +221,8 @@ extern void stl_write_ascii(stl_file *stl, const char *file, const char *label);
 /**
  * @brief Write STL data to the STL file in the binary format.
  * 
- * @param stl Data to write to a file.
- * @param file Target file location.
+ * @param stl   Data to write to a file.
+ * @param file  Target file location.
  * @param label A label to use in the file. (Name of the solid.)
  */
 extern void stl_write_binary(stl_file *stl, const char *file, const char *label);
@@ -231,7 +231,7 @@ extern void stl_write_binary(stl_file *stl, const char *file, const char *label)
  * @brief Write STL facets to a file. Used internally by @ref stl_write_binary.
  * 
  * @param stl Data from which to extract facets.
- * @param fp Target file.
+ * @param fp  Target file.
  */
 extern void stl_write_binary_block(stl_file *stl, FILE *fp);
 
@@ -249,7 +249,7 @@ extern void stl_check_facets_exact(stl_file *stl);
 /**
  * @brief Check nearby facets available for connection within a distance specified by tolerance.
  * 
- * @param stl Data to work with.
+ * @param stl       Data to work with.
  * @param tolerance Distance that is searched for the neighboring facet.
  */
 extern void stl_check_facets_nearby(stl_file *stl, float tolerance);
@@ -270,16 +270,16 @@ extern void stl_remove_unconnected_facets(stl_file *stl);
 /**
  * @brief Print a specified vertex of a selected facet to stdout.
  * 
- * @param stl Data to get a facet from.
- * @param facet Selected facet index.
- * @param vertex Selected vertex index.
+ * @param stl     Data to get a facet from.
+ * @param facet   Selected facet index.
+ * @param vertex  Selected vertex index.
  */
 extern void stl_write_vertex(stl_file *stl, int facet, int vertex);
 
 /**
  * @brief Print a selected facet with all three vertices to stdout.
  * 
- * @param stl Data to get a facet from.
+ * @param stl   Data to get a facet from.
  * @param label A text to print after "facet".
  * @param facet Selected facet index.
  */
@@ -288,16 +288,16 @@ extern void stl_write_facet(stl_file *stl, char *label, int facet);
 /**
  * @brief Print a selected facet's edge to the stdout.
  * 
- * @param stl Data to get an edge from.
+ * @param stl   Data to get an edge from.
  * @param label A text to print after "edge".
- * @param edge A selected edge to print.
+ * @param edge  A selected edge to print.
  */
 extern void stl_write_edge(stl_file *stl, char *label, stl_hash_edge edge);
 
 /**
  * @brief Print a facet's neighbors to the stdout.
  * 
- * @param stl Data to get a facet from.
+ * @param stl   Data to get a facet from.
  * @param facet Selected facet index.
  */
 extern void stl_write_neighbor(stl_file *stl, int facet);
@@ -555,21 +555,83 @@ extern void stl_repair(stl_file *stl, int fixall_flag, int exact_flag, int toler
 extern void stl_initialize(stl_file *stl);
 
 /**
- * @brief Count facets in the mesh.
+ * @brief Read a STL file and count facets in the mesh.
  * 
- * @param stl 
- * @param file 
+ * @param stl   Struct to load count to.
+ * @param file  Input STL file.
  */
 extern void stl_count_facets(stl_file *stl, char *file);
+
+/**
+ * @brief Allocate STL data structures.
+ * 
+ * @param stl Struct to allocate memory in.
+ */
 extern void stl_allocate(stl_file *stl);
+
+/**
+ * @brief Read a file to the STL structure.
+ * Reads the contents of the file pointed to by stl->fp into the stl structure,
+ * starting at facet first_facet. The second argument says if it's our first
+ * time running this for the stl and therefore we should reset our max and min stats.
+ * @param stl         Struct to load data to.
+ * @param first_facet Starting facet index.
+ * @param first       Non-zero = reset STL max/min stats.
+ */
 extern void stl_read(stl_file *stl, int first_facet, int first);
+
+/**
+ * @brief Update STL stats using a specified facet.
+ * If the `first` parameter is non-zero, the stats won't be compared
+ * using MAX/MIN functions, they will be overwritten (used for initialization).
+ * @param stl   STL struct to use.
+ * @param facet Facet to update stats with.
+ * @param first Non-zero = overwrite (reset/init) max/min stats.
+ */
 extern void stl_facet_stats(stl_file *stl, stl_facet facet, int first);
+
+/**
+ * @brief Allocate more memory for the facets and neighbors.
+ * @param stl STL struct where the arrays will be reallocated.
+ */
 extern void stl_reallocate(stl_file *stl);
+
+/**
+ * @brief Add a facet to the STL. Realloc internal structures if more memory needed.
+ * @note Normal vector is not set, just initialized to 0.
+ * 
+ * @param stl       Source STL struct.
+ * @param new_facet New facet to add.
+ */
 extern void stl_add_facet(stl_file *stl, stl_facet *new_facet);
+
+/**
+ * @brief Calculate a mesh size and store to the stats.
+ * 
+ * @param stl Source STL struct.
+ */
 extern void stl_get_size(stl_file *stl);
 
+/**
+ * @brief Clear a STL struct error code;
+ * 
+ * @param stl Source STL struct.
+ */
 extern void stl_clear_error(stl_file *stl);
+
+/**
+ * @brief Get a STL struct error code.
+ * 
+ * @param stl   Source STL struct.
+ * @return int  Error code.
+ */
 extern int stl_get_error(stl_file *stl);
+
+/**
+ * @brief Exit if the error code is set in the provided STL struct.
+ * 
+ * @param stl Source STL struct.
+ */
 extern void stl_exit_on_error(stl_file *stl);
 
 #ifdef __cplusplus

@@ -30,3 +30,5 @@ stamp-h1
 compat_reports
 AUTHORS
 ChangeLog
+build/
+.vscode/

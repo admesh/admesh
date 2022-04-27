@@ -248,10 +248,6 @@ stl_reallocate(stl_file *stl) {
   if(stl->facet_start == NULL) perror("stl_initialize");
 }
 
-
-/* Reads the contents of the file pointed to by stl->fp into the stl structure,
-   starting at facet first_facet.  The second argument says if it's our first
-   time running this for the stl and therefore we should reset our max and min stats. */
 void
 stl_read(stl_file *stl, int first_facet, int first) {
   stl_facet facet;

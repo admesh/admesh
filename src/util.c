@@ -122,7 +122,6 @@ stl_translate_relative(stl_file *stl, float x, float y, float z) {
   stl_invalidate_shared_vertices(stl);
 }
 
-/* stretch the STL, i.e. move a point by a relative XYZ offset if it fits within a given bounding box */
 void
 stl_stretch(stl_file *stl, float x_min, float x_max, float x_off, float y_min, float y_max, float y_off, float z_min, float z_max, float z_off) {
   int i;

@@ -36,7 +36,7 @@
 #endif
 
 void
-stl_open(stl_file *stl, char *file) {
+stl_open(stl_file *stl, const char *file) {
   stl_initialize(stl);
   stl_count_facets(stl, file);
   stl_allocate(stl);
@@ -69,7 +69,7 @@ stl_initialize(stl_file *stl) {
 }
 
 void
-stl_count_facets(stl_file *stl, char *file) {
+stl_count_facets(stl_file *stl, const char *file) {
   long           file_size;
   uint32_t       header_num_facets;
   int            num_facets;
@@ -187,7 +187,7 @@ stl_allocate(stl_file *stl) {
 }
 
 void
-stl_open_merge(stl_file *stl, char *file_to_merge) {
+stl_open_merge(stl_file *stl, const char *file_to_merge) {
   int num_facets_so_far;
   stl_type origStlType;
   FILE *origFp;

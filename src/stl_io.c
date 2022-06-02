@@ -49,7 +49,7 @@ stl_print_edges(stl_file *stl, FILE *file) {
 
 
 void
-stl_stats_out(stl_file *stl, FILE *file, char *input_file) {
+stl_stats_out(stl_file *stl, FILE *file, const char *input_file) {
   if (stl->error) return;
 
   /* this is here for Slic3r, without our config.h
@@ -169,7 +169,7 @@ stl_write_ascii(stl_file *stl, const char *file, const char *label) {
 }
 
 void
-stl_print_neighbors(stl_file *stl, char *file) {
+stl_print_neighbors(stl_file *stl, const char *file) {
   int i;
   FILE *fp;
   char *error_msg;
@@ -302,7 +302,7 @@ stl_write_vertex(stl_file *stl, int facet, int vertex) {
 }
 
 void
-stl_write_facet(stl_file *stl, char *label, int facet) {
+stl_write_facet(stl_file *stl, const char *label, int facet) {
   if (stl->error) return;
   printf("facet (%d)/ %s\n", facet, label);
   stl_write_vertex(stl, facet, 0);
@@ -311,7 +311,7 @@ stl_write_facet(stl_file *stl, char *label, int facet) {
 }
 
 void
-stl_write_edge(stl_file *stl, char *label, stl_hash_edge edge) {
+stl_write_edge(stl_file *stl, const char *label, stl_hash_edge edge) {
   if (stl->error) return;
   printf("edge (%d)/(%d) %s\n", edge.facet_number, edge.which_edge, label);
   if(edge.which_edge < 3) {
@@ -336,7 +336,7 @@ stl_write_neighbor(stl_file *stl, int facet) {
 }
 
 void
-stl_write_quad_object(stl_file *stl, char *file) {
+stl_write_quad_object(stl_file *stl, const char *file) {
   FILE      *fp;
   int       i;
   int       j;
@@ -410,7 +410,7 @@ stl_write_quad_object(stl_file *stl, char *file) {
 }
 
 void
-stl_write_dxf(stl_file *stl, char *file, char *label) {
+stl_write_dxf(stl_file *stl, const char *file, const char *label) {
   int       i;
   FILE      *fp;
   char      *error_msg;

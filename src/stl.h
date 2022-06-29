@@ -302,7 +302,10 @@ extern void stl_write_edge(stl_file *stl, char *label, stl_hash_edge edge);
  */
 extern void stl_write_neighbor(stl_file *stl, int facet);
 
-// TODO
+/**
+ * @brief Unknown.
+ * @deprecated Not used.
+ */
 extern void stl_write_quad_object(stl_file *stl, char *file);
 
 /**

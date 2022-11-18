@@ -114,10 +114,7 @@ stl_fix_normal_directions(stl_file *stl) {
   tail->next = tail;
 
   /* Initialize list that keeps track of already fixed facets. */
-  const size_t number_of_facets = stl->stats.number_of_facets;
-  const size_t number_of_alloc_bytes = number_of_facets*sizeof(char);
-
-  norm_sw = (char*)calloc(number_of_facets, sizeof(char));
+  norm_sw = (char*)calloc(stl->stats.number_of_facets, sizeof(char));
   if(norm_sw == NULL) perror("stl_fix_normal_directions");
 
 
@@ -144,15 +141,15 @@ stl_fix_normal_directions(stl_file *stl) {
           (stl, stl->neighbors_start[facet_num].neighbor[j]);
         }
       }
-      const size_t neighbor_index = stl->neighbors_start[facet_num].neighbor[j];
       /* If this edge of the facet is connected: */
-      if(neighbor_index != -1 && neighbor_index < number_of_alloc_bytes) {
+      if(stl->neighbors_start[facet_num].neighbor[j] != -1 &&
+         stl->neighbors_start[facet_num].neighbor[j] < stl->stats.number_of_facets*sizeof(char)) {
         /* If we haven't fixed this facet yet, add it to the list: */
-        if(norm_sw[neighbor_index] != 1) {
+        if(norm_sw[stl->neighbors_start[facet_num].neighbor[j]] != 1) {
           /* Add node to beginning of list. */
           newn = (struct stl_normal*)malloc(sizeof(struct stl_normal));
           if(newn == NULL) perror("stl_fix_normal_directions");
-          newn->facet_num = neighbor_index;
+          newn->facet_num = stl->neighbors_start[facet_num].neighbor[j];
           newn->next = head->next;
           head->next = newn;
         }

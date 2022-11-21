@@ -143,7 +143,7 @@ stl_fix_normal_directions(stl_file *stl) {
       }
       /* If this edge of the facet is connected: */
       if(stl->neighbors_start[facet_num].neighbor[j] != -1 &&
-         stl->neighbors_start[facet_num].neighbor[j] < stl->stats.number_of_facets*sizeof(char)) {
+         stl->neighbors_start[facet_num].neighbor[j] < stl->stats.number_of_facets*(int)sizeof(char)) {
         /* If we haven't fixed this facet yet, add it to the list: */
         if(norm_sw[stl->neighbors_start[facet_num].neighbor[j]] != 1) {
           /* Add node to beginning of list. */

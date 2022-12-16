@@ -260,6 +260,7 @@ stl_read(stl_file *stl, int first_facet, int first) {
   float *facet_floats[12];
   char facet_buffer[12 * sizeof(float)];
   uint32_t endianswap_buffer;  /* for byteswapping operations */
+  int  read_count;  /* for checking file read result */
 
   facet.extra[0] = 0;
   facet.extra[1] = 0;
@@ -291,8 +292,10 @@ stl_read(stl_file *stl, int first_facet, int first) {
     if(stl->stats.type == binary)
       /* Read a single facet from a binary .STL file */
     {
-      if(fread(facet_buffer, sizeof(facet_buffer), 1, stl->fp)
-         + fread(&facet.extra, sizeof(char), 2, stl->fp) != 3) {
+      read_count  = fread(facet_buffer, sizeof(facet_buffer), 1, stl->fp);
+      read_count += fread(&facet.extra, sizeof(char), 2, stl->fp);
+
+      if(read_count != 3) {
         perror("Cannot read facet");
         stl->error = 1;
         return;
@@ -307,13 +310,15 @@ stl_read(stl_file *stl, int first_facet, int first) {
     } else
       /* Read a single facet from an ASCII .STL file */
     {
-      if((fscanf(stl->fp, "%*s %*s %f %f %f\n", &facet.normal.x, &facet.normal.y, &facet.normal.z) + \
-          fscanf(stl->fp, "%*s %*s") + \
-          fscanf(stl->fp, "%*s %f %f %f\n", &facet.vertex[0].x, &facet.vertex[0].y,  &facet.vertex[0].z) + \
-          fscanf(stl->fp, "%*s %f %f %f\n", &facet.vertex[1].x, &facet.vertex[1].y,  &facet.vertex[1].z) + \
-          fscanf(stl->fp, "%*s %f %f %f\n", &facet.vertex[2].x, &facet.vertex[2].y,  &facet.vertex[2].z) + \
-          fscanf(stl->fp, "%*s") + \
-          fscanf(stl->fp, "%*s")) != 12) {
+      read_count  = fscanf(stl->fp, "%*s %*s %f %f %f\n", &facet.normal.x, &facet.normal.y, &facet.normal.z);
+      read_count += fscanf(stl->fp, "%*s %*s");
+      read_count += fscanf(stl->fp, "%*s %f %f %f\n", &facet.vertex[0].x, &facet.vertex[0].y,  &facet.vertex[0].z);
+      read_count += fscanf(stl->fp, "%*s %f %f %f\n", &facet.vertex[1].x, &facet.vertex[1].y,  &facet.vertex[1].z);
+      read_count += fscanf(stl->fp, "%*s %f %f %f\n", &facet.vertex[2].x, &facet.vertex[2].y,  &facet.vertex[2].z);
+      read_count += fscanf(stl->fp, "%*s");
+      read_count += fscanf(stl->fp, "%*s");
+
+      if(read_count != 12) {
         perror("Something is syntactically very wrong with this ASCII STL!");
         stl->error = 1;
         return;

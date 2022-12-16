@@ -260,6 +260,7 @@ stl_read(stl_file *stl, int first_facet, int first) {
   float *facet_floats[12];
   char facet_buffer[12 * sizeof(float)];
   uint32_t endianswap_buffer;  /* for byteswapping operations */
+  float read_count = 0;  /* for checking ASCII .stl read result */
 
   facet.extra[0] = 0;
   facet.extra[1] = 0;
@@ -307,7 +308,6 @@ stl_read(stl_file *stl, int first_facet, int first) {
     } else
       /* Read a single facet from an ASCII .STL file */
     {
-      int read_count = 0;
       read_count += fscanf(stl->fp, "%*s %*s %f %f %f\n", &facet.normal.x, &facet.normal.y, &facet.normal.z);
       read_count += fscanf(stl->fp, "%*s %*s");
       read_count += fscanf(stl->fp, "%*s %f %f %f\n", &facet.vertex[0].x, &facet.vertex[0].y,  &facet.vertex[0].z);
@@ -320,6 +320,7 @@ stl_read(stl_file *stl, int first_facet, int first) {
         stl->error = 1;
         return;
       }
+      read_count = 0;
     }
     /* Write the facet into memory. */
     stl->facet_start[i] = facet;

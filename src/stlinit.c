@@ -260,7 +260,7 @@ stl_read(stl_file *stl, int first_facet, int first) {
   float *facet_floats[12];
   char facet_buffer[12 * sizeof(float)];
   uint32_t endianswap_buffer;  /* for byteswapping operations */
-  int  read_count;  /* for checking ASCII .stl read result */
+  int  read_count;  /* for checking file read result */
 
   facet.extra[0] = 0;
   facet.extra[1] = 0;
@@ -292,8 +292,10 @@ stl_read(stl_file *stl, int first_facet, int first) {
     if(stl->stats.type == binary)
       /* Read a single facet from a binary .STL file */
     {
-      if(fread(facet_buffer, sizeof(facet_buffer), 1, stl->fp)
-         + fread(&facet.extra, sizeof(char), 2, stl->fp) != 3) {
+      read_count  = fread(facet_buffer, sizeof(facet_buffer), 1, stl->fp);
+      read_count += fread(&facet.extra, sizeof(char), 2, stl->fp);
+
+      if(read_count != 3) {
         perror("Cannot read facet");
         stl->error = 1;
         return;

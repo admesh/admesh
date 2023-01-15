@@ -69,6 +69,7 @@ main(int argc, char **argv) {
   int      normal_directions_flag = 0;
   int      normal_values_flag = 0;
   int      reverse_all_flag = 0;
+  int      fail_if_invalid_flag = 0;
   int      write_binary_stl_flag = 0;
   int      write_ascii_stl_flag = 0;
   int      generate_shared_vertices_flag = 0;
@@ -98,7 +99,8 @@ main(int argc, char **argv) {
 
   enum {rotate_x = 1000, rotate_y, rotate_z, merge, help, version,
         mirror_xy, mirror_yz, mirror_xz, scale, translate, translate_rel,
-        stretch, reverse_all, off_file, dxf_file, vrml_file, scale_xyz
+        stretch, reverse_all, off_file, dxf_file, vrml_file, scale_xyz,
+        fail_if_invalid
        };
 
   struct option long_options[] = {
@@ -113,6 +115,7 @@ main(int argc, char **argv) {
     {"normal-values",      no_argument,       NULL, 'v'},
     {"no-check",           no_argument,       NULL, 'c'},
     {"reverse-all",        no_argument,       NULL, reverse_all},
+    {"fail-if-invalid",    no_argument,       NULL, fail_if_invalid},
     {"write-binary-stl",   required_argument, NULL, 'b'},
     {"write-ascii-stl",    required_argument, NULL, 'a'},
     {"write-off",          required_argument, NULL, off_file},
@@ -182,6 +185,9 @@ main(int argc, char **argv) {
     case reverse_all:
       reverse_all_flag = 1;
       fixall_flag = 0;
+      break;
+    case fail_if_invalid:
+      fail_if_invalid_flag = 1;
       break;
     case 'b':
       write_binary_stl_flag = 1;
@@ -450,7 +456,10 @@ redistribute it under certain conditions.  See the file COPYING for details.\n")
   }
 
   stl_stats_out(&stl_in, stdout, input_file);
-
+  /* Calculate a number of facets that should be reversed to validate in stl_was_invalid.*/
+  int facets_reversed = (reverse_all_flag) ? stl_in.stats.number_of_facets : 0;
+  if(fail_if_invalid_flag && stl_was_invalid(&stl_in, facets_reversed))
+    ret = 1;
   stl_close(&stl_in);
 
   if (ret)
@@ -492,6 +501,7 @@ usage(int status, char *program_name) {
     printf("     --reverse-all        Reverse the directions of all facets and normals\n");
     printf(" -v, --normal-values      Check and fix normal values\n");
     printf(" -c, --no-check           Don't do any check on input file\n");
+    printf("     --fail-if-invalid    Return non-zero if the input STL was invalid\n");
     printf(" -b, --write-binary-stl=name   Output a binary STL file called name\n");
     printf(" -a, --write-ascii-stl=name    Output an ascii STL file called name\n");
     printf("     --write-off=name     Output a Geomview OFF format file called name\n");

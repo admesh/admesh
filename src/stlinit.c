@@ -61,6 +61,7 @@ stl_initialize(stl_file *stl) {
   stl->stats.facets_malloced = 0;
   stl->stats.volume = -1.0;
   stl->stats.surface_area = -1.0;
+  memset(stl->stats.header, 0, sizeof(stl->stats.header));
 
   stl->neighbors_start = NULL;
   stl->facet_start = NULL;

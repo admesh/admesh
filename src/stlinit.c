@@ -39,6 +39,7 @@ void
 stl_open(stl_file *stl, const char *file) {
   stl_initialize(stl);
   stl_count_facets(stl, file);
+  if (stl->error) return;
   stl_allocate(stl);
   stl_read(stl, 0, 1);
   if (!stl->error) fclose(stl->fp);
@@ -174,16 +175,30 @@ void
 stl_allocate(stl_file *stl) {
   if (stl->error) return;
 
+  if (stl->stats.number_of_facets <= 0) {
+    fprintf(stderr, "stl_allocate: invalid number_of_facets=%d\n", stl->stats.number_of_facets);
+    stl->error = 1;
+    return;
+  }
+
   /*  Allocate memory for the entire .STL file */
   stl->facet_start = (stl_facet*)calloc(stl->stats.number_of_facets,
                                         sizeof(stl_facet));
-  if(stl->facet_start == NULL) perror("stl_initialize");
+  if(stl->facet_start == NULL) {
+    perror("stl_initialize: calloc failed for facet_start");
+    stl->error = 1;
+    return;
+  }
   stl->stats.facets_malloced = stl->stats.number_of_facets;
 
   /* Allocate memory for the neighbors list */
   stl->neighbors_start = (stl_neighbors*)
                          calloc(stl->stats.number_of_facets, sizeof(stl_neighbors));
-  if(stl->neighbors_start == NULL) perror("stl_initialize");
+  if(stl->neighbors_start == NULL) {
+    perror("stl_initialize: calloc failed for neighbors_start");
+    stl->error = 1;
+    return;
+  }
 }
 
 void
@@ -238,14 +253,22 @@ stl_reallocate(stl_file *stl) {
   /*  Reallocate more memory for the .STL file(s) */
   stl->facet_start = (stl_facet*)realloc(stl->facet_start, stl->stats.number_of_facets *
                                          sizeof(stl_facet));
-  if(stl->facet_start == NULL) perror("stl_initialize");
+  if(stl->facet_start == NULL) {
+    perror("stl_reallocate: realloc failed for facet_start");
+    stl->error = 1;
+    return;
+  }
   stl->stats.facets_malloced = stl->stats.number_of_facets;
 
   /* Reallocate more memory for the neighbors list */
   stl->neighbors_start = (stl_neighbors*)
                          realloc(stl->neighbors_start, stl->stats.number_of_facets *
                                  sizeof(stl_neighbors));
-  if(stl->facet_start == NULL) perror("stl_initialize");
+  if(stl->neighbors_start == NULL) {
+    perror("stl_reallocate: realloc failed for neighbors_start");
+    stl->error = 1;
+    return;
+  }
 }
 
 

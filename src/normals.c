@@ -107,15 +107,30 @@ stl_fix_normal_directions(stl_file *stl) {
 
   /* Initialize linked list. */
   head = (struct stl_normal*)malloc(sizeof(struct stl_normal));
-  if(head == NULL) perror("stl_fix_normal_directions");
+  if(head == NULL) {
+    perror("stl_fix_normal_directions: malloc head");
+    stl->error = 1;
+    return;
+  }
   tail = (struct stl_normal*)malloc(sizeof(struct stl_normal));
-  if(tail == NULL) perror("stl_fix_normal_directions");
+  if(tail == NULL) {
+    perror("stl_fix_normal_directions: malloc tail");
+    free(head);
+    stl->error = 1;
+    return;
+  }
   head->next = tail;
   tail->next = tail;
 
   /* Initialize list that keeps track of already fixed facets. */
   norm_sw = (char*)calloc(stl->stats.number_of_facets, sizeof(char));
-  if(norm_sw == NULL) perror("stl_fix_normal_directions");
+  if(norm_sw == NULL) {
+    perror("stl_fix_normal_directions: calloc norm_sw");
+    free(head);
+    free(tail);
+    stl->error = 1;
+    return;
+  }
 
 
   facet_num = 0;

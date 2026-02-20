@@ -39,10 +39,12 @@ void
 stl_open(stl_file *stl, const char *file) {
   stl_initialize(stl);
   stl_count_facets(stl, file);
-  if (stl->error) return;
   stl_allocate(stl);
   stl_read(stl, 0, 1);
-  if (!stl->error) fclose(stl->fp);
+  if (stl->fp != NULL) {
+    fclose(stl->fp);
+    stl->fp = NULL;
+  }
 }
 
 
@@ -63,6 +65,7 @@ stl_initialize(stl_file *stl) {
   stl->stats.volume = -1.0;
   stl->stats.surface_area = -1.0;
 
+  stl->fp = NULL;
   stl->neighbors_start = NULL;
   stl->facet_start = NULL;
   stl->v_indices = NULL;
@@ -102,6 +105,8 @@ stl_count_facets(stl_file *stl, const char *file) {
   fseek(stl->fp, HEADER_SIZE, SEEK_SET);
   if (!fread(chtest, sizeof(chtest), 1, stl->fp)) {
     perror("The input is an empty file");
+    fclose(stl->fp);
+    stl->fp = NULL;
     stl->error = 1;
     return;
   }
@@ -121,6 +126,8 @@ stl_count_facets(stl_file *stl, const char *file) {
     if(((file_size - HEADER_SIZE) % SIZEOF_STL_FACET != 0)
         || (file_size < STL_MIN_FILE_SIZE)) {
       fprintf(stderr, "The file %s has the wrong size.\n", file);
+      fclose(stl->fp);
+      stl->fp = NULL;
       stl->error = 1;
       return;
     }
@@ -142,6 +149,7 @@ stl_count_facets(stl_file *stl, const char *file) {
     /* Reopen the file in text mode (for getting correct newlines on Windows) */
     if (freopen(file, "r", stl->fp) == NULL) {
       perror("Could not reopen the file, something went wrong");
+      stl->fp = NULL;
       stl->error = 1;
       return;
     }
@@ -222,6 +230,11 @@ stl_open_merge(stl_file *stl, const char *file_to_merge) {
   /* Initialize the sturucture with zero stats, header info and sizes: */
   stl_initialize(&stl_to_merge);
   stl_count_facets(&stl_to_merge, file_to_merge);
+  if (stl_to_merge.error) {
+    if (stl_to_merge.fp != NULL) fclose(stl_to_merge.fp);
+    stl->error = 1;
+    return;
+  }
 
   /* Copy what we need to into stl so that we can read the file_to_merge directly into it
      using stl_read:  Save the rest of the valuable info: */

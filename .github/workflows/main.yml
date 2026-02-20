@@ -17,62 +17,62 @@ jobs:
             os: ubuntu-latest
             cc: gcc
             cflags: ""
-            linker_flage: ""
+            linker_flags: ""
             systemname: Linux
             build_type: Release
           - name: ubuntu-latest-g++-asan
             os: ubuntu-latest
             cc: gcc
             cflags: "-fno-omit-frame-pointer -fsanitize=address"
-            linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
+            linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
             systemname: Linux
             build_type: Debug
           - name: ubuntu-latest-g++-ubsan
             os: ubuntu-latest
             cc: gcc
             cflags: "-fsanitize=undefined"
-            linker_flage: ""
+            linker_flags: ""
             systemname: Linux
             build_type: Debug
           - name: ubuntu-latest-clang
             os: ubuntu-latest
             cc: clang
             cflags: ""
-            linker_flage: ""
+            linker_flags: ""
             systemname: Linux
             build_type: Release
           - name: ubuntu-latest-clang-asan
             os: ubuntu-latest
             cc: clang
             cflags: "-fno-omit-frame-pointer -fsanitize=address"
-            linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
+            linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
             systemname: Linux
             build_type: Debug
           - name: ubuntu-latest-clang-ubsan
             os: ubuntu-latest
             cc: clang
             cflags: "-fsanitize=undefined"
-            linker_flage: ""
+            linker_flags: ""
             systemname: Linux
             build_type: Debug
           - name: windows-mingw64
             os: ubuntu-latest
             cc: x86_64-w64-mingw32-gcc
             cflags: ""
-            linker_flage: ""
+            linker_flags: ""
             systemname: Windows
             build_type: Release
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v4
 
     - name: install cross compile tools
       if: contains(matrix.name, 'windows')
-      run: sudo apt-get install mingw-w64
+      run: sudo apt-get update && sudo apt-get install -y mingw-w64
 
     - name: install clang
       if: contains(matrix.name, 'clang')
-      run: sudo apt-get install clang
+      run: sudo apt-get update && sudo apt-get install -y clang
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -87,7 +87,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_C_FLAGS="${{ matrix.cflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flage }}" -DCMAKE_SYSTEM_NAME=${{ matrix.systemname }}
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_C_FLAGS="${{ matrix.cflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_SYSTEM_NAME=${{ matrix.systemname }}
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -99,11 +99,15 @@ jobs:
       if: contains(matrix.systemname, 'Linux')
       working-directory: ${{github.workspace}}/build
       shell: bash
-      run: make test
+      run: ctest --output-on-failure
+
+    - name: Set artifact vars
+      id: vars
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
     - name: upload windows
       if: contains(matrix.name, 'windows')
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: admesh-${{ steps.vars.outputs.sha_short }}
         path: |

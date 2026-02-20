@@ -41,7 +41,10 @@ stl_open(stl_file *stl, const char *file) {
   stl_count_facets(stl, file);
   stl_allocate(stl);
   stl_read(stl, 0, 1);
-  if (!stl->error) fclose(stl->fp);
+  if (stl->fp != NULL) {
+    fclose(stl->fp);
+    stl->fp = NULL;
+  }
 }
 
 
@@ -62,6 +65,7 @@ stl_initialize(stl_file *stl) {
   stl->stats.volume = -1.0;
   stl->stats.surface_area = -1.0;
 
+  stl->fp = NULL;
   stl->neighbors_start = NULL;
   stl->facet_start = NULL;
   stl->v_indices = NULL;
@@ -101,6 +105,8 @@ stl_count_facets(stl_file *stl, const char *file) {
   fseek(stl->fp, HEADER_SIZE, SEEK_SET);
   if (!fread(chtest, sizeof(chtest), 1, stl->fp)) {
     perror("The input is an empty file");
+    fclose(stl->fp);
+    stl->fp = NULL;
     stl->error = 1;
     return;
   }
@@ -120,6 +126,8 @@ stl_count_facets(stl_file *stl, const char *file) {
     if(((file_size - HEADER_SIZE) % SIZEOF_STL_FACET != 0)
         || (file_size < STL_MIN_FILE_SIZE)) {
       fprintf(stderr, "The file %s has the wrong size.\n", file);
+      fclose(stl->fp);
+      stl->fp = NULL;
       stl->error = 1;
       return;
     }
@@ -141,6 +149,7 @@ stl_count_facets(stl_file *stl, const char *file) {
     /* Reopen the file in text mode (for getting correct newlines on Windows) */
     if (freopen(file, "r", stl->fp) == NULL) {
       perror("Could not reopen the file, something went wrong");
+      stl->fp = NULL;
       stl->error = 1;
       return;
     }
@@ -174,16 +183,30 @@ void
 stl_allocate(stl_file *stl) {
   if (stl->error) return;
 
+  if (stl->stats.number_of_facets <= 0) {
+    fprintf(stderr, "stl_allocate: invalid number_of_facets=%d\n", stl->stats.number_of_facets);
+    stl->error = 1;
+    return;
+  }
+
   /*  Allocate memory for the entire .STL file */
   stl->facet_start = (stl_facet*)calloc(stl->stats.number_of_facets,
                                         sizeof(stl_facet));
-  if(stl->facet_start == NULL) perror("stl_initialize");
+  if(stl->facet_start == NULL) {
+    perror("stl_initialize: calloc failed for facet_start");
+    stl->error = 1;
+    return;
+  }
   stl->stats.facets_malloced = stl->stats.number_of_facets;
 
   /* Allocate memory for the neighbors list */
   stl->neighbors_start = (stl_neighbors*)
                          calloc(stl->stats.number_of_facets, sizeof(stl_neighbors));
-  if(stl->neighbors_start == NULL) perror("stl_initialize");
+  if(stl->neighbors_start == NULL) {
+    perror("stl_initialize: calloc failed for neighbors_start");
+    stl->error = 1;
+    return;
+  }
 }
 
 void
@@ -207,6 +230,11 @@ stl_open_merge(stl_file *stl, const char *file_to_merge) {
   /* Initialize the sturucture with zero stats, header info and sizes: */
   stl_initialize(&stl_to_merge);
   stl_count_facets(&stl_to_merge, file_to_merge);
+  if (stl_to_merge.error) {
+    if (stl_to_merge.fp != NULL) fclose(stl_to_merge.fp);
+    stl->error = 1;
+    return;
+  }
 
   /* Copy what we need to into stl so that we can read the file_to_merge directly into it
      using stl_read:  Save the rest of the valuable info: */
@@ -238,14 +266,22 @@ stl_reallocate(stl_file *stl) {
   /*  Reallocate more memory for the .STL file(s) */
   stl->facet_start = (stl_facet*)realloc(stl->facet_start, stl->stats.number_of_facets *
                                          sizeof(stl_facet));
-  if(stl->facet_start == NULL) perror("stl_initialize");
+  if(stl->facet_start == NULL) {
+    perror("stl_reallocate: realloc failed for facet_start");
+    stl->error = 1;
+    return;
+  }
   stl->stats.facets_malloced = stl->stats.number_of_facets;
 
   /* Reallocate more memory for the neighbors list */
   stl->neighbors_start = (stl_neighbors*)
                          realloc(stl->neighbors_start, stl->stats.number_of_facets *
                                  sizeof(stl_neighbors));
-  if(stl->facet_start == NULL) perror("stl_initialize");
+  if(stl->neighbors_start == NULL) {
+    perror("stl_reallocate: realloc failed for neighbors_start");
+    stl->error = 1;
+    return;
+  }
 }
 
 

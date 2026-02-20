@@ -147,3 +147,6 @@ foreach(testfile "block" "conveyor" "hourglass")
   add_test(${testfile}-vrml-stl-compare ${CMAKE_COMMAND} -E compare_files ${CMAKE_SOURCE_DIR}/test/${testfile}/basic.vrml ${CMAKE_BINARY_DIR}/basic.vrml)
 
 endforeach()
+# CVE-2026-2653: heap-buffer-overflow in stl_calculate_normal via crafted STL
+add_test(CVE-2026-2653 ${CMAKE_BINARY_DIR}/admesh ${CMAKE_SOURCE_DIR}/test/CVE-2026-2653.stl)
+set_tests_properties(CVE-2026-2653 PROPERTIES WILL_FAIL TRUE)

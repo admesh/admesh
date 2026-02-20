@@ -65,7 +65,7 @@ jobs:
             build_type: Release
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
 
     - name: install cross compile tools
       if: contains(matrix.name, 'windows')

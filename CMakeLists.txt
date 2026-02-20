@@ -1,5 +1,5 @@
+cmake_minimum_required(VERSION 3.5...3.10)
 project(admesh C)
-cmake_minimum_required(VERSION 3.2)
 
 include(GNUInstallDirs)
 include_directories(${CMAKE_SOURCE_DIR}/src)

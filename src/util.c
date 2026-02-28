@@ -633,3 +633,19 @@ All facets connected.  No further nearby check necessary.\n");
     stl_verify_neighbors(stl);
   }
 }
+
+int stl_was_invalid(stl_file *stl, int facets_reversed){
+
+  return (
+    stl->stats.facets_w_1_bad_edge  != 0 ||
+    stl->stats.facets_w_2_bad_edge  != 0 ||
+    stl->stats.facets_w_3_bad_edge  != 0 ||
+    stl->stats.degenerate_facets    != 0 ||
+    stl->stats.edges_fixed          != 0 ||
+    stl->stats.facets_removed       != 0 ||
+    stl->stats.facets_added         != 0 ||
+    stl->stats.backwards_edges      != 0 ||
+    stl->stats.normals_fixed        != 0 ||
+    stl->stats.facets_reversed      != facets_reversed
+  );
+} 

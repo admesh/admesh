@@ -59,10 +59,10 @@ stl_generate_shared_vertices(stl_file *stl) {
 
   stl->v_indices = (v_indices_struct*)
                    calloc(stl->stats.number_of_facets, sizeof(v_indices_struct));
-  if(stl->v_indices == NULL) perror("stl_generate_shared_vertices");
+  if(stl->v_indices == NULL) stl_write_error_message(stl, "stl_generate_shared_vertices");
   stl->v_shared = (stl_vertex*)
                   calloc((stl->stats.number_of_facets / 2), sizeof(stl_vertex));
-  if(stl->v_shared == NULL) perror("stl_generate_shared_vertices");
+  if(stl->v_shared == NULL) stl_write_error_message(stl, "stl_generate_shared_vertices");
   stl->stats.shared_malloced = stl->stats.number_of_facets / 2;
   stl->stats.shared_vertices = 0;
 
@@ -83,7 +83,7 @@ stl_generate_shared_vertices(stl_file *stl) {
         stl->stats.shared_malloced += 1024;
         stl->v_shared = (stl_vertex*)realloc(stl->v_shared,
                                              stl->stats.shared_malloced * sizeof(stl_vertex));
-        if(stl->v_shared == NULL) perror("stl_generate_shared_vertices");
+        if(stl->v_shared == NULL) stl_write_error_message(stl, "stl_generate_shared_vertices");
       }
 
       stl->v_shared[stl->stats.shared_vertices] =
@@ -155,7 +155,7 @@ stl_write_off(stl_file *stl, const char *file) {
                 malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
     sprintf(error_msg, "stl_write_ascii: Couldn't open %s for writing",
             file);
-    perror(error_msg);
+    stl_write_error_message(stl, error_msg);
     free(error_msg);
     stl->error = 1;
     return;
@@ -191,7 +191,7 @@ stl_write_vrml(stl_file *stl, const char *file) {
                 malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
     sprintf(error_msg, "stl_write_ascii: Couldn't open %s for writing",
             file);
-    perror(error_msg);
+    stl_write_error_message(stl, error_msg);
     free(error_msg);
     stl->error = 1;
     return;
@@ -245,7 +245,7 @@ void stl_write_obj (stl_file *stl, const char *file) {
   if (fp == NULL) {
     char* error_msg = (char*)malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
     sprintf(error_msg, "stl_write_ascii: Couldn't open %s for writing", file);
-    perror(error_msg);
+    stl_write_error_message(stl, error_msg);
     free(error_msg);
     stl->error = 1;
     return;

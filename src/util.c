@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 
 #include "stl.h"
 
@@ -631,5 +632,22 @@ All facets connected.  No further nearby check necessary.\n");
     if (verbose_flag)
       printf("Verifying neighbors...\n");
     stl_verify_neighbors(stl);
+  }
+}
+
+void stl_write_error_message(stl_file *stl, const char *msg){
+
+  if(stl->error_buffer != NULL)
+    free(stl->error_buffer);
+
+  /* Check for library errors and append additional error message if available. */
+  if(errno != 0) {
+    const char *delimiter = ": ";
+    stl->error_buffer = (char*)calloc(strlen(msg) + strlen(strerror(errno)) + strlen(delimiter) + 1, sizeof(char));
+    strcpy(stl->error_buffer, msg);
+    strcat(stl->error_buffer, delimiter);
+    strcat(stl->error_buffer, strerror(errno));
+  } else {
+    stl->error_buffer = strdup(msg);
   }
 }

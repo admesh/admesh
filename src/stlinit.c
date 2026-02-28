@@ -48,6 +48,7 @@ stl_open(stl_file *stl, const char *file) {
 void
 stl_initialize(stl_file *stl) {
   stl->error = 0;
+  stl->error_buffer = NULL;
   stl->stats.backwards_edges = 0;
   stl->stats.degenerate_facets = 0;
   stl->stats.edges_fixed  = 0;
@@ -88,7 +89,7 @@ stl_count_facets(stl_file *stl, const char *file) {
                 malloc(81 + strlen(file)); /* Allow 80 chars+file size for message */
     sprintf(error_msg, "stl_initialize: Couldn't open %s for reading",
             file);
-    perror(error_msg);
+    stl_write_error_message(stl, error_msg);
     free(error_msg);
     stl->error = 1;
     return;
@@ -100,7 +101,7 @@ stl_count_facets(stl_file *stl, const char *file) {
   /* Check for binary or ASCII file */
   fseek(stl->fp, HEADER_SIZE, SEEK_SET);
   if (!fread(chtest, sizeof(chtest), 1, stl->fp)) {
-    perror("The input is an empty file");
+    stl_write_error_message(stl, "The input is an empty file");
     stl->error = 1;
     return;
   }
@@ -140,7 +141,7 @@ stl_count_facets(stl_file *stl, const char *file) {
   else {
     /* Reopen the file in text mode (for getting correct newlines on Windows) */
     if (freopen(file, "r", stl->fp) == NULL) {
-      perror("Could not reopen the file, something went wrong");
+      stl_write_error_message(stl, "Could not reopen the file, something went wrong");
       stl->error = 1;
       return;
     }
@@ -177,13 +178,13 @@ stl_allocate(stl_file *stl) {
   /*  Allocate memory for the entire .STL file */
   stl->facet_start = (stl_facet*)calloc(stl->stats.number_of_facets,
                                         sizeof(stl_facet));
-  if(stl->facet_start == NULL) perror("stl_initialize");
+  if(stl->facet_start == NULL) stl_write_error_message(stl, "stl_initialize");
   stl->stats.facets_malloced = stl->stats.number_of_facets;
 
   /* Allocate memory for the neighbors list */
   stl->neighbors_start = (stl_neighbors*)
                          calloc(stl->stats.number_of_facets, sizeof(stl_neighbors));
-  if(stl->neighbors_start == NULL) perror("stl_initialize");
+  if(stl->neighbors_start == NULL) stl_write_error_message(stl, "stl_initialize");
 }
 
 void
@@ -238,14 +239,14 @@ stl_reallocate(stl_file *stl) {
   /*  Reallocate more memory for the .STL file(s) */
   stl->facet_start = (stl_facet*)realloc(stl->facet_start, stl->stats.number_of_facets *
                                          sizeof(stl_facet));
-  if(stl->facet_start == NULL) perror("stl_initialize");
+  if(stl->facet_start == NULL) stl_write_error_message(stl, "stl_initialize");
   stl->stats.facets_malloced = stl->stats.number_of_facets;
 
   /* Reallocate more memory for the neighbors list */
   stl->neighbors_start = (stl_neighbors*)
                          realloc(stl->neighbors_start, stl->stats.number_of_facets *
                                  sizeof(stl_neighbors));
-  if(stl->facet_start == NULL) perror("stl_initialize");
+  if(stl->facet_start == NULL) stl_write_error_message(stl, "stl_initialize");
 }
 
 
@@ -293,7 +294,7 @@ stl_read(stl_file *stl, int first_facet, int first) {
     {
       if(fread(facet_buffer, sizeof(facet_buffer), 1, stl->fp)
          + fread(&facet.extra, sizeof(char), 2, stl->fp) != 3) {
-        perror("Cannot read facet");
+        stl_write_error_message(stl, "Cannot read facet");
         stl->error = 1;
         return;
       }
@@ -314,7 +315,7 @@ stl_read(stl_file *stl, int first_facet, int first) {
           fscanf(stl->fp, "%*s %f %f %f\n", &facet.vertex[2].x, &facet.vertex[2].y,  &facet.vertex[2].z) + \
           fscanf(stl->fp, "%*s") + \
           fscanf(stl->fp, "%*s")) != 12) {
-        perror("Something is syntactically very wrong with this ASCII STL!");
+        stl_write_error_message(stl, "Something is syntactically very wrong with this ASCII STL!");
         stl->error = 1;
         return;
       }
@@ -401,5 +402,7 @@ stl_close(stl_file *stl) {
     free(stl->v_indices);
   if(stl->v_shared != NULL)
     free(stl->v_shared);
+  if(stl->error_buffer != NULL)
+    free(stl->error_buffer);
 }
 

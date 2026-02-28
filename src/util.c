@@ -633,3 +633,72 @@ All facets connected.  No further nearby check necessary.\n");
     stl_verify_neighbors(stl);
   }
 }
+
+stl_file *stl_copy(stl_file *dst, const stl_file *src){
+
+  if(src->error) return NULL;
+
+  dst->fp               = NULL;
+  dst->facet_start      = NULL;
+  dst->edge_start       = NULL;       // edge_start is never allocated nor populated.
+  dst->heads            = NULL;       // Allocated and used only by stl_fill_holes and immediately freed.
+  dst->tail             = NULL;       // Same as ->heads.
+  dst->M                = src->M;
+  dst->neighbors_start  = NULL;
+  dst->v_indices        = NULL;
+  dst->v_shared         = NULL;
+  dst->stats            = src->stats;
+  dst->stats.type       = inmemory;
+  dst->error            = 0;
+
+  if(src->facet_start != NULL){
+    
+    dst->facet_start = (stl_facet*)calloc(dst->stats.number_of_facets, sizeof(stl_facet));
+    if(dst->facet_start == NULL) {
+      perror("stl_copy");
+      dst->error = 1;
+      return dst;
+    }
+
+    memcpy(dst->facet_start, src->facet_start, dst->stats.number_of_facets * sizeof(stl_facet));
+  }
+
+  if(src->neighbors_start != NULL){
+
+    dst->neighbors_start = (stl_neighbors*) calloc(dst->stats.number_of_facets, sizeof(stl_neighbors));
+    if(dst->neighbors_start == NULL) {
+      perror("stl_copy");
+      dst->error = 1;
+      return dst;
+    }
+
+    memcpy(dst->neighbors_start, src->neighbors_start, dst->stats.number_of_facets * sizeof(stl_neighbors));
+  }
+
+  if(src->v_indices != NULL){
+    
+    dst->v_indices = (v_indices_struct*) calloc(dst->stats.number_of_facets, sizeof(v_indices_struct));
+    if(dst->v_indices == NULL) {
+      perror("stl_copy");
+      dst->error = 1;
+      return dst;
+    }
+
+    memcpy(dst->v_indices, src->v_indices, sizeof(dst->stats.number_of_facets) * sizeof(v_indices_struct));
+  }
+
+  if(src->v_shared != NULL){
+
+    dst->v_shared = (stl_vertex*) calloc((dst->stats.number_of_facets / 2), sizeof(stl_vertex));
+    if(dst->v_shared == NULL) {
+      perror("stl_copy");
+      dst->error = 1;
+      return dst;
+    }
+
+    /* Mimic allocation from shared.c (stl_generate_shared_vertices). */
+    memcpy(dst->v_shared, src->v_shared, dst->stats.number_of_facets / 2 * sizeof(stl_vertex));
+  }
+
+  return dst;
+}
